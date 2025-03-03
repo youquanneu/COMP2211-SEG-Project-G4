@@ -10,9 +10,9 @@ A Smart Campus Navigation and Resource Management System
 
 ## Project Structure
 
-- \`frontend/\`: ReactJS user interface
-- \`backend/\`: Backend Java Spring-Boot API
-- \`docs/\`: Project documentation
+- \`frontend\`: ReactJS user interface
+- \`backend\`: Backend Java Spring-Boot API
+- \`docs\`: Project documentation
 
 ## Team
 - Abdullah Hashmat Azeez
