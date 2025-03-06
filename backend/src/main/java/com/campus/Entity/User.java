@@ -1,7 +1,6 @@
 package com.campus.Entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 @Entity
 public class User {
     public User() {
@@ -12,8 +11,8 @@ public class User {
         setPassword(password);
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id // Primary Key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     // Auto Increment
     private Integer id;
     private String username;
     private String email;
