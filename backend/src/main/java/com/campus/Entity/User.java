@@ -3,6 +3,9 @@ package com.campus.Entity;
 import com.campus.EntityClassification.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
+
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -16,13 +19,15 @@ public class User {
     }
     @Id // Primary Key
     @GeneratedValue(strategy = GenerationType.IDENTITY)     // Auto Increment
-    private Integer id;
+    private Integer userId;
     private String username;
     private String email;
     private String password;
     private UserRole userRole;
-    public Integer getId() {
-        return id;
+    @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
+    private List<Reservation> reservations;
+    public Integer getUserId() {
+        return userId;
     }
     public String getEmail() {
         return email;

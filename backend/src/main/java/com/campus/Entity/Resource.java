@@ -11,9 +11,8 @@ public class Resource {
     public Resource(){}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer resourceId;
     private String resourceName;
-
 }
 @Entity
 class OutdoorVenue extends Resource{
