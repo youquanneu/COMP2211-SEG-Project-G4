@@ -13,14 +13,13 @@ public class Resource {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String resourceName;
-    private LocalDateTime reservationStarting;
-    private LocalDateTime reservationEnding;
+
 }
 @Entity
-class Venue extends Resource{
+class OutdoorVenue extends Resource{
 }
 @Entity
-class IndoorVenue extends Venue{
+class IndoorVenue extends Resource{
     private String roomNumber;
     private LocalDateTime openTime;
     private LocalDateTime closeTime;
@@ -28,7 +27,4 @@ class IndoorVenue extends Venue{
 @Entity
 class Equipment extends  Resource{
     private String serialNumber;
-}
-enum ResourceType{
-
 }

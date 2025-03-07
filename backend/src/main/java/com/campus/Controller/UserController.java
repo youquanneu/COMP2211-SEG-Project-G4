@@ -1,6 +1,7 @@
 package com.campus.Controller;
 
 import com.campus.Entity.User;
+import com.campus.EntityClassification.UserRole;
 import com.campus.Repository.UserRepository;
 import com.campus.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,6 @@ public class UserController implements CommandLineRunner{
     public void run(String... args) throws Exception {
         registerNewUser();
         loginAsUser();
-
     }
     private void registerNewUser(){
         Scanner scanner = new Scanner(System.in);
@@ -42,8 +42,17 @@ public class UserController implements CommandLineRunner{
         String email = scanner.nextLine();
         System.out.println("Input password : ");
         String password = passwordEncoder.encode(scanner.nextLine());
-
-        User newUser = new User(username,email,password);
+        System.out.println("Input type: 1.Student 2.Lecturer 3.AdministrativeStaff ");
+        UserRole userRole;
+        int type = scanner.nextInt();
+        if (type ==1){
+            userRole = UserRole.valueOf("Student");
+        } else if (type==2) {
+            userRole = UserRole.valueOf("Lecturer");
+        }else {
+            userRole = UserRole.valueOf("AdministrativeStaff");
+        }
+        User newUser = new User(username,email,password,userRole);
         userRepository.save(newUser);
         System.out.println("Adding new user : " + newUser.getUsername());
     }
@@ -55,7 +64,8 @@ public class UserController implements CommandLineRunner{
         if (user.isPresent()){
             User user1 = user.get();
             System.out.println("Input password : ");
-
+            System.out.println(user1.getPassword());
+            System.out.println(user1.getUserRole());
             String password = passwordEncoder.encode(scanner.nextLine());
             if (password.equals(user1.getPassword())){
                 System.out.println("Password correct");

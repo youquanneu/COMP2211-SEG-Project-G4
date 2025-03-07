@@ -2,6 +2,7 @@ package com.campus.Service;
 
 
 import com.campus.Entity.User;
+import com.campus.EntityClassification.UserRole;
 import com.campus.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,9 @@ public class UserService implements UserDetailsService {
     }
     public User saveUser(User user){
         return userRepository.save(user);
+    }
+    public List<User> getUserByUserRole(UserRole userRole){
+        return userRepository.findUserByUserRole(userRole);
     }
     @Override   //Still don't know how to apply
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -1,17 +1,18 @@
 package com.campus.Entity;
 
+import com.campus.EntityClassification.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_role",discriminatorType = DiscriminatorType.STRING)
 public class User {
     public User() {}
-    public User(String username, String email, String password){
+    public User(String username, String email, String password, UserRole userRole){
         setUsername(username);
         setEmail(email);
         setPassword(password);
+        setUserRole(userRole);
     }
     @Id // Primary Key
     @GeneratedValue(strategy = GenerationType.IDENTITY)     // Auto Increment
@@ -32,13 +33,12 @@ public class User {
     public String getUsername() {
         return username;
     }
-    UserRole getUserRole() {
+    public UserRole getUserRole() {
         return userRole;
     }
     private void setEmail(String email) {
         this.email = email;
     }
-
     private void setPassword(String password) {
         this.password = password;
     }
@@ -49,20 +49,6 @@ public class User {
         this.userRole = userRole;
     }
 }
-@Entity
-@DiscriminatorValue("Student")
-class Student extends User{
-}
-@Entity
-@DiscriminatorValue("Lecturer")
-class Lecturer extends User{
-
-}
-@Entity
-@DiscriminatorValue("AdministrativeStaff")
-class AdministrativeStaff extends User{
-
-}
-enum UserRole{
-
-}
+class Student extends User{}
+class Lecturer extends User{}
+class AdministrativeStaff extends User{ }
