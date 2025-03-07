@@ -5,7 +5,6 @@ import com.campus.Repository.UserRepository;
 import com.campus.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.UserDetailsManagerConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
 import java.util.Scanner;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/User")
 public class UserController implements CommandLineRunner{
     @Autowired
     private UserService userService;
@@ -46,6 +45,7 @@ public class UserController implements CommandLineRunner{
         String email = scanner.nextLine();
         System.out.println("Input password : ");
         String password = passwordEncoder.encode(scanner.nextLine());
+
         User newUser = new User(username,email,password);
         userRepository.save(newUser);
         System.out.println("Adding new user : " + newUser.getUsername());
