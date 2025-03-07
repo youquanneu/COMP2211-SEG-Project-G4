@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -29,8 +28,6 @@ public class UserController implements CommandLineRunner{
     public User createUser(@RequestBody User user){
         return userService.saveUser(user);
     }
-
-
     @Override // Function waiting of polish
     public void run(String... args) throws Exception {
         registerNewUser();

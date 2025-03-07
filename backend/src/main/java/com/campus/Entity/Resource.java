@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Resource {
+    public Resource(){}
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

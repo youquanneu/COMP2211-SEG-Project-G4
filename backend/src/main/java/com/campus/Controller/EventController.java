@@ -1,16 +1,17 @@
 package com.campus.Controller;
 
-import com.campus.Repository.ResourceRepository;
-import com.campus.Service.ResourceService;
+import com.campus.Entity.Event;
+import com.campus.Repository.EventRepository;
+import com.campus.Service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Resource")
-public class ResourceController {
+@RequestMapping("/Event")
+public class EventController {
     @Autowired
-    private ResourceService resourceService;
+    private EventService eventService;
     @Autowired
-    private ResourceRepository resourceRepository;
+    private EventRepository eventRepository;
 }

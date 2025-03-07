@@ -2,14 +2,12 @@ package com.campus.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 @Data
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_role",discriminatorType = DiscriminatorType.STRING)
 public class User {
-    public User() {
-    }
+    public User() {}
     public User(String username, String email, String password){
         setUsername(username);
         setEmail(email);
