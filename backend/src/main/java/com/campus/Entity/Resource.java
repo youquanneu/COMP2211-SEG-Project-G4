@@ -15,7 +15,15 @@ public class Resource {
         setOpenTime(openTime);
         setCloseTime(closeTime);
     }
-    public Integer getResourceId() {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer resourceId;
+    private String resourceName;
+    private LocalDateTime openTime;
+    private LocalDateTime closeTime;
+    @ManyToOne
+    @JoinColumn(name = "reservationId",nullable = false)public Integer getResourceId() {
         return resourceId;
     }
     public LocalDateTime getOpenTime() {
@@ -27,7 +35,6 @@ public class Resource {
     public LocalDateTime getCloseTime() {
         return closeTime;
     }
-
     private void setOpenTime(LocalDateTime openTime) {
         this.openTime = openTime;
     }
@@ -38,14 +45,7 @@ public class Resource {
         this.resourceName = resourceName;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer resourceId;
-    private String resourceName;
-    private LocalDateTime openTime;
-    private LocalDateTime closeTime;
-    @ManyToOne
-    @JoinColumn(name = "reservationId",nullable = false)
+    
     private Reservation booking;
 }
 @Entity

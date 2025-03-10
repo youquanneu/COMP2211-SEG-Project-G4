@@ -1,5 +1,5 @@
 package com.campus.EntityClassification;
 
-public enum ResourceType {
+public enum ResourceCategory {
     OutdoorVenue,IndoorVenue,Equipment;
 }

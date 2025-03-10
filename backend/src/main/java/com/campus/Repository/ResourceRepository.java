@@ -8,5 +8,4 @@ import java.util.List;
 
 @Repository
 public interface ResourceRepository extends JpaRepository<Resource,Integer> {
-    List<Resource> getAllResource();
 }
