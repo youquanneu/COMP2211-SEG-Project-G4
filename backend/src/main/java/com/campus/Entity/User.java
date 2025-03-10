@@ -24,8 +24,6 @@ public class User {
     private String email;
     private String password;
     private UserRole userRole;
-    @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
-    private List<Reservation> reservations;
     public Integer getUserId() {
         return userId;
     }
@@ -53,6 +51,9 @@ public class User {
     private void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+
+    @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
+    private List<Reservation> reservations;
 }
 class Student extends User{}
 class Lecturer extends User{}

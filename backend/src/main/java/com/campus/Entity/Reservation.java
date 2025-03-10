@@ -3,8 +3,7 @@ package com.campus.Entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class Reservation {
@@ -14,9 +13,8 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
     private User booker;
-    @OneToOne
-    private Resource resource;
+    @OneToMany(mappedBy = "booking",cascade = CascadeType.ALL)
+    private List<Resource> resources;
     private LocalDateTime reservationStarting;
     private LocalDateTime reservationEnding;
-
 }
