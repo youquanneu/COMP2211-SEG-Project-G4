@@ -13,5 +13,5 @@ public class Event {
     private Integer id;
     private LocalDateTime eventStarting;
     private LocalDateTime eventEnding;
-    private Text eventDescription;
+    private String eventDescription;
 }

@@ -13,16 +13,16 @@ import java.util.List;
 public class UserController implements CommandLineRunner{
     @Autowired
     private UserService userService;
-    @Autowired
-    private UserRepository userRepository;
-    @GetMapping
-    public List<User> getAllUser(){
-        return userService.getAllUsers();
-    }
-    @PostMapping
-    public User createUser(@RequestBody User user){
-        return userService.saveUser(user);
-    }
+//    @Autowired
+//    private UserRepository userRepository;
+//    @GetMapping
+//    public List<User> getAllUser(){
+//        return userService.getAllUsers();
+//    }
+//    @PostMapping
+//    public User createUser(@RequestBody User user){
+//        return userService.saveUser(user);
+//    }
     @Override
     public void run(String... args) throws Exception {
         userService.register();

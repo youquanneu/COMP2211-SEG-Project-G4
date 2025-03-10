@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 public class Resource {
     public Resource(){}
     public Resource(String resourceName, LocalDateTime openTime, LocalDateTime closeTime){
-
+        setResourceName(resourceName);
+        setOpenTime(openTime);
+        setCloseTime(closeTime);
     }
     public Integer getResourceId() {
         return resourceId;
@@ -25,7 +27,6 @@ public class Resource {
     public LocalDateTime getCloseTime() {
         return closeTime;
     }
-
 
     private void setOpenTime(LocalDateTime openTime) {
         this.openTime = openTime;
@@ -52,9 +53,30 @@ class OutdoorVenue extends Resource{
 }
 @Entity
 class IndoorVenue extends Resource{
+    public IndoorVenue(String roomNumber, String resourceName, LocalDateTime openTime, LocalDateTime closeTime){
+        super(resourceName, openTime, closeTime);
+        setRoomNumber(roomNumber);
+    }
     private String roomNumber;
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+    private void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 }
 @Entity
 class Equipment extends Resource{
+    public Equipment(String serialNumber, String resourceName, LocalDateTime openTime, LocalDateTime closeTime){
+        super(resourceName, openTime, closeTime);
+        setSerialNumber(serialNumber);
+    }
     private String serialNumber;
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+    private void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+    private String Location;
 }
