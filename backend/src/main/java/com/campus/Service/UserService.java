@@ -25,6 +25,12 @@ public class UserService implements UserDetailsService {
     public List<User> getUserByUserRole(UserRole userRole){
         return userRepository.findUserByUserRole(userRole);
     }
+    
+    
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsernameEqualsIgnoreCase(username);
+    }
+    
     @Override   //Still don't know how to apply
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);
