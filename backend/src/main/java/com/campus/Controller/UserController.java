@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController implements CommandLineRunner{
     @Autowired
     private UserService userService;
-
     @Override
     public void run(String... args) throws Exception {
-        userService.register();
         userService.login();
+        userService.allUser();
+        userService.register();
+        userService.userByRole();
+        userService.changePassword();
     }
 }

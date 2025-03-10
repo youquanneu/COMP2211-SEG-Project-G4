@@ -11,16 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-//    @Bean
-//    public SecurityFilterChain securityFilterChain (HttpSecurity httpSecurity) throws Exception {
-//        return httpSecurity.authorizeHttpRequests(
-//                registry->{
-//                    registry.requestMatchers("").permitAll();
-//                    registry.requestMatchers("/admin/**").hasRole("AdministrativeStaff"); // Need requirement for Admin
-//                    registry.anyRequest().authenticated();
-//                }
-//        ).build();
-//    }
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

@@ -4,8 +4,8 @@ package com.campus.Service;
 import com.campus.Entity.User;
 import com.campus.EntityClassification.UserRole;
 import com.campus.Repository.UserRepository;
-import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,17 +22,6 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Nonnull
-    private User saveUser(User user){
-        return userRepository.save(user);
-    }
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
-    }
-    public List<User> getUserByUserRole(UserRole userRole){
-        return userRepository.findUserByUserRole(userRole);
-    }
-
     public void register(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -45,24 +34,32 @@ public class UserService implements UserDetailsService {
         UserRole userRole;
         int type = scanner.nextInt();
         if (type ==1){
-            userRole = UserRole.valueOf("Student");
+            userRole = UserRole.Student;
         } else if (type==2) {
-            userRole = UserRole.valueOf("Lecturer");
+            userRole = UserRole.Lecturer;
         }else {
-            userRole = UserRole.valueOf("AdministrativeStaff");
+            userRole = UserRole.AdministrativeStaff;
         }
-        User u = registerNewUser(username,email,password,userRole);
-        System.out.println(u.toString());
-    }
+        try {
+            User u = registerNewUser(username, email, password, userRole);
+            System.out.println("User register successful : \n" + u);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            register();
+        }
+    }   // Demonstration method: Register a new user
     private User registerNewUser(String username, String email, String password, UserRole userRole) {
-        Optional<User> existingUser = userRepository.findByUsernameOrEmailEqualsIgnoreCase(email, username);
+        Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username, email);
         if (existingUser.isPresent()) {
-            System.out.println("User with this email or username already exists.");
+            throw new RuntimeException("User with this email or username already exists.");
         }
         String encodedPassword = passwordEncoder.encode(password);
         User newUser = new User(username, email, encodedPassword, userRole);
         return saveUser(newUser);
-    }
+    }   // Register a new user only if non-duplicate email or username
+    private User saveUser(User user){
+        return userRepository.save(user);
+    }   // Insert a new user into database
     public void login(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -71,13 +68,12 @@ public class UserService implements UserDetailsService {
         String password = scanner.nextLine();
         try {
             User user = loginAsUser(username, password);
-            System.out.println(user.getEmail());
-            System.out.println(user.getUserRole());
+            System.out.println(user);
         }catch (Exception e){
             System.out.println(e.getMessage());
             login();
         }
-    }
+    }   // Demonstration method: Login as user by username and password
     private User loginAsUser(String username, String password) {
         Optional<User> userOpt = userRepository.findByUsernameEqualsIgnoreCase(username);
         if (userOpt.isEmpty()) {
@@ -89,8 +85,88 @@ public class UserService implements UserDetailsService {
         } else {
             throw new RuntimeException("Invalid password.");
         }
-    }
-
+    }   // Return a user by username and password
+    public void allUser(){
+        List<User> userList = getAllUsers();
+        for (User user : userList) {
+            System.out.println(user.toString());
+        }
+    }   // Demonstration method: List out all user
+    private List<User> getAllUsers(){
+        return userRepository.findAll();
+    }   // Get a list of all user
+    public void userByRole() {
+        System.out.println("Select type: 1.Student 2.Lecturer 3.AdministrativeStaff ");
+        UserRole userRole;
+        Scanner scanner = new Scanner(System.in);
+        int type = scanner.nextInt();
+        if (type ==1){
+            userRole = UserRole.Student;
+        } else if (type==2) {
+            userRole = UserRole.Lecturer;
+        }else {
+            userRole = UserRole.AdministrativeStaff;
+        }
+        List<User> roleList = getUserByUserRole(userRole);
+        for (User user : roleList) {
+            System.out.println(user.toString());
+        }
+    }   // Demonstration method: List out user by role
+    private List<User> getUserByUserRole(UserRole userRole){
+        return userRepository.findUserByUserRole(userRole);
+    }   // Get a list of user base on role
+    public void changePassword(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input username : ");
+        String username = scanner.nextLine();
+        System.out.println("Input password : ");
+        String password = scanner.nextLine();
+        try {
+            changePassword(loginAsUser(username, password));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            changePassword();
+        }
+    }   // Demonstration method: Change password
+    private void changePassword(User user) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter your current password: ");
+        String password = scanner.nextLine();
+        try{
+            verifyCurrentPassword(user,password);
+            changeToNewPassword(user);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            changePassword(user);
+        }
+    }   // Change password for user after verify current password
+    private void changeToNewPassword(User user) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("New password: ");
+        String newPassword = scanner.nextLine();
+        System.out.println("Confirm password: ");
+        String confirmationPassword = scanner.nextLine();
+        try {
+            user.changePassword(passwordEncoder.encode(verifyNewPassword(newPassword, confirmationPassword)));
+            userRepository.save(user);
+            System.out.println("Your password has been successfully changed.");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            changeToNewPassword(user);
+        }
+    }   // Change password after new password confirmation
+    private void verifyCurrentPassword(User user, String password){
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Incorrect current password.");
+        }
+    }   // Verify current password
+    private String verifyNewPassword(String newPassword, String confirmationPassword){
+        if (newPassword.equals(confirmationPassword)){
+            return newPassword;
+        }else {
+            throw new RuntimeException("Password not matches");
+        }
+    }   // New password confirmation
 //    public void forgotPassword() {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter your email address: ");
@@ -148,32 +224,7 @@ public class UserService implements UserDetailsService {
 //
 //        System.out.println("Your password has been successfully reset.");
 //    }
-//    public void changePassword() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter your current password: ");
-//        String currentPassword = scanner.nextLine();
-//
-//        // Retrieve the currently logged-in user (you can get the logged-in user from a session, context, etc.)
-//        User user = getCurrentLoggedInUser();
-//
-//        // Verify the current password
-//        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-//            throw new RuntimeException("Incorrect current password.");
-//        }
-//
-//        // Ask for a new password
-//        System.out.println("Enter your new password: ");
-//        String newPassword = scanner.nextLine();
-//
-//        // Encode the new password
-//        String encodedPassword = passwordEncoder.encode(newPassword);
-//
-//        // Update the password in the user object
-//        user.setPassword(encodedPassword);
-//        userRepository.save(user);
-//
-//        System.out.println("Your password has been successfully changed.");
-//    }
+
     @Override   //Still don't know how to apply
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);

@@ -24,6 +24,9 @@ public class User {
     private String email;
     private String password;
     private UserRole userRole;
+    public void changePassword(String password){
+        setPassword(password);
+    }
     public Integer getUserId() {
         return userId;
     }
@@ -51,7 +54,16 @@ public class User {
     private void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
-
+    public String toString(){
+        return String.format(
+                """
+                        Username   : %s
+                        Email      : %s
+                        Role       : %s
+                        UserId     : %s
+                        """,
+                getUsername(),getEmail(),getUserRole(),getUserId());
+    }
     @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
     private List<Reservation> reservations;
 }

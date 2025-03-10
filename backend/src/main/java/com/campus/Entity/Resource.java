@@ -1,29 +1,30 @@
 package com.campus.Entity;
 
+import com.campus.EntityClassification.ResourceCategory;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Resource {
+public abstract class Resource {
     public Resource(){}
-    public Resource(String resourceName, LocalDateTime openTime, LocalDateTime closeTime){
+    public Resource(String resourceName,
+                    LocalDateTime openTime, LocalDateTime closeTime,
+                    ResourceCategory resourceCategory){
         setResourceName(resourceName);
         setOpenTime(openTime);
         setCloseTime(closeTime);
+        setResourceCategory(resourceCategory);
     }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer resourceId;
     private String resourceName;
     private LocalDateTime openTime;
     private LocalDateTime closeTime;
-    @ManyToOne
-    @JoinColumn(name = "reservationId",nullable = false)public Integer getResourceId() {
+    private ResourceCategory resourceCategory;
+    public Integer getResourceId() {
         return resourceId;
     }
     public LocalDateTime getOpenTime() {
@@ -35,6 +36,9 @@ public class Resource {
     public LocalDateTime getCloseTime() {
         return closeTime;
     }
+    public ResourceCategory getResourceCategory() {
+        return resourceCategory;
+    }
     private void setOpenTime(LocalDateTime openTime) {
         this.openTime = openTime;
     }
@@ -44,22 +48,40 @@ public class Resource {
     private void setResourceName(String resourceName) {
         this.resourceName = resourceName;
     }
-
-    
+    private void setResourceCategory(ResourceCategory resourceCategory) {
+        this.resourceCategory = resourceCategory;
+    }
+    @ManyToOne
+    @JoinColumn(name = "reservationId",nullable = false)
     private Reservation booking;
+
 }
 @Entity
 class OutdoorVenue extends Resource{
+    public OutdoorVenue(){}
+    public OutdoorVenue(String resourceName,
+                        LocalDateTime openTime, LocalDateTime closeTime){
+        super(resourceName, openTime, closeTime, ResourceCategory.OutdoorVenue);
+    }
 }
 @Entity
 class IndoorVenue extends Resource{
-    public IndoorVenue(String roomNumber, String resourceName, LocalDateTime openTime, LocalDateTime closeTime){
-        super(resourceName, openTime, closeTime);
+    public IndoorVenue(){}
+    public IndoorVenue(String roomNumber, String resourceName,
+                       LocalDateTime openTime, LocalDateTime closeTime){
+        super(resourceName, openTime, closeTime, ResourceCategory.IndoorVenue);
         setRoomNumber(roomNumber);
     }
+    private String building;
     private String roomNumber;
+    public String getBuilding() {
+        return building;
+    }
     public String getRoomNumber() {
         return roomNumber;
+    }
+    private void setBuilding(String building) {
+        this.building = building;
     }
     private void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
@@ -67,8 +89,10 @@ class IndoorVenue extends Resource{
 }
 @Entity
 class Equipment extends Resource{
-    public Equipment(String serialNumber, String resourceName, LocalDateTime openTime, LocalDateTime closeTime){
-        super(resourceName, openTime, closeTime);
+    public Equipment() {}
+    public Equipment(String serialNumber, String resourceName,
+                     LocalDateTime openTime, LocalDateTime closeTime){
+        super(resourceName, openTime, closeTime, ResourceCategory.Equipment);
         setSerialNumber(serialNumber);
     }
     private String serialNumber;
@@ -78,5 +102,4 @@ class Equipment extends Resource{
     private void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
-    private String Location;
 }
