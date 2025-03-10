@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -50,16 +49,17 @@ public class UserService implements UserDetailsService {
         }else {
             userRole = UserRole.valueOf("AdministrativeStaff");
         }
-        registerNewUser(username,email,password,userRole);
+        User u = registerNewUser(username,email,password,userRole);
+        System.out.println(u.toString());
     }
-    private void registerNewUser(String username, String email, String password, UserRole userRole) {
+    private User registerNewUser(String username, String email, String password, UserRole userRole) {
         Optional<User> existingUser = userRepository.findByUsernameOrEmailEqualsIgnoreCase(email, username);
         if (existingUser.isPresent()) {
             System.out.println("User with this email or username already exists.");
         }
         String encodedPassword = passwordEncoder.encode(password);
         User newUser = new User(username, email, encodedPassword, userRole);
-        userRepository.save(newUser);
+        return saveUser(newUser);
     }
     public void login(){
         Scanner scanner = new Scanner(System.in);
@@ -88,6 +88,7 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Invalid password.");
         }
     }
+
 //    public void forgotPassword() {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Enter your email address: ");

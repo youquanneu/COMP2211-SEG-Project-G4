@@ -11,6 +11,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResourceController {
     @Autowired
     private ResourceService resourceService;
-    @Autowired
-    private ResourceRepository resourceRepository;
 }
