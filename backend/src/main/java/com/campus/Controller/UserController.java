@@ -12,10 +12,5 @@ public class UserController implements CommandLineRunner{
     private UserService userService;
     @Override
     public void run(String... args) throws Exception {
-        userService.login();
-        userService.allUser();
-        userService.register();
-        userService.userByRole();
-        userService.changePassword();
     }
 }
