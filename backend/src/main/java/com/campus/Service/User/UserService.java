@@ -22,6 +22,11 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
+    private void verifyCurrentPassword(User user, String password){
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Incorrect current password.");
+        }
+    }   // Verify current password
     public void login(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -42,12 +47,9 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Invalid username.");
         }
         User user = userOpt.get();
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return user;
-        } else {
-            throw new RuntimeException("Invalid password.");
-        }
-    }   // Return a user by username and password
+        verifyCurrentPassword(user,password);
+        return user;
+    }   // Function: Return a user by username and password
     public void changePassword(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -65,35 +67,39 @@ public class UserService implements UserDetailsService {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your current password: ");
         String password = scanner.nextLine();
-        try{
-            verifyCurrentPassword(user,password);
-            changeToNewPassword(user);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            changePassword(user);
-        }
-    }   // Change password for user after verify current password
-    private void changeToNewPassword(User user) {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("New password: ");
         String newPassword = scanner.nextLine();
         System.out.println("Confirm password: ");
         String confirmationPassword = scanner.nextLine();
+        try{
+            changePassword(user,password,newPassword,confirmationPassword);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            changePassword(user);
+        }
+    }   // Demonstration method: Change password after user login successful
+    private void changePassword(User user, String currentPassword, String newPassword, String confirmationPassword) {
+        try{
+            verifyCurrentPassword(user,currentPassword);
+            changeToNewPassword(user,newPassword,confirmationPassword);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            changePassword(user);
+        }
+    }   // Function: Change password for user
+    private void changeToNewPassword(User user,String newPassword, String confirmationPassword) {
         try {
+            System.out.println("New password:       ******");
+            System.out.println("Confirm password:   ******");
             user.changePassword(passwordEncoder.encode(verifyNewPassword(user, newPassword, confirmationPassword)));
             userRepository.save(user);
             System.out.println("Your password has been successfully changed.");
         }   // Save password changed of user into database after validation
         catch (Exception e) {
             System.out.println(e.getMessage());
-            changeToNewPassword(user);
+            changePassword(user);
         }
-    }   // Change password after new password confirmation
-    private void verifyCurrentPassword(User user, String password){
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Incorrect current password.");
-        }
-    }   // Verify current password
+    }   // Change password after new verification
     private String verifyNewPassword(User user, String newPassword, String confirmationPassword){
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
             throw new RuntimeException("New password cannot be the same as current password.");
@@ -103,32 +109,45 @@ public class UserService implements UserDetailsService {
         }   // Check if new password and new password confirmation are same
         return newPassword;
     }   // Return new password after validation checking
-    public void forgotPassword(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Your email : ");
-        String email = scanner.nextLine();
+
+    public void forgotPasswordDemo(){
         try {
-            User user = findUserByEmail(email);
-            String otp = emailSenderService.sendOTP(user.getEmail());
-            String input = scanner.nextLine();
-            matchesAndChange(user,otp,input);
+            // Page 1 : Take email and send OTP
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Your email : ");
+            String email = scanner.nextLine();
+            // Page 2 : Get user input of OTP
+            System.out.println("Your OTP : ");
+            String inputOTP = scanner.nextLine();
+            User user = forgotPassword(email,inputOTP);
+            // Page 3 : Let user change of password
+            System.out.println("New Password : ");
+            String newPassword = scanner.nextLine();
+            System.out.println("Confirm Password : ");
+            String confirmationPassword = scanner.nextLine();
+            changeToNewPassword(user,newPassword,confirmationPassword);
         }catch (Exception e){
             System.out.println(e.getMessage());
-            forgotPassword();
+            forgotPasswordDemo();
         }
+    }   // Demonstration method: Forgot password
+    private User forgotPassword(String email,String inputOTP){
+        User user = findUserByMatchingEmail(email);
+        String givenOTP = emailSenderService.sendOTP(email);
+        matchOTP(givenOTP,inputOTP);
+        return user;
     }
-    private User findUserByEmail(String email){
+    private User findUserByMatchingEmail(String email){
         Optional<User> user = userRepository.findByEmailEqualsIgnoreCase(email);
         if (user.isEmpty()){
             throw new RuntimeException("Invalid Email");
         }
         return user.get();
     }   // Get user by email
-    private void matchesAndChange(User user, String givenOTP, String inputOTP){
+    private void matchOTP(String givenOTP, String inputOTP){
         if (!givenOTP.equals(inputOTP)){
             throw new RuntimeException("OTP not matches");
         }
-        changeToNewPassword(user);
     }   // Change password if OTP verification successful
     @Override   //Still don't know how to apply
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
