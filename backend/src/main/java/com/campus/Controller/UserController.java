@@ -25,6 +25,20 @@ public class UserController implements CommandLineRunner{
     public List<User> getAllUser(){
         return userService.getAllUsers();
     }
+    @PostMapping("/register")
+    public User registerUser(@RequestBody User user) {
+        // Encrypt the password before saving
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        // Create a new user with the encoded password
+        User newUser = new User(
+            user.getUsername(),
+            user.getEmail(),
+            encodedPassword,
+            user.getUserRole()
+        );
+        
+        return userService.saveUser(newUser);
+    }
     @PostMapping
     public User createUser(@RequestBody User user){
         return userService.saveUser(user);
