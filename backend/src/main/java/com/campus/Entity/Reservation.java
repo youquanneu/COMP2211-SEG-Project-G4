@@ -1,5 +1,7 @@
 package com.campus.Entity;
 
+import com.campus.Entity.Resource.Resource;
+import com.campus.Entity.User.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

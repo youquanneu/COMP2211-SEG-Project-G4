@@ -1,5 +1,6 @@
-package com.campus.Entity;
+package com.campus.Entity.User;
 
+import com.campus.Entity.Reservation;
 import com.campus.EntityClassification.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -69,4 +70,3 @@ public class User {
 }
 class Student extends User{}
 class Lecturer extends User{}
-class AdministrativeStaff extends User{ }

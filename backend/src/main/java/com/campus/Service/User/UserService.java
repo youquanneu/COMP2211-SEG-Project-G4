@@ -1,9 +1,9 @@
-package com.campus.Service;
+package com.campus.Service.User;
 
 
-import com.campus.Entity.User;
-import com.campus.EntityClassification.UserRole;
-import com.campus.Repository.UserRepository;
+import com.campus.Entity.User.User;
+import com.campus.Repository.User.UserRepository;
+import com.campus.Service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -23,44 +22,6 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
-    public void register(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Input username : ");
-        String username = scanner.nextLine();
-        System.out.println("Input email : ");
-        String email = scanner.nextLine();
-        System.out.println("Input password : ");
-        String password = scanner.nextLine();
-        System.out.println("Input type: 1.Student 2.Lecturer 3.AdministrativeStaff ");
-        UserRole userRole;
-        int type = scanner.nextInt();
-        if (type ==1){
-            userRole = UserRole.Student;
-        } else if (type==2) {
-            userRole = UserRole.Lecturer;
-        }else {
-            userRole = UserRole.AdministrativeStaff;
-        }
-        try {
-            User u = registerNewUser(username, email, password, userRole);
-            System.out.println("User register successful : \n" + u);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            register();
-        }
-    }   // Demonstration method: Register a new user
-    private User registerNewUser(String username, String email, String password, UserRole userRole) {
-        Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username, email);
-        if (existingUser.isPresent()) {
-            throw new RuntimeException("User with this email or username already exists.");
-        }
-        String encodedPassword = passwordEncoder.encode(password);
-        User newUser = new User(username, email, encodedPassword, userRole);
-        return saveUser(newUser);
-    }   // Register a new user only if non-duplicate email or username
-    private User saveUser(User user){
-        return userRepository.save(user);
-    }   // Insert a new user into database
     public void login(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -87,35 +48,6 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Invalid password.");
         }
     }   // Return a user by username and password
-    public void allUser(){
-        List<User> userList = getAllUsers();
-        for (User user : userList) {
-            System.out.println(user.toString());
-        }
-    }   // Demonstration method: List out all user
-    private List<User> getAllUsers(){
-        return userRepository.findAll();
-    }   // Get a list of all user
-    public void userByRole() {
-        System.out.println("Select type: 1.Student 2.Lecturer 3.AdministrativeStaff ");
-        UserRole userRole;
-        Scanner scanner = new Scanner(System.in);
-        int type = scanner.nextInt();
-        if (type ==1){
-            userRole = UserRole.Student;
-        } else if (type==2) {
-            userRole = UserRole.Lecturer;
-        }else {
-            userRole = UserRole.AdministrativeStaff;
-        }
-        List<User> roleList = getUserByUserRole(userRole);
-        for (User user : roleList) {
-            System.out.println(user.toString());
-        }
-    }   // Demonstration method: List out user by role
-    private List<User> getUserByUserRole(UserRole userRole){
-        return userRepository.findUserByUserRole(userRole);
-    }   // Get a list of user base on role
     public void changePassword(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -198,64 +130,6 @@ public class UserService implements UserDetailsService {
         }
         changeToNewPassword(user);
     }   // Change password if OTP verification successful
-//    public void forgotPassword() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter your email address: ");
-//        String email = scanner.nextLine();
-//        Optional<User> userOpt = userRepository.findByEmailEqualsIgnoreCase(email);
-//        if (userOpt.isEmpty()) {
-//            throw new RuntimeException("No user found with this email.");
-//        }
-//        User user = userOpt.get();
-//
-//        // Generate a reset token (you could store this token in the database with an expiry time)
-//        String resetToken = UUID.randomUUID().toString();
-//
-//        // Save the reset token (in your database or any temporary storage)
-//        user.setResetToken(resetToken);
-//        userRepository.save(user);
-//
-//        // Send email with the reset token (implement your email service)
-//        sendPasswordResetEmail(user.getEmail(), resetToken);
-//
-//        System.out.println("A password reset link has been sent to your email.");
-//    }
-//    private void sendPasswordResetEmail(String email, String token) {
-//        // Email sending logic (using a library such as JavaMail, for example)
-//        String resetLink = "http://example.com/reset-password?token=" + token;
-//        String subject = "Password Reset Request";
-//        String body = "Click the link below to reset your password:\n" + resetLink;
-//
-//        // Implement the email sending here (using SMTP, JavaMail API, etc.)
-//        // For example:
-//        // emailService.sendEmail(email, subject, body);
-//    }
-//    public void resetPassword() {
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Enter the reset token from your email: ");
-//        String token = scanner.nextLine();
-//
-//        Optional<User> userOpt = userRepository.findByResetToken(token);
-//        if (userOpt.isEmpty()) {
-//            throw new RuntimeException("Invalid or expired token.");
-//        }
-//
-//        User user = userOpt.get();
-//
-//        System.out.println("Enter your new password: ");
-//        String newPassword = scanner.nextLine();
-//
-//        // Encode the new password
-//        String encodedPassword = passwordEncoder.encode(newPassword);
-//
-//        // Update the user's password
-//        user.setPassword(encodedPassword);
-//        user.setResetToken(null); // Clear the reset token
-//        userRepository.save(user);
-//
-//        System.out.println("Your password has been successfully reset.");
-//    }
-
     @Override   //Still don't know how to apply
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);

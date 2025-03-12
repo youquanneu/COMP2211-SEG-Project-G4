@@ -1,8 +1,8 @@
-package com.campus.Service;
+package com.campus.Service.Resource;
 
-import com.campus.Entity.Resource;
+import com.campus.Entity.Resource.Resource;
 import com.campus.EntityClassification.ResourceCategory;
-import com.campus.Repository.ResourceRepository;
+import com.campus.Repository.Resource.ResourceRepository;
 import jakarta.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
