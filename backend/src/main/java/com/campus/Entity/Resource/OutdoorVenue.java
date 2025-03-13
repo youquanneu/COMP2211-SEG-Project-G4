@@ -7,11 +7,12 @@ import jakarta.persistence.Entity;
 import java.time.LocalTime;
 
 @Entity
-public class OutdoorVenue extends Resource{
+public class OutdoorVenue extends Venue{
     public OutdoorVenue(){}
     public OutdoorVenue(String resourceName,
                         LocalTime openTime, LocalTime closeTime,
                         Restriction restriction){
         super(resourceName, openTime, closeTime, restriction, ResourceCategory.OutdoorVenue);
     }
+    private String description;
 }

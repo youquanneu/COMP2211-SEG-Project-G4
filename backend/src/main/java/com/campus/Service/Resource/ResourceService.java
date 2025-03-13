@@ -9,16 +9,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ResourceService {
     @Autowired
     private ResourceRepository resourceRepository;
-    @Nonnull
-    private Resource saveResource(Resource resource){
+    public Resource saveResource(Resource resource){
         return resourceRepository.save(resource);
     }
-    private void deleteResource(Resource resource){
+    public void deleteResource(Resource resource){
         resourceRepository.delete(resource);
     }
     public List<Resource> getAllResource(){
@@ -27,8 +27,33 @@ public class ResourceService {
     public List<Resource> getResourceByCategory(ResourceCategory resourceCategory){
         return resourceRepository.findByResourceCategory(resourceCategory);
     }
-    public void changeOpenTime(Resource resource, LocalTime localTime){
-
-        saveResource(resource);
+    public Resource changeResourceName(Resource resource, String name){
+        resource.changeResourceName(name);
+        return saveResource(resource);
+    }
+    public Resource changeOpenTime(Resource resource, LocalTime openTime){
+        resource.changeOpenTime(openTime);
+        return saveResource(resource);
+    }
+    public Resource changeCloseTime(Resource resource, LocalTime closeTime){
+        resource.changeCloseTime(closeTime);
+        return saveResource(resource);
+    }
+    public void setToNonRestriction(Resource resource){
+        resource.setToNonRestriction();
+    }
+    public void setToApprovalRequired(Resource resource){
+        resource.setToApprovalRequired();
+    }
+    public void setToRestricted(Resource resource){
+        resource.setToRestricted();
+    }
+    public Resource getResourceByID(Integer id){
+        Optional<Resource> resource = resourceRepository.findById(id);
+        if (resource.isPresent()){
+            return resource.get();
+        }else {
+            throw new RuntimeException();
+        }
     }
 }

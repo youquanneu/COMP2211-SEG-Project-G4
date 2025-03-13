@@ -31,6 +31,9 @@ public class Resource {
     private LocalTime closeTime;
     private Restriction restriction;
     private ResourceCategory resourceCategory;
+    public String toString(){
+        return getResourceId()+getResourceName()+getResourceCategory();
+    }
     public void changeResourceName(String resourceName){
         setResourceName(resourceName);
     }
@@ -86,4 +89,3 @@ public class Resource {
     @JoinColumn(name = "reservationId",nullable = true)
     private Reservation booking;
 }
-

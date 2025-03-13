@@ -1,9 +1,10 @@
 package com.campus.Entity;
 
+import com.campus.Entity.Resource.Venue;
 import jakarta.persistence.*;
-import org.w3c.dom.Text;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Event {
@@ -14,4 +15,6 @@ public class Event {
     private LocalDateTime eventStarting;
     private LocalDateTime eventEnding;
     private String eventDescription;
+    @ManyToMany
+    private List<Venue> venues;
 }

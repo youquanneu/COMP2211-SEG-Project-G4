@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.Scanner;
 
 @Service
 public class EquipmentService extends ResourceService{
@@ -16,16 +17,21 @@ public class EquipmentService extends ResourceService{
     @Autowired
     private ResourceRepository resourceRepository;
     public void addEquipment(){
-        Equipment equipment = new Equipment("S15","Computer23", LocalTime.now(), LocalTime.now(), Restriction.ApprovalRequired);
-        saveEquipment(equipment);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Serial Number : ");
+        String serialNumber = scanner.nextLine();
+        System.out.println("Equipment Name : ");
+        String name = scanner.nextLine();
+        Equipment equipment =
+        saveEquipment(new Equipment(serialNumber,name, LocalTime.now(), LocalTime.now(), Restriction.ApprovalRequired));
     }
-    private Equipment saveEquipment(Equipment equipment){
+    public Equipment saveEquipment(Equipment equipment){
         return equipmentRepository.save(equipment);
     }   // Insert a new equipment into database
     private void deleteEquipment(Equipment equipment){
         equipmentRepository.delete(equipment);
     }
-    private void modifySerialNumber(Equipment equipment, String serialNumber){
+    public void modifySerialNumber(Equipment equipment, String serialNumber){
         equipment.changeSerialNumber(serialNumber);
         saveEquipment(equipment);
     }
