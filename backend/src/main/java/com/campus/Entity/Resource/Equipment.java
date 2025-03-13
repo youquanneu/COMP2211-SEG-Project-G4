@@ -1,19 +1,24 @@
 package com.campus.Entity.Resource;
 
-import com.campus.EntityClassification.ResourceCategory;
+import com.campus.Classification.ResourceCategory;
+import com.campus.Classification.Restriction;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 public class Equipment extends Resource{
     public Equipment() {}
     public Equipment(String serialNumber, String resourceName,
-                     LocalDateTime openTime, LocalDateTime closeTime){
-        super(resourceName, openTime, closeTime, ResourceCategory.Equipment);
+                     LocalTime openTime, LocalTime closeTime,
+                     Restriction restriction){
+        super(resourceName, openTime, closeTime, restriction, ResourceCategory.Equipment);
         setSerialNumber(serialNumber);
     }
     private String serialNumber;
+    public void changeSerialNumber(String serialNumber){
+        setSerialNumber(serialNumber);
+    }
     public String getSerialNumber() {
         return serialNumber;
     }

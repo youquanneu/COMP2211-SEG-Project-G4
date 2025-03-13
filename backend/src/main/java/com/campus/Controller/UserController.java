@@ -1,5 +1,6 @@
 package com.campus.Controller;
 
+import com.campus.Classification.ResourceCategory;
 import com.campus.Entity.Resource.Equipment;
 import com.campus.Repository.Resource.ResourceRepository;
 import com.campus.Service.Resource.EquipmentService;
@@ -10,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @RestController
 @RequestMapping("/User")
@@ -24,6 +26,5 @@ public class UserController implements CommandLineRunner{
     private ResourceRepository resourceRepository;
     @Override
     public void run(String... args) throws Exception {
-        equipmentService.addEquipment();
     }
 }

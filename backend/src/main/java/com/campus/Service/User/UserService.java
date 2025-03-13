@@ -2,7 +2,7 @@ package com.campus.Service.User;
 
 
 import com.campus.Entity.User.User;
-import com.campus.Repository.User.UserRepository;
+import com.campus.Repository.UserRepository;
 import com.campus.Service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -109,7 +109,6 @@ public class UserService implements UserDetailsService {
         }   // Check if new password and new password confirmation are same
         return newPassword;
     }   // Return new password after validation checking
-
     public void forgotPasswordDemo(){
         try {
             // Page 1 : Take email and send OTP

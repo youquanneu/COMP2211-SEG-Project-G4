@@ -1,20 +1,28 @@
 package com.campus.Entity.Resource;
 
-import com.campus.EntityClassification.ResourceCategory;
+import com.campus.Classification.ResourceCategory;
+import com.campus.Classification.Restriction;
 import jakarta.persistence.Entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 public class IndoorVenue extends Resource{
     public IndoorVenue(){}
     public IndoorVenue(String roomNumber, String resourceName,
-                       LocalDateTime openTime, LocalDateTime closeTime){
-        super(resourceName, openTime, closeTime, ResourceCategory.IndoorVenue);
+                       LocalTime openTime, LocalTime closeTime,
+                       Restriction restriction){
+        super(resourceName, openTime, closeTime, restriction, ResourceCategory.IndoorVenue);
         setRoomNumber(roomNumber);
     }
     private String building;
     private String roomNumber;
+    public void changeBuilding(String building){
+        setBuilding(building);
+    }
+    public void changeRoomNumber(String roomNumber){
+        setRoomNumber(roomNumber);
+    }
     public String getBuilding() {
         return building;
     }

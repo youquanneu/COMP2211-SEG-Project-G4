@@ -1,7 +1,7 @@
 package com.campus.Entity.User;
 
 import com.campus.Entity.Reservation;
-import com.campus.EntityClassification.UserRole;
+import com.campus.Classification.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -27,6 +27,12 @@ public class User {
     private UserRole userRole;
     public void changePassword(String password){
         setPassword(password);
+    }
+    public void changeUsername(String username){
+        setUsername(username);
+    }
+    public void changeEmail(String email){
+        setEmail(email);
     }
     public Integer getUserId() {
         return userId;

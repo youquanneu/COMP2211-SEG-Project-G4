@@ -1,8 +1,8 @@
 package com.campus.Service.User;
 
 import com.campus.Entity.User.User;
-import com.campus.EntityClassification.UserRole;
-import com.campus.Repository.User.AdministrativeStaffRepository;
+import com.campus.Classification.UserRole;
+import com.campus.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.Scanner;
 @Service
 public class AdministrativeStaffService{
     @Autowired
-    private AdministrativeStaffRepository administrativeStaffRepository;
+    private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     public void register(){
@@ -44,16 +44,24 @@ public class AdministrativeStaffService{
         }
     }   // Demonstration method: Register a new user
     private User registerNewUser(String username, String email, String password, UserRole userRole) {
-        Optional<User> existingUser = administrativeStaffRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username, email);
+        Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username, email);
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with this email or username already exists.");
         }
         String encodedPassword = passwordEncoder.encode(password);
         User newUser = new User(username, email, encodedPassword, userRole);
         return saveUser(newUser);
-    }   // Register a new user only if non-duplicate email or username
+    }   // Function: Register a new user only if non-duplicate email or username
+    private User modifyUsername(User user, String username){
+        user.changeUsername(username);
+        return saveUser(user);
+    }
+    private User modifyEmail(User user, String email){
+        user.changeEmail(email);
+        return saveUser(user);
+    }
     private User saveUser(User user){
-        return administrativeStaffRepository.save(user);
+        return userRepository.save(user);
     }   // Insert a new user into database
     public void allUser(){
         List<User> userList = getAllUsers();
@@ -62,8 +70,8 @@ public class AdministrativeStaffService{
         }
     }   // Demonstration method: List out all user
     private List<User> getAllUsers(){
-        return administrativeStaffRepository.findAll();
-    }   // Get a list of all user
+        return userRepository.findAll();
+    }   // Function: Get a list of all user
     public void userByRole() {
         System.out.println("Select type: 1.Student 2.Lecturer 3.AdministrativeStaff ");
         UserRole userRole;
@@ -82,6 +90,6 @@ public class AdministrativeStaffService{
         }
     }   // Demonstration method: List out user by role
     private List<User> getUserByUserRole(UserRole userRole){
-        return administrativeStaffRepository.findUserByUserRole(userRole);
-    }   // Get a list of user base on role
+        return userRepository.findUserByUserRole(userRole);
+    }   // Function: Get a list of user base on role
 }

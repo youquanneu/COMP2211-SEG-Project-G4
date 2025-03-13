@@ -1,4 +1,4 @@
-package com.campus.EntityClassification;
+package com.campus.Classification;
 
 public enum UserRole {
     Student, Lecturer, AdministrativeStaff;
