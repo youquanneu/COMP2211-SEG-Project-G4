@@ -31,9 +31,9 @@ public class Resource {
     private LocalTime closeTime;
     private Restriction restriction;
     private ResourceCategory resourceCategory;
-    public String toString(){
-        return getResourceId()+getResourceName()+getResourceCategory();
-    }
+    @ManyToOne
+    @JoinColumn(name = "reservationId",nullable = true)
+    private Reservation booking;
     public void changeResourceName(String resourceName){
         setResourceName(resourceName);
     }
@@ -85,7 +85,7 @@ public class Resource {
     private void setResourceCategory(ResourceCategory resourceCategory) {
         this.resourceCategory = resourceCategory;
     }
-    @ManyToOne
-    @JoinColumn(name = "reservationId",nullable = true)
-    private Reservation booking;
+    public String toString(){
+        return getResourceId()+getResourceName()+getResourceCategory();
+    }
 }

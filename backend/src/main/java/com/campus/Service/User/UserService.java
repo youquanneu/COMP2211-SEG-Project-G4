@@ -2,12 +2,10 @@ package com.campus.Service.User;
 
 
 import com.campus.Entity.User.User;
+
 import com.campus.Repository.UserRepository;
 import com.campus.Service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +13,20 @@ import java.util.Optional;
 import java.util.Scanner;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
+    public User getUserById(Integer id){
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()){
+            throw new RuntimeException("User not found");
+        }
+        return user.get();
+    }
     private void verifyCurrentPassword(User user, String password){
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Incorrect current password.");
@@ -148,17 +153,4 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("OTP not matches");
         }
     }   // Change password if OTP verification successful
-    @Override   //Still don't know how to apply
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);
-        if (user.isPresent()){
-            var userL = user.get();
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(userL.getUsername())
-                    .password(userL.getPassword())
-                    .build();
-        }else {
-            throw new UsernameNotFoundException(username);
-        }
-    }
 }

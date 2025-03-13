@@ -27,6 +27,15 @@ public class Reservation {
     private List<Resource> resources;
     private LocalDateTime reservationStarting;
     private LocalDateTime reservationEnding;
+    public void changeResources(List<Resource> resources){
+        setResources(resources);
+    }
+    public void changeStartingTime(LocalDateTime reservationStarting){
+        setReservationStarting(reservationStarting);
+    }
+    public void changeEndingTime(LocalDateTime reservationEnding){
+        setReservationEnding(reservationEnding);
+    }
     public Integer getReservationId() {
         return reservationId;
     }
@@ -54,5 +63,4 @@ public class Reservation {
     private void setReservationEnding(LocalDateTime reservationEnding) {
         this.reservationEnding = reservationEnding;
     }
-
 }

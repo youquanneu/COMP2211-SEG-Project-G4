@@ -9,10 +9,12 @@ import java.time.LocalTime;
 @Entity
 public class IndoorVenue extends Resource{
     public IndoorVenue(){}
-    public IndoorVenue(String roomNumber, String resourceName,
+    public IndoorVenue(String resourceName,
                        LocalTime openTime, LocalTime closeTime,
-                       Restriction restriction){
+                       Restriction restriction,
+                       String building, String roomNumber){
         super(resourceName, openTime, closeTime, restriction, ResourceCategory.IndoorVenue);
+        setBuilding(building);
         setRoomNumber(roomNumber);
     }
     private String building;

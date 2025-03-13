@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.Scanner;
 
 @Service
@@ -34,5 +35,12 @@ public class EquipmentService extends ResourceService{
     public void modifySerialNumber(Equipment equipment, String serialNumber){
         equipment.changeSerialNumber(serialNumber);
         saveEquipment(equipment);
+    }
+    public Equipment getEquipmentBySerialNumber(String serialNumber){
+        Optional<Equipment> equipment = equipmentRepository.findBySerialNumberEqualsIgnoreCase(serialNumber);
+        if (equipment.isEmpty()){
+            throw new RuntimeException("Equipment not found");
+        }
+        return equipment.get();
     }
 }

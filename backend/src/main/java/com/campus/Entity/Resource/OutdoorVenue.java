@@ -11,8 +11,19 @@ public class OutdoorVenue extends Venue{
     public OutdoorVenue(){}
     public OutdoorVenue(String resourceName,
                         LocalTime openTime, LocalTime closeTime,
-                        Restriction restriction){
+                        Restriction restriction,
+                        String location){
         super(resourceName, openTime, closeTime, restriction, ResourceCategory.OutdoorVenue);
+        setLocation(location);
     }
-    private String description;
+    private String location;
+    public void changeLocation(String location){
+        setLocation(location);
+    }
+    public String getLocation() {
+        return location;
+    }
+    private void setLocation(String location) {
+        this.location = location;
+    }
 }
