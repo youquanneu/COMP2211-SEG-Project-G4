@@ -4,7 +4,7 @@ import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
 import com.campus.Repository.Resource.IndoorVenueRepository;
-import com.campus.Repository.UserRepository;
+import com.campus.Repository.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

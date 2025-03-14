@@ -5,10 +5,12 @@ import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import jakarta.persistence.*;
+import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Data
 @Entity
 public class Reservation {
     public Reservation(){}
@@ -27,9 +29,13 @@ public class Reservation {
     @JoinColumn(name = "user_Id",nullable = false)
     private User booker;
     @ManyToMany
+    @NotNull
     private List<Resource> resources;
+    @NotNull
     private LocalDateTime reservationStarting;
+    @NotNull
     private LocalDateTime reservationEnding;
+    @NotNull
     private Approval approval;
     public void changeResources(List<Resource> resources){
         setResources(resources);
@@ -73,7 +79,7 @@ public class Reservation {
     private void setApproval(Approval approval) {
         this.approval = approval;
     }
-    public Approval checkResources(List<Resource> resources){
+    private Approval checkResources(@NotNull List<Resource> resources){
         for (Resource resource: resources) {
             if (resource.getRestriction().equals(Restriction.Restricted)) {
                 return Approval.Rejected;

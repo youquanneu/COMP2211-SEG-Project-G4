@@ -5,6 +5,7 @@ import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.ResourceCategory;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -27,9 +28,11 @@ public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer resourceId;
+    @NotNull
     private String resourceName;
     private LocalTime openTime;
     private LocalTime closeTime;
+    @NotNull
     private Restriction restriction;
     private ResourceCategory resourceCategory;
     @ManyToMany(mappedBy = "resources")

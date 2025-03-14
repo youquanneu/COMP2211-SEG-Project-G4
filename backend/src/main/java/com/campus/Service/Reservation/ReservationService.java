@@ -1,7 +1,7 @@
-package com.campus.Service;
+package com.campus.Service.Reservation;
 
 import com.campus.Entity.Reservation.Reservation;
-import com.campus.Repository.ReservationRepository;
+import com.campus.Repository.Reservation.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

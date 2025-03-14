@@ -1,9 +1,11 @@
 package com.campus.Entity.User;
 
+import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -21,9 +23,15 @@ public class User {
     @Id // Primary Key
     @GeneratedValue(strategy = GenerationType.IDENTITY)     // Auto Increment
     private Integer userId;
+    @NotNull
+    @Column(unique = true)
     private String username;
+    @NotNull
+    @Column(unique = true)
     private String email;
+    @NotNull
     private String password;
+    @NotNull
     private UserRole userRole;
     public void changePassword(String password){
         setPassword(password);
@@ -73,6 +81,6 @@ public class User {
     }
     @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
     private List<Reservation> reservations;
+    @ManyToMany
+    private List<Event> events;
 }
-class Student extends User{}
-class Lecturer extends User{}

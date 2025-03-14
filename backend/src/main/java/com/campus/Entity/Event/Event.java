@@ -2,6 +2,7 @@ package com.campus.Entity.Event;
 
 import com.campus.Classification.Approval;
 import com.campus.Entity.Resource.Venue;
+import com.campus.Entity.User.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,8 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer eventId;
+    @ManyToMany
+    private List<User> organizer;
     private String eventTitle;
     private LocalDateTime eventStarting;
     private LocalDateTime eventEnding;

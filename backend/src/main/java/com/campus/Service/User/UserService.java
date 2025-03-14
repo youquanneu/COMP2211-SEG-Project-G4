@@ -3,8 +3,8 @@ package com.campus.Service.User;
 
 import com.campus.Entity.User.User;
 
-import com.campus.Repository.UserRepository;
-import com.campus.Service.EmailSenderService;
+import com.campus.Repository.User.UserRepository;
+import com.campus.Service.Mail.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class UserService {
             throw new RuntimeException("User not found");
         }
         return user.get();
-    }
+    }  
     private void verifyCurrentPassword(User user, String password){
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Incorrect current password.");

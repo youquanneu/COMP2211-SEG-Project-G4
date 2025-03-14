@@ -1,4 +1,4 @@
-package com.campus.Repository;
+package com.campus.Repository.Reservation;
 
 import com.campus.Entity.Reservation.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;

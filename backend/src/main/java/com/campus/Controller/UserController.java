@@ -1,7 +1,7 @@
 package com.campus.Controller;
 
-import com.campus.Repository.ReservationRepository;
-import com.campus.Service.ReservationService;
+import com.campus.Repository.Reservation.ReservationRepository;
+import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.EquipmentService;
 import com.campus.Service.Resource.IndoorVenueService;
 import com.campus.Service.Resource.ResourceService;

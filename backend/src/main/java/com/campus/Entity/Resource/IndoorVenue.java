@@ -3,10 +3,13 @@ package com.campus.Entity.Resource;
 import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import java.time.LocalTime;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"building","roomNumber"}))
 public class IndoorVenue extends Resource{
     public IndoorVenue(){}
     public IndoorVenue(String resourceName,
