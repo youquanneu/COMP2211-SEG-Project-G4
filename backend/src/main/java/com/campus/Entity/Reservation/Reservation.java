@@ -1,5 +1,7 @@
-package com.campus.Entity;
+package com.campus.Entity.Reservation;
 
+import com.campus.Classification.Approval;
+import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import jakarta.persistence.*;
@@ -16,31 +18,30 @@ public class Reservation {
         setResources(resources);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
+        setApproval(checkResources(resources));
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reservationId;
     @ManyToOne
-    @JoinColumn(name = "userId",nullable = false)
+    @JoinColumn(name = "user_Id",nullable = false)
     private User booker;
-    @OneToMany(mappedBy = "booking",cascade = CascadeType.ALL)
+    @ManyToMany
     private List<Resource> resources;
     private LocalDateTime reservationStarting;
     private LocalDateTime reservationEnding;
+    private Approval approval;
     public void changeResources(List<Resource> resources){
         setResources(resources);
     }
-    public void changeStartingTime(LocalDateTime reservationStarting){
+    public void changeReservationStartingTime(LocalDateTime reservationStarting){
         setReservationStarting(reservationStarting);
     }
-    public void changeEndingTime(LocalDateTime reservationEnding){
+    public void changeReservationEndingTime(LocalDateTime reservationEnding){
         setReservationEnding(reservationEnding);
     }
     public Integer getReservationId() {
         return reservationId;
-    }
-    private void setBooker(User booker) {
-        this.booker = booker;
     }
     public User getBooker() {
         return booker;
@@ -54,6 +55,12 @@ public class Reservation {
     public LocalDateTime getReservationEnding() {
         return reservationEnding;
     }
+    public Approval getApproval() {
+        return approval;
+    }
+    private void setBooker(User booker) {
+        this.booker = booker;
+    }
     private void setResources(List<Resource> resources) {
         this.resources = resources;
     }
@@ -63,4 +70,20 @@ public class Reservation {
     private void setReservationEnding(LocalDateTime reservationEnding) {
         this.reservationEnding = reservationEnding;
     }
+    private void setApproval(Approval approval) {
+        this.approval = approval;
+    }
+    public Approval checkResources(List<Resource> resources){
+        for (Resource resource: resources) {
+            if (resource.getRestriction().equals(Restriction.Restricted)) {
+                return Approval.Rejected;
+            }
+        }      // Prevent user accidentally book restricted resource
+        for (Resource resource: resources){
+            if (resource.getRestriction().equals(Restriction.ApprovalRequired)) {
+                return Approval.Pending;
+            }
+        }   // Approval required if any approval required resource is booked
+        return Approval.Approved;   // Else approve the reservation
+    }   // Determine the approval status of reservation
 }

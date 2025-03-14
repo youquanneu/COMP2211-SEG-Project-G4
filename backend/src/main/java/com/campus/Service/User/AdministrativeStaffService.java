@@ -1,7 +1,9 @@
 package com.campus.Service.User;
 
+import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
+import com.campus.Repository.Resource.IndoorVenueRepository;
 import com.campus.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -92,4 +94,21 @@ public class AdministrativeStaffService{
     private List<User> getUserByUserRole(UserRole userRole){
         return userRepository.findUserByUserRole(userRole);
     }   // Function: Get a list of user base on role
+
+    @Autowired
+    private IndoorVenueRepository indoorVenueRepository;
+    private IndoorVenue saveIndoorVenue(IndoorVenue indoorVenue){
+        return indoorVenueRepository.save(indoorVenue);
+    }
+    private void deleteIndoorVenue(IndoorVenue indoorVenue){
+        indoorVenueRepository.delete(indoorVenue);
+    }
+    private IndoorVenue modifyBuilding(IndoorVenue indoorVenue, String building){
+        indoorVenue.changeBuilding(building);
+        return saveIndoorVenue(indoorVenue);
+    }
+    private IndoorVenue modifyRoomNumber(IndoorVenue indoorVenue, String roomNumber){
+        indoorVenue.changeRoomNumber(roomNumber);
+        return saveIndoorVenue(indoorVenue);
+    }
 }

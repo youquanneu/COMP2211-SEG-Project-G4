@@ -1,6 +1,5 @@
 package com.campus.Controller;
 
-import com.campus.Entity.Event;
 import com.campus.Repository.EventRepository;
 import com.campus.Service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -24,7 +24,7 @@ public class EquipmentService extends ResourceService{
         System.out.println("Equipment Name : ");
         String name = scanner.nextLine();
         Equipment equipment =
-        saveEquipment(new Equipment(serialNumber,name, LocalTime.now(), LocalTime.now(), Restriction.ApprovalRequired));
+        saveEquipment(new Equipment(name, LocalTime.now(), LocalTime.now(), Restriction.ApprovalRequired,serialNumber));
     }
     public Equipment saveEquipment(Equipment equipment){
         return equipmentRepository.save(equipment);

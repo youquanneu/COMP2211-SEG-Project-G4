@@ -4,21 +4,29 @@ import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Repository.Resource.IndoorVenueRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class IndoorVenueService extends ResourceService{
+public class IndoorVenueService extends VenueService{
     private IndoorVenueRepository indoorVenueRepository;
-    private IndoorVenue saveIndoorVenue(IndoorVenue indoorVenue){
-        return indoorVenueRepository.save(indoorVenue);
+    public IndoorVenue getIndoorVenueByBuildingAndRoomNumber(String building, String roomNumber){
+        Optional<IndoorVenue> indoorVenue = indoorVenueRepository.findIndoorVenueByBuildingEqualsIgnoreCaseAndRoomNumberEqualsIgnoreCase(building, roomNumber);
+        if (indoorVenue.isEmpty()){
+            throw new RuntimeException("Indoor Venue not found");
+        }
+        return indoorVenue.get();
     }
-    private void deleteIndoorVenue(IndoorVenue indoorVenue){
-        indoorVenueRepository.delete(indoorVenue);
+    public List<IndoorVenue> getAllIndoorVenue(){
+        return indoorVenueRepository.findAll();
     }
-    private void modifyBuilding(IndoorVenue indoorVenue, String building){
-        indoorVenue.changeBuilding(building);
-        saveIndoorVenue(indoorVenue);
+    public List<IndoorVenue> getIndoorVenueByBuilding(String building){
+        return indoorVenueRepository.findByBuildingEqualsIgnoreCase(building);
     }
-    private void modifyRoomNumber(IndoorVenue indoorVenue, String roomNumber){
-        indoorVenue.changeRoomNumber(roomNumber);
-        saveIndoorVenue(indoorVenue);
+    public List<IndoorVenue> getIndoorVenueByRoomNumber(String roomNumber){
+        return indoorVenueRepository.findByRoomNumberEqualsIgnoreCase(roomNumber);
+    }
+    public List<IndoorVenue> getIndoorVenueBySearching(String search){
+        return indoorVenueRepository.findByBuildingContainingIgnoreCaseOrRoomNumberContainingIgnoreCase(search,search);
     }
 }

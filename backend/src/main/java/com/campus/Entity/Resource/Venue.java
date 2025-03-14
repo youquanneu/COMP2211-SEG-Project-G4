@@ -2,7 +2,7 @@ package com.campus.Entity.Resource;
 
 import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
-import com.campus.Entity.Event;
+import com.campus.Entity.Event.Event;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;

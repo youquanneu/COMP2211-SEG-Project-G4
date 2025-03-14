@@ -9,9 +9,10 @@ import java.time.LocalTime;
 @Entity
 public class Equipment extends Resource{
     public Equipment() {}
-    public Equipment(String serialNumber, String resourceName,
+    public Equipment(String resourceName,
                      LocalTime openTime, LocalTime closeTime,
-                     Restriction restriction){
+                     Restriction restriction,
+                     String serialNumber){
         super(resourceName, openTime, closeTime, restriction, ResourceCategory.Equipment);
         setSerialNumber(serialNumber);
     }

@@ -1,12 +1,13 @@
 package com.campus.Entity.Resource;
 
 import com.campus.Classification.Restriction;
-import com.campus.Entity.Reservation;
+import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.ResourceCategory;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -31,9 +32,8 @@ public class Resource {
     private LocalTime closeTime;
     private Restriction restriction;
     private ResourceCategory resourceCategory;
-    @ManyToOne
-    @JoinColumn(name = "reservationId",nullable = true)
-    private Reservation booking;
+    @ManyToMany(mappedBy = "resources")
+    private List<Reservation> booking;
     public void changeResourceName(String resourceName){
         setResourceName(resourceName);
     }
@@ -43,14 +43,14 @@ public class Resource {
     public void changeCloseTime(LocalTime closeTime){
         setCloseTime(closeTime);
     }
-    public void setToNonRestriction(){
-        setRestriction(Restriction.NonRestriction);
+    public void setToNonRestriction(Restriction restriction){
+        setRestriction(restriction);
     }
-    public void setToApprovalRequired(){
-        setRestriction(Restriction.ApprovalRequired);
+    public void setToApprovalRequired(Restriction restriction){
+        setRestriction(restriction);
     }
-    public void setToRestricted(){
-        setRestriction(Restriction.Restricted);
+    public void setToRestricted(Restriction restriction){
+        setRestriction(restriction);
     }
     public Integer getResourceId() {
         return resourceId;

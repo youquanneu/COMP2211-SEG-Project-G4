@@ -56,15 +56,15 @@ public class ResourceService {
         return saveResource(resource);
     }   // Change the close time of the resource
     public Resource setToNonRestriction(Resource resource){
-        resource.setToNonRestriction();
+        resource.setToNonRestriction(Restriction.NonRestriction);
         return saveResource(resource);
     }   // Change the resource as non restrict
     public Resource setToApprovalRequired(Resource resource){
-        resource.setToApprovalRequired();
+        resource.setToApprovalRequired(Restriction.ApprovalRequired);
         return saveResource(resource);
     }   // Change the resource as approval required
     public Resource setToRestricted(Resource resource){
-        resource.setToRestricted();
+        resource.setToRestricted(Restriction.Restricted);
         return saveResource(resource);
     }   // Change the resource as restricted
 }

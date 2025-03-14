@@ -4,6 +4,6 @@ import com.campus.Repository.Resource.OutdoorVenueRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OutdoorVenueService extends ResourceService{
+public class OutdoorVenueService extends VenueService{
     private OutdoorVenueRepository outdoorVenueRepository;
 }
