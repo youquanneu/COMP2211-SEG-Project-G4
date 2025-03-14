@@ -1,11 +1,16 @@
 package com.campus.Service.User;
 
 
+import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.User.User;
 
 import com.campus.Repository.User.UserRepository;
 import com.campus.Service.Mail.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,20 +18,25 @@ import java.util.Optional;
 import java.util.Scanner;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
+    @Lazy
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
-    public User getUserById(Integer id){
+    private UserDTO mapUserDTO(User user){
+        return new UserDTO(user.getUserId(), user.getUsername(),
+                user.getEmail(),user.getUserRole());
+    }
+    public UserDTO getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()){
             throw new RuntimeException("User not found");
         }
-        return user.get();
-    }  
+        return mapUserDTO(user.get());
+    }   // Get user by user id
     private void verifyCurrentPassword(User user, String password){
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Incorrect current password.");
@@ -153,4 +163,17 @@ public class UserService {
             throw new RuntimeException("OTP not matches");
         }
     }   // Change password if OTP verification successful
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);
+        if (user.isPresent()){
+            var userL = user.get();
+            return org.springframework.security.core.userdetails.User.builder()
+                    .username(userL.getUsername())
+                    .password(userL.getPassword())
+                    .build();
+        }else {
+            throw new UsernameNotFoundException(username);
+        }
+    }
 }
