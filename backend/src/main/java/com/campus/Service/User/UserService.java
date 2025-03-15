@@ -37,6 +37,9 @@ public class UserService implements UserDetailsService {
         }
         return mapUserDTO(user.get());
     }   // Get user by user id
+    public UserDTO getUserByUsernamePassword(String username, String password){
+        return mapUserDTO(loginAsUser(username,password));
+    }
     private void verifyCurrentPassword(User user, String password){
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Incorrect current password.");
@@ -57,11 +60,7 @@ public class UserService implements UserDetailsService {
         }
     }   // Demonstration method: Login as user by username and password
     private User loginAsUser(String username, String password) {
-        Optional<User> userOpt = userRepository.findByUsernameEqualsIgnoreCase(username);
-        if (userOpt.isEmpty()) {
-            throw new RuntimeException("Invalid username.");
-        }
-        User user = userOpt.get();
+        User user = findByUsername(username);
         verifyCurrentPassword(user,password);
         return user;
     }   // Function: Return a user by username and password
@@ -165,15 +164,17 @@ public class UserService implements UserDetailsService {
     }   // Change password if OTP verification successful
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUsername(username);
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .build();
+    }
+    private User findByUsername(String username){
         Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);
-        if (user.isPresent()){
-            var userL = user.get();
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(userL.getUsername())
-                    .password(userL.getPassword())
-                    .build();
-        }else {
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
+        return user.get();
     }
 }

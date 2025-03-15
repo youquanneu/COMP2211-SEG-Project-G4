@@ -3,7 +3,9 @@ package com.campus.Entity.Event;
 import com.campus.Classification.Approval;
 import com.campus.Entity.Resource.Venue;
 import com.campus.Entity.User.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +34,8 @@ public class Event {
     private String eventDescription;
     @ManyToMany
     private List<Venue> venues;
+    @NotNull
+    @JsonProperty("Approval")
     private Approval approval;
     public void changeEventTitle(String eventTitle){
         setEventTitle(eventTitle);

@@ -45,6 +45,15 @@ public class AdministrativeStaffService{
             register();
         }
     }   // Demonstration method: Register a new user
+    public User registerNewUser(User user) {
+        Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(user.getUsername(), user.getEmail());
+        if (existingUser.isPresent()) {
+            throw new RuntimeException("User with this email or username already exists.");
+        }
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.changePassword(encodedPassword);
+        return saveUser(user);
+    }   // Function: Register a new user only if non-duplicate email or username
     private User registerNewUser(String username, String email, String password, UserRole userRole) {
         Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username, email);
         if (existingUser.isPresent()) {

@@ -3,6 +3,7 @@ package com.campus.Entity.Resource;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.ResourceCategory;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ public class Resource {
     private LocalTime closeTime;
     @NotNull
     private Restriction restriction;
+    @JsonProperty("ResourceCategory")
     private ResourceCategory resourceCategory;
     @ManyToMany(mappedBy = "resources")
     private List<Reservation> booking;
