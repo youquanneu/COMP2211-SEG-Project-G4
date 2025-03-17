@@ -1,0 +1,96 @@
+package com.campus.Entity.Resource;
+
+import com.campus.Classification.Restriction;
+import com.campus.Entity.Reservation.Reservation;
+import com.campus.Classification.ResourceCategory;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+
+import java.time.LocalTime;
+import java.util.List;
+
+@Data
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Resource {
+    public Resource(){}
+    public Resource(String resourceName,
+                    LocalTime openTime, LocalTime closeTime,
+                    Restriction restriction,
+                    ResourceCategory resourceCategory){
+        setResourceName(resourceName);
+        setOpenTime(openTime);
+        setCloseTime(closeTime);
+        setRestriction(restriction);
+        setResourceCategory(resourceCategory);
+    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer resourceId;
+    @NotNull
+    private String resourceName;
+    private LocalTime openTime;
+    private LocalTime closeTime;
+    @NotNull
+    private Restriction restriction;
+    @JsonProperty("ResourceCategory")
+    private ResourceCategory resourceCategory;
+    @ManyToMany(mappedBy = "resources")
+    private List<Reservation> booking;
+    public void changeResourceName(String resourceName){
+        setResourceName(resourceName);
+    }
+    public void changeOpenTime(LocalTime openTime){
+        setOpenTime(openTime);
+    }
+    public void changeCloseTime(LocalTime closeTime){
+        setCloseTime(closeTime);
+    }
+    public void setToNonRestriction(Restriction restriction){
+        setRestriction(restriction);
+    }
+    public void setToApprovalRequired(Restriction restriction){
+        setRestriction(restriction);
+    }
+    public void setToRestricted(Restriction restriction){
+        setRestriction(restriction);
+    }
+    public Integer getResourceId() {
+        return resourceId;
+    }
+    public String getResourceName() {
+        return resourceName;
+    }
+    public LocalTime getOpenTime() {
+        return openTime;
+    }
+    public LocalTime getCloseTime() {
+        return closeTime;
+    }
+    public Restriction getRestriction() {
+        return restriction;
+    }
+    public ResourceCategory getResourceCategory() {
+        return resourceCategory;
+    }
+    private void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
+    private void setOpenTime(LocalTime openTime) {
+        this.openTime = openTime;
+    }
+    private void setCloseTime(LocalTime closeTime) {
+        this.closeTime = closeTime;
+    }
+    private void setRestriction(Restriction restriction) {
+        this.restriction = restriction;
+    }
+    private void setResourceCategory(ResourceCategory resourceCategory) {
+        this.resourceCategory = resourceCategory;
+    }
+    public String toString(){
+        return getResourceId()+getResourceName()+getResourceCategory();
+    }
+}

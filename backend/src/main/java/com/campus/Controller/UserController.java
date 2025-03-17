@@ -1,23 +1,34 @@
 package com.campus.Controller;
 
-import com.campus.Entity.User;
-import com.campus.Service.UserService;
+import com.campus.Repository.Reservation.ReservationRepository;
+import com.campus.Service.Reservation.ReservationService;
+import com.campus.Service.Resource.EquipmentService;
+import com.campus.Service.Resource.IndoorVenueService;
+import com.campus.Service.Resource.ResourceService;
+import com.campus.Service.User.AdministrativeStaffService;
+import com.campus.Service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommandLineRunner{
     @Autowired
     private UserService userService;
-    @GetMapping
-    public List<User> getAllUser(){
-        return userService.getAllUsers();
-    }
-    @PostMapping
-    public User createUser(@RequestBody User user){
-        return userService.saveUser(user);
+    @Autowired
+    private AdministrativeStaffService administrativeStaffService;
+    @Autowired
+    private EquipmentService equipmentService;
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
+    private ReservationService reservationService;
+    @Autowired
+    private ReservationRepository reservationRepository;
+    @Autowired
+    private IndoorVenueService indoorVenueService;
+    @Override
+    public void run(String... args) throws Exception {
     }
 }
