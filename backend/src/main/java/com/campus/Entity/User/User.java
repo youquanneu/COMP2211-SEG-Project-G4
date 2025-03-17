@@ -3,6 +3,7 @@ package com.campus.Entity.User;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.UserRole;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ public class User {
     @NotNull
     private String password;
     @NotNull
+    @JsonProperty("UserRole")
     private UserRole userRole;
     public void changePassword(String password){
         setPassword(password);

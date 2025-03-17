@@ -1,11 +1,16 @@
 package com.campus.Service.User;
 
 
+import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.User.User;
 
 import com.campus.Repository.User.UserRepository;
 import com.campus.Service.Mail.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,20 +18,28 @@ import java.util.Optional;
 import java.util.Scanner;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
+    @Lazy
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
-    public User getUserById(Integer id){
+    private UserDTO mapUserDTO(User user){
+        return new UserDTO(user.getUserId(), user.getUsername(),
+                user.getEmail(),user.getUserRole());
+    }
+    public UserDTO getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()){
             throw new RuntimeException("User not found");
         }
-        return user.get();
-    }  
+        return mapUserDTO(user.get());
+    }   // Get user by user id
+    public UserDTO getUserByUsernamePassword(String username, String password){
+        return mapUserDTO(loginAsUser(username,password));
+    }
     private void verifyCurrentPassword(User user, String password){
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Incorrect current password.");
@@ -47,11 +60,7 @@ public class UserService {
         }
     }   // Demonstration method: Login as user by username and password
     private User loginAsUser(String username, String password) {
-        Optional<User> userOpt = userRepository.findByUsernameEqualsIgnoreCase(username);
-        if (userOpt.isEmpty()) {
-            throw new RuntimeException("Invalid username.");
-        }
-        User user = userOpt.get();
+        User user = findByUsername(username);
         verifyCurrentPassword(user,password);
         return user;
     }   // Function: Return a user by username and password
@@ -153,4 +162,19 @@ public class UserService {
             throw new RuntimeException("OTP not matches");
         }
     }   // Change password if OTP verification successful
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUsername(username);
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .build();
+    }
+    private User findByUsername(String username){
+        Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException(username);
+        }
+        return user.get();
+    }
 }

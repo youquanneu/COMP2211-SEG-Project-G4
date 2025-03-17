@@ -12,7 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/User")
+@RequestMapping("/user")
 public class UserController implements CommandLineRunner{
     @Autowired
     private UserService userService;
@@ -31,5 +31,4 @@ public class UserController implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
     }
-
 }

@@ -1,9 +1,26 @@
 package com.campus.DataTransferObject.User;
+
+import com.campus.Classification.UserRole;
+import lombok.Getter;
+
 public class UserDTO {
     public UserDTO(){}
-    public UserDTO(String username, String email){
+    public UserDTO(Integer userId,String username,
+                   String email, UserRole userRole){
+        setUserId(userId);
         setUsername(username);
         setEmail(email);
+        setUserRole(userRole);
+    }
+    private Integer userId;
+    private String username;
+    private String email;
+    private UserRole userRole;
+    public UserRole getUserRole() {
+        return userRole;
+    }
+    public Integer getUserId() {
+        return userId;
     }
     public String getUsername() {
         return username;
@@ -11,12 +28,16 @@ public class UserDTO {
     public String getEmail() {
         return email;
     }
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
     private void setUsername(String username) {
         this.username = username;
     }
     private void setEmail(String email) {
         this.email = email;
     }
-    private String username;
-    private String email;
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
 }

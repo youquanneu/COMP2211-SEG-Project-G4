@@ -4,6 +4,7 @@ import com.campus.Classification.Approval;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 public class Reservation {
     public Reservation(){}
-    public Reservation(User booker, List<Resource> resources,
+    public Reservation(User booker,List<Resource> resources,
                        LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         setBooker(booker);
         setResources(resources);
@@ -36,6 +37,7 @@ public class Reservation {
     @NotNull
     private LocalDateTime reservationEnding;
     @NotNull
+    @JsonProperty("Approval")
     private Approval approval;
     public void changeResources(List<Resource> resources){
         setResources(resources);
