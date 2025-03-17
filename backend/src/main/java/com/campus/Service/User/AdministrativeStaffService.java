@@ -38,7 +38,9 @@ public class AdministrativeStaffService{
             userRole = UserRole.AdministrativeStaff;
         }
         try {
-            User u = registerNewUser(username, email, password, userRole);
+            User u = new User(username, email, password, userRole);
+            registerNewUser(u);
+            //User u = registerNewUser(username, email, password, userRole);
             System.out.println("User register successful : \n" + u);
         }catch (Exception e){
             System.out.println(e.getMessage());

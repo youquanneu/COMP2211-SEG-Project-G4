@@ -5,6 +5,7 @@ import com.campus.DataTransferObject.User.LoginRequest;
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Service.Security.JwtService;
 import com.campus.Service.User.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,11 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    @Autowired
     private UserService userService;
+    @Autowired
     private JwtService jwtService;
+    @Autowired
     private AuthenticationManager authenticationManager;
-    private PasswordEncoder passwordEncoder;
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         String username = request.getUsername();
