@@ -1,0 +1,62 @@
+/* src/pages/Dashboard.css */
+.dashboard-container {
+    width: 90%;
+    max-width: 360px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center content */
+    margin: 0 auto; /* Center horizontally */
+  }
+  
+  .dashboard-logo {
+    display: block;
+    margin: 20px auto 15px auto; /* Center and space */
+    width: 100px; /* Match login logo size */
+    height: auto;
+  }
+  
+  .dashboard-container h1 {
+    color: #333;
+    font-size: 20px; /* Mobile-friendly size */
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-container p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-container button {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(to right, #0077B6, #005888);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .dashboard-container button:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Optional: Larger screens */
+  @media (min-width: 768px) {
+    .dashboard-container {
+      padding: 20px;
+    }
+    .dashboard-logo {
+      width: 120px;
+    }
+    .dashboard-container h1 {
+      font-size: 24px;
+    }
+    .dashboard-container p {
+      font-size: 16px;
+    }
+  }

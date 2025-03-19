@@ -1,0 +1,109 @@
+.login-logo {
+  display: block;
+  margin: 20px auto 15px auto; /* Center and add spacing */
+  width: 300px; /* Adjust size as needed */
+  height: auto;
+}
+
+.form-group {
+  margin-bottom: 15px; /* Reduced for mobile */
+}
+
+label {
+  display: block;
+  color: #555;
+  font-size: 14px; /* Smaller font for mobile */
+  margin-bottom: 5px;
+  text-align: left; /* Align labels left for readability */
+}
+
+input {
+  width: 100%;
+  padding: 10px; /* Slightly smaller padding */
+  border: 1px solid #ddd;
+  border-radius: 6px; /* Softer corners */
+  font-size: 14px; /* Mobile-friendly font size */
+  box-sizing: border-box; /* Ensure padding doesn’t overflow */
+}
+
+input:focus {
+  outline: none;
+  border-color: #0077B6;
+}
+
+button {
+  width: 100%;
+  padding: 10px; /* Reduced for mobile */
+  background: linear-gradient(to right, #0077B6, #005888);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px; /* Smaller font */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px); /* Still works on mobile if supported */
+}
+
+.otp-display {
+  text-align: center;
+  margin-bottom: 15px; /* Reduced spacing */
+}
+
+.otp-display span {
+  display: block;
+  color: #555;
+  font-size: 12px; /* Smaller for mobile */
+  margin-bottom: 5px;
+}
+
+#generatedOTP {
+  font-size: 24px; /* Slightly smaller for mobile */
+  font-weight: bold;
+  color: #0077B6;
+  background: #f5f5f5;
+  padding: 8px; /* Reduced padding */
+  border-radius: 6px;
+  letter-spacing: 2px;
+}
+
+.forgot-link,
+.back-link {
+  text-align: center;
+  color: #0077B6;
+  font-size: 14px; /* Smaller for mobile */
+  margin-top: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.forgot-link:hover,
+.back-link:hover {
+  color: #005888;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px; /* Reduced spacing */
+  font-size: 20px; /* Smaller for mobile */
+}
+
+/* Media query for larger screens (optional) */
+@media (min-width: 768px) {
+  .container {
+    padding: 20px; /* Slightly larger on desktop */
+  }
+  input,
+  button {
+    font-size: 16px; /* Default size for larger screens */
+  }
+  h2 {
+    font-size: 24px;
+  }
+  #generatedOTP {
+    font-size: 28px;
+  }
+}
