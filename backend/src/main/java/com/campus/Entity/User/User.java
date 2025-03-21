@@ -1,6 +1,7 @@
 package com.campus.Entity.User;
 
 import com.campus.Entity.Event.Event;
+import com.campus.Entity.Reservation.Booking;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -82,7 +83,7 @@ public class User {
                 getUsername(),getEmail(),getUserRole(),getUserId());
     }
     @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
-    private List<Reservation> reservations;
+    private List<Booking> bookings;
     @ManyToMany
     private List<Event> events;
 }

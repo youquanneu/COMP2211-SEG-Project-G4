@@ -3,9 +3,7 @@ package com.campus.Entity.Resource;
 import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalTime;
 @Data
@@ -19,7 +17,6 @@ public class Equipment extends Resource{
         super(resourceName, openTime, closeTime, restriction, ResourceCategory.Equipment);
         setSerialNumber(serialNumber);
     }
-    @NotNull
     @Column(unique = true)
     private String serialNumber;
     public void changeSerialNumber(String serialNumber){
@@ -30,5 +27,18 @@ public class Equipment extends Resource{
     }
     private void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+    public String toString(){
+        return String.format(
+                """
+                        %s
+                        Name            : %s
+                        Serial Number   : %s
+                        Open Time       : %s
+                        Close Time      : %s
+                        """,
+                getResourceCategory(),
+                getResourceName(),getSerialNumber(),
+                getOpenTime(),getCloseTime());
     }
 }

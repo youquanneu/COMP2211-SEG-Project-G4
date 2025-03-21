@@ -1,40 +1,19 @@
 package com.campus.Service.Resource;
 
-import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Equipment;
 import com.campus.Repository.Resource.EquipmentRepository;
-import com.campus.Repository.Resource.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 
 @Service
 public class EquipmentService extends ResourceService{
     @Autowired
     private EquipmentRepository equipmentRepository;
-    @Autowired
-    private ResourceRepository resourceRepository;
-    public void addEquipment(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Serial Number : ");
-        String serialNumber = scanner.nextLine();
-        System.out.println("Equipment Name : ");
-        String name = scanner.nextLine();
-        Equipment equipment =
-        saveEquipment(new Equipment(name, LocalTime.now(), LocalTime.now(), Restriction.ApprovalRequired,serialNumber));
-    }
-    public Equipment saveEquipment(Equipment equipment){
-        return equipmentRepository.save(equipment);
-    }   // Insert a new equipment into database
-    private void deleteEquipment(Equipment equipment){
-        equipmentRepository.delete(equipment);
-    }
-    public void modifySerialNumber(Equipment equipment, String serialNumber){
-        equipment.changeSerialNumber(serialNumber);
-        saveEquipment(equipment);
+    public Equipment getEquipmentById(Integer id){
+        return (Equipment) getResourceByID(id);
     }
     public Equipment getEquipmentBySerialNumber(String serialNumber){
         Optional<Equipment> equipment = equipmentRepository.findBySerialNumberEqualsIgnoreCase(serialNumber);
@@ -42,5 +21,8 @@ public class EquipmentService extends ResourceService{
             throw new RuntimeException("Equipment not found");
         }
         return equipment.get();
+    }
+    public List<Equipment> searchEquipmentBySerialNumber(String serialNumber){
+        return equipmentRepository.findBySerialNumberContainingIgnoreCase(serialNumber);
     }
 }

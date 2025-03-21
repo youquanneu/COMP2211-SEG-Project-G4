@@ -22,12 +22,6 @@ public class ResourceService {
         }
         return resource.get();
     }
-    public Resource saveResource(Resource resource){
-        return resourceRepository.save(resource);
-    }
-    public void deleteResource(Resource resource){
-        resourceRepository.delete(resource);
-    }
     public List<Resource> getAllResource(){
         return resourceRepository.findAll();
     }   // Get all resources
@@ -43,28 +37,4 @@ public class ResourceService {
     public List<Resource> getResourceOpenDuring(LocalTime timeFrom,LocalTime timeTo){
         return resourceRepository.findByOpenTimeBeforeAndCloseTimeAfter(timeFrom,timeTo);
     }   // Filter resource which open during the time
-    public Resource changeResourceName(Resource resource, String name){
-        resource.changeResourceName(name);
-        return saveResource(resource);
-    }   // Change the name of the resource
-    public Resource changeOpenTime(Resource resource, LocalTime openTime){
-        resource.changeOpenTime(openTime);
-        return saveResource(resource);
-    }   // Change the open time of the resource
-    public Resource changeCloseTime(Resource resource, LocalTime closeTime){
-        resource.changeCloseTime(closeTime);
-        return saveResource(resource);
-    }   // Change the close time of the resource
-    public Resource setToNonRestriction(Resource resource){
-        resource.setToNonRestriction(Restriction.NonRestriction);
-        return saveResource(resource);
-    }   // Change the resource as non restrict
-    public Resource setToApprovalRequired(Resource resource){
-        resource.setToApprovalRequired(Restriction.ApprovalRequired);
-        return saveResource(resource);
-    }   // Change the resource as approval required
-    public Resource setToRestricted(Resource resource){
-        resource.setToRestricted(Restriction.Restricted);
-        return saveResource(resource);
-    }   // Change the resource as restricted
 }

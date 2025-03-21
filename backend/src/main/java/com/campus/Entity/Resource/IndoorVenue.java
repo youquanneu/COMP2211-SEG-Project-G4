@@ -40,4 +40,18 @@ public class IndoorVenue extends Resource{
     private void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
     }
+    public String toString(){
+        return String.format(
+                """
+                        %s
+                        Name            : %s
+                        Building        : %s
+                        Room Number     : %s
+                        Open Time       : %s
+                        Close Time      : %s
+                        """,
+                getResourceCategory(),
+                getResourceName(),getBuilding(),getRoomNumber(),
+                getOpenTime(),getCloseTime());
+    }
 }

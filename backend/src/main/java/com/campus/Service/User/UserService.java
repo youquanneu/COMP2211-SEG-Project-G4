@@ -26,6 +26,48 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private EmailSenderService emailSenderService;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUsername(username);
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .build();
+    }
+    public void changePassword(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input username : ");
+        String username = scanner.nextLine();
+        System.out.println("Input password : ");
+        String password = scanner.nextLine();
+        try {
+            changePassword(loginAsUser(username, password));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            changePassword();
+        }
+    }   // Demonstration method: Change password
+    public void forgotPasswordDemo(){
+        try {
+            // Page 1 : Take email and send OTP
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Your email : ");
+            String email = scanner.nextLine();
+            // Page 2 : Get user input of OTP
+            System.out.println("Your OTP : ");
+            String inputOTP = scanner.nextLine();
+            User user = forgotPassword(email,inputOTP);
+            // Page 3 : Let user change of password
+            System.out.println("New Password : ");
+            String newPassword = scanner.nextLine();
+            System.out.println("Confirm Password : ");
+            String confirmationPassword = scanner.nextLine();
+            changeToNewPassword(user,newPassword,confirmationPassword);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            forgotPasswordDemo();
+        }
+    }   // Demonstration method: Forgot password
     private UserDTO mapUserDTO(User user){
         return new UserDTO(user.getUserId(), user.getUsername(),
                 user.getEmail(),user.getUserRole());
@@ -39,12 +81,12 @@ public class UserService implements UserDetailsService {
     }   // Get user by user id
     public UserDTO getUserByUsernamePassword(String username, String password){
         return mapUserDTO(loginAsUser(username,password));
-    }
+    }   // Get user by username and password
     private void verifyCurrentPassword(User user, String password){
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Incorrect current password.");
         }
-    }   // Verify current password
+    }   // Function : Verify current password
     public void login(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -64,19 +106,6 @@ public class UserService implements UserDetailsService {
         verifyCurrentPassword(user,password);
         return user;
     }   // Function: Return a user by username and password
-    public void changePassword(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Input username : ");
-        String username = scanner.nextLine();
-        System.out.println("Input password : ");
-        String password = scanner.nextLine();
-        try {
-            changePassword(loginAsUser(username, password));
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            changePassword();
-        }
-    }   // Demonstration method: Change password
     private void changePassword(User user) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your current password: ");
@@ -123,27 +152,6 @@ public class UserService implements UserDetailsService {
         }   // Check if new password and new password confirmation are same
         return newPassword;
     }   // Return new password after validation checking
-    public void forgotPasswordDemo(){
-        try {
-            // Page 1 : Take email and send OTP
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Your email : ");
-            String email = scanner.nextLine();
-            // Page 2 : Get user input of OTP
-            System.out.println("Your OTP : ");
-            String inputOTP = scanner.nextLine();
-            User user = forgotPassword(email,inputOTP);
-            // Page 3 : Let user change of password
-            System.out.println("New Password : ");
-            String newPassword = scanner.nextLine();
-            System.out.println("Confirm Password : ");
-            String confirmationPassword = scanner.nextLine();
-            changeToNewPassword(user,newPassword,confirmationPassword);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            forgotPasswordDemo();
-        }
-    }   // Demonstration method: Forgot password
     private User forgotPassword(String email,String inputOTP){
         User user = findUserByMatchingEmail(email);
         String givenOTP = emailSenderService.sendOTP(email);
@@ -162,14 +170,6 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("OTP not matches");
         }
     }   // Change password if OTP verification successful
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .build();
-    }
     private User findByUsername(String username){
         Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);
         if (user.isEmpty()) {
