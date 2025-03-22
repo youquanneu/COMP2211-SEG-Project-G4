@@ -20,8 +20,8 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reservationId;
-    @ManyToOne
     @NotNull
+    @ManyToOne
     private Resource resources;
     @NotNull
     private LocalDateTime reservationStarting;
@@ -30,12 +30,16 @@ public class Reservation {
     @NotNull
     private Approval approval;
     @ManyToOne
+    @JoinColumn(name = "bookingId")
     private Booking booking;
     public void changeReservationStartingTime(LocalDateTime reservationStarting){
         setReservationStarting(reservationStarting);
     }
     public void changeReservationEndingTime(LocalDateTime reservationEnding){
         setReservationEnding(reservationEnding);
+    }
+    public void changeReservationApproval(Approval approval){
+        setApproval(approval);
     }
     public Integer getReservationId() {
         return reservationId;

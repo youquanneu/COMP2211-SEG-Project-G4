@@ -15,10 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @RequestMapping("/user")
 public class UserController implements CommandLineRunner{
@@ -38,5 +34,6 @@ public class UserController implements CommandLineRunner{
     private BookingService bookingService;
     @Override
     public void run(String... args) throws Exception {
+        System.out.println( bookingService.getBookingById(2));
     }
 }

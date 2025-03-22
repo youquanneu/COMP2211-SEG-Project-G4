@@ -26,7 +26,7 @@ public class ReservationService {
     public List<Reservation> getNonRejectedReservation(Resource resource){
         return reservationRepository.findReservationByResourcesAndApprovalIsNot(resource,Approval.Rejected);
     }
-    public void createNewReservation(){
+    public Reservation createNewReservation(){
         try {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Input Start: yyyy-mm-ddTHH:mm:ss");
@@ -38,17 +38,18 @@ public class ReservationService {
             System.out.println("Input resource Id : ");
             Resource resource = resourceService.getResourceByID(scanner.nextInt());
             newReservationValidation(resource, reservationStarting, reservationEnding);
-            saveReservation(new Reservation(resource, reservationStarting, reservationEnding));
+            return new  Reservation(resource, reservationStarting, reservationEnding);
         }catch (Exception e){
             System.out.println(e.getMessage());
             createNewReservation();
+            return null;
         }
     }   // Demonstration Method : Create a new reservation and add into database
     public Reservation createNewReservation(Resource resource,
                                             LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         newReservationValidation(resource,reservationStarting,reservationEnding);
         return new Reservation(resource,reservationStarting,reservationEnding);
-    }
+    }   // Function : Create a new reservation after check the time validation
     private void newReservationValidation(Resource resource, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         checkTimeValidity(reservationStarting,reservationEnding);
         checkTimeAvailability(resource,reservationStarting,reservationEnding);

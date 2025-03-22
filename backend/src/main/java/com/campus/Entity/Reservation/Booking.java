@@ -19,12 +19,12 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer bookingId;
     @ManyToOne
-    @JoinColumn(name = "user_Id",nullable = false)
+    @JoinColumn(name = "userId")
     private User booker;
     @NotNull
     @JsonProperty("Approval")
     private Approval approval;
-    @OneToMany
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     private List<Reservation> reservations;
     public Integer getBookingId() {
         return bookingId;
@@ -46,5 +46,19 @@ public class Booking {
     }
     private void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+    public String toString(){
+        return String.format(
+                """
+                        Booking Id-
+                        %s
+                        User-
+                        %s
+                        Approval-
+                        %s
+                        Reservation-
+                        %s
+                        """,
+                getBookingId(),getBooker(),getApproval(),getReservations());
     }
 }

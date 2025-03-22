@@ -4,8 +4,8 @@ import java.time.LocalTime;
 
 public class VenueDTO extends ResourceDTO{
     public VenueDTO(){}
-    public VenueDTO(String resourceName,
+    public VenueDTO(Integer resourceId,String resourceName,
                     LocalTime openTime, LocalTime closeTime){
-        super(resourceName, openTime, closeTime);
+        super(resourceId,resourceName, openTime, closeTime);
     }
 }
