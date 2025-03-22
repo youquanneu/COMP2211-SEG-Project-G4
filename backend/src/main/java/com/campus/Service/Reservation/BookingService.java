@@ -5,6 +5,7 @@ import com.campus.Classification.Restriction;
 import com.campus.Entity.Reservation.Booking;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Repository.Reservation.BookingRepository;
+import com.campus.Service.Resource.ResourceService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import java.util.List;
 public class BookingService {
     @Autowired
     private BookingRepository bookingRepository;
+    @Autowired
+    private ResourceService resourceService;
     public Booking saveBooking(Booking booking){
         return bookingRepository.save(booking);
     }
@@ -31,4 +34,5 @@ public class BookingService {
         }   // Approval required if any approval required resource is booked
         return Approval.Approved;   // Else approve the reservation
     }   // Determine the approval status of reservation
+
 }

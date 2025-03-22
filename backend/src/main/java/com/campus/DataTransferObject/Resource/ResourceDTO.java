@@ -4,15 +4,20 @@ import java.time.LocalTime;
 
 public class ResourceDTO {
     public ResourceDTO(){}
-    public ResourceDTO(String resourceName,
+    public ResourceDTO(Integer resourceId, String resourceName,
                        LocalTime openTime, LocalTime closeTime){
+        setResourceId(resourceId);
         setResourceName(resourceName);
         setOpenTime(openTime);
         setCloseTime(closeTime);
     }
+    private Integer resourceId;
     private String resourceName;
     private LocalTime openTime;
     private LocalTime closeTime;
+    public Integer getResourceId() {
+        return resourceId;
+    }
     public String getResourceName() {
         return resourceName;
     }
@@ -21,6 +26,9 @@ public class ResourceDTO {
     }
     public LocalTime getCloseTime() {
         return closeTime;
+    }
+    private void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
     }
     private void setResourceName(String resourceName) {
         this.resourceName = resourceName;

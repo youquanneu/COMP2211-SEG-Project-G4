@@ -1,5 +1,6 @@
 package com.campus.Entity.Reservation;
 
+import com.campus.Classification.Approval;
 import com.campus.Entity.Resource.Resource;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,7 @@ public class Reservation {
         setResources(resource);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
+        setApproval(Approval.Pending);
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +27,8 @@ public class Reservation {
     private LocalDateTime reservationStarting;
     @NotNull
     private LocalDateTime reservationEnding;
+    @NotNull
+    private Approval approval;
     @ManyToOne
     private Booking booking;
     public void changeReservationStartingTime(LocalDateTime reservationStarting){
@@ -45,6 +49,9 @@ public class Reservation {
     public LocalDateTime getReservationEnding() {
         return reservationEnding;
     }
+    public Approval getApproval() {
+        return approval;
+    }
     private void setResources(Resource resources) {
         this.resources = resources;
     }
@@ -53,5 +60,19 @@ public class Reservation {
     }
     private void setReservationEnding(LocalDateTime reservationEnding) {
         this.reservationEnding = reservationEnding;
+    }
+    private void setApproval(Approval approval) {
+        this.approval = approval;
+    }
+    public String toString(){
+        return String.format(
+                """
+                        Id              : %s
+                        Resources       : %s
+                        Starting Time   : %s
+                        Ending Time     : %s
+                        """,
+                getReservationId(),getResources().getResourceName(),
+                getReservationStarting(),getReservationEnding());
     }
 }

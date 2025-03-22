@@ -1,6 +1,7 @@
 package com.campus.Service.Reservation;
 
 import ch.qos.logback.core.encoder.EchoEncoder;
+import com.campus.Classification.Approval;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Repository.Reservation.ReservationRepository;
@@ -22,6 +23,9 @@ public class ReservationService {
     public Reservation saveReservation(Reservation reservation){
         return reservationRepository.save(reservation);
     }
+    public List<Reservation> getNonRejectedReservation(Resource resource){
+        return reservationRepository.findReservationByResourcesAndApprovalIsNot(resource,Approval.Rejected);
+    }
     public void createNewReservation(){
         try {
             Scanner scanner = new Scanner(System.in);
@@ -40,14 +44,15 @@ public class ReservationService {
             createNewReservation();
         }
     }   // Demonstration Method : Create a new reservation and add into database
-    public Reservation createNewReservation(Resource resource, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
+    public Reservation createNewReservation(Resource resource,
+                                            LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         newReservationValidation(resource,reservationStarting,reservationEnding);
         return new Reservation(resource,reservationStarting,reservationEnding);
     }
     private void newReservationValidation(Resource resource, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         checkTimeValidity(reservationStarting,reservationEnding);
         checkTimeAvailability(resource,reservationStarting,reservationEnding);
-        List<Reservation> reservations = reservationRepository.findReservationByResources(resource);
+        List<Reservation> reservations = reservationRepository.findReservationByResourcesAndApprovalIsNot(resource,Approval.Rejected);
         for (Reservation reservation : reservations){
             checkTimeConflict(reservation,reservationStarting,reservationEnding);
         }
@@ -56,7 +61,7 @@ public class ReservationService {
         Resource resource = reservation.getResources();
         checkTimeValidity(reservationStarting,reservationEnding);
         checkTimeAvailability(resource,reservationStarting,reservationEnding);
-        List<Reservation> reservations = reservationRepository.findReservationByResources(resource);
+        List<Reservation> reservations = reservationRepository.findReservationByResourcesAndApprovalIsNot(resource,Approval.Rejected);
         reservations.remove(reservation);   // Prevent self conflict
         for (Reservation otherReservation : reservations){
             checkTimeConflict(otherReservation,reservationStarting,reservationEnding);
