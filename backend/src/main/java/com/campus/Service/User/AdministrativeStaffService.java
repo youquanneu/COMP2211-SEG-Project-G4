@@ -115,6 +115,9 @@ public class AdministrativeStaffService{
     private List<User> getAllUsers(){
         return userRepository.findAll();
     }   // Base Function: Get a list of all user
+    private List<User> filterUsers(Integer userId,String username, String email, UserRole userRole){
+        return userRepository.findUserByFilter(userId,username,email,userRole);
+    }   // Base Function : Filter user
     private List<User> getUserByUserRole(UserRole userRole){
         return userRepository.findUserByUserRole(userRole);
     }   // Base Function: Get a list of user base on role
@@ -127,16 +130,28 @@ public class AdministrativeStaffService{
     private IndoorVenueRepository indoorVenueRepository;
     public void addNewResource(){
         try {
+            String name;
+            int periodBool,openHour,closeHour;
+            LocalTime openTime,closeTime;
+
             Scanner scanner = new Scanner(System.in);
             System.out.println("Input resource name : ");
-            String name = scanner.nextLine();
-            System.out.println("Input open time : ");
-            int openHour = scanner.nextInt();
-            LocalTime openTime = LocalTime.of(openHour, 0);
-            System.out.println("Input close time : ");
-            int closeHour = scanner.nextInt();
-            LocalTime closeTimeNull = null;
-            LocalTime closeTime = LocalTime.of(closeHour, 0).minusSeconds(1);
+            name = scanner.nextLine();
+
+            System.out.println("Set Opening Time? : 1.Yes 2.No");
+            periodBool = scanner.nextInt();
+            if (periodBool==1) {
+                System.out.println("Input open time : ");
+                openHour = scanner.nextInt();
+                openTime = LocalTime.of(openHour, 0);
+                System.out.println("Input close time : ");
+                closeHour = scanner.nextInt();
+                closeTime = LocalTime.of(closeHour, 0).minusSeconds(1);
+            }else {
+                openTime = null;
+                closeTime = null;
+            }
+
             System.out.println("Input restriction: 1.Non-Restrict 2.Approval required 3.Restricted ");
             Restriction restriction;
             int restrict = scanner.nextInt();
@@ -147,6 +162,7 @@ public class AdministrativeStaffService{
             } else {
                 restriction = Restriction.Restricted;
             }
+
             System.out.println("Input type: 1.Equipment 2.Indoor Venue 3.Outdoor Venue ");
             int type = scanner.nextInt();
             String blank = scanner.nextLine();  // Resolve scanner next line issue
@@ -159,17 +175,17 @@ public class AdministrativeStaffService{
                 String building = scanner.nextLine();
                 System.out.println("Input room number : ");
                 String roomNumber = scanner.nextLine();
-                addNewIndoorVenue(new IndoorVenue(name, openTime, closeTimeNull, restriction, building, roomNumber));
+                addNewIndoorVenue(new IndoorVenue(name, openTime, closeTime, restriction, building, roomNumber));
             } else {
                 System.out.println("Input location : ");
                 String location = scanner.nextLine();
-                addNewOutdoorVenue(new OutdoorVenue(name, closeTimeNull, closeTimeNull, restriction, location));
+                addNewOutdoorVenue(new OutdoorVenue(name, openTime, closeTime, restriction, location));
             }
         }catch (Exception e){
             System.out.println(e.getMessage());
             addNewResource();
         }
-    }
+    }   // Demonstration method : Add a new resource
     public Equipment addNewEquipment(Equipment equipment) {
         Optional<Equipment> existingEquipment = equipmentRepository.findBySerialNumberEqualsIgnoreCase(equipment.getSerialNumber());
         if (existingEquipment.isPresent()) {

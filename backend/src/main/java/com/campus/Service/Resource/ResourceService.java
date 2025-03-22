@@ -22,9 +22,22 @@ public class ResourceService {
         }
         return resource.get();
     }
+    public Resource getResourceByResourceName(String resourceName){
+        Optional<Resource> resource = resourceRepository.findByResourceNameEqualsIgnoreCase(resourceName);
+        if (resource.isEmpty()){
+            throw new RuntimeException("Resource not found");
+        }
+        return resource.get();
+    }
     public List<Resource> getAllResource(){
         return resourceRepository.findAll();
     }   // Get all resources
+    public List<Resource> filterResource(Integer resourceId, String resourceName,
+                                         LocalTime openTime, LocalTime closeTime,
+                                         Restriction restriction,ResourceCategory resourceCategory){
+        return resourceRepository.findResourceByFilter
+                (resourceId,resourceName,openTime,closeTime,restriction,resourceCategory);
+    }   // Base Function : Filter resource
     public List<Resource> getResourceByCategory(ResourceCategory resourceCategory){
         return resourceRepository.findByResourceCategory(resourceCategory);
     }   // Filter resources by category

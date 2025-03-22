@@ -1,4 +1,7 @@
 package com.campus.Repository.Reservation;
 
-public interface BookingRepository {
+import com.campus.Entity.Reservation.Booking;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BookingRepository extends JpaRepository<Booking,Integer> {
 }

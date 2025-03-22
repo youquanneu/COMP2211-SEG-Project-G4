@@ -25,13 +25,13 @@ public interface IndoorVenueRepository extends JpaRepository<IndoorVenue,Integer
             "and    (:closeTime         is null or indoorVenue.closeTime    > :closeTime)   " +
             "and    (:restriction       is null or indoorVenue.restriction  = :restriction) " +
             "and    (:building          is null or upper(indoorVenue.building)      like concat('%',upper(:building),'%'))" +
-            "and    (:building          is null or upper(indoorVenue.roomNumber)    like concat('%',upper(:roomNumber),'%'))"
+            "and    (:roomNumber        is null or upper(indoorVenue.roomNumber)    like concat('%',upper(:roomNumber),'%'))"
     )
     List<IndoorVenue> findIndoorVenueByFilter(@Param("resourceId")      Integer resourceId,
                                               @Param("resourceName")    String resourceName,
                                               @Param("openTime")        LocalTime openTime,
                                               @Param("closeTime")       LocalTime closeTime,
                                               @Param("restriction")     Restriction restriction,
-                                              @Param("building")        String location,
+                                              @Param("building")        String building,
                                               @Param("roomNumber")      String roomNumber);
 }

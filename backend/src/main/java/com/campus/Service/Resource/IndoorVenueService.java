@@ -7,6 +7,7 @@ import com.campus.Repository.Resource.IndoorVenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,12 @@ public class IndoorVenueService extends VenueService{
     public List<IndoorVenue> getAllIndoorVenue(){
         return indoorVenueRepository.findAll();
     }
+    public List<IndoorVenue> filterIndoorVenue(Integer resourceId, String resourceName,
+                                               LocalTime openTime, LocalTime closeTime,
+                                               Restriction restriction, String building, String roomNumber){
+        return indoorVenueRepository.findIndoorVenueByFilter
+                (resourceId,resourceName,openTime,closeTime,restriction,building,roomNumber );
+    }   // Base Function : Filter indoor venue
     public List<IndoorVenue> getIndoorVenueByRestriction(Restriction restriction){
         return indoorVenueRepository.findByRestriction(restriction);
     }

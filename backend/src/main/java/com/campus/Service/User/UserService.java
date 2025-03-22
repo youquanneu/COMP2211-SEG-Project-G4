@@ -34,6 +34,20 @@ public class UserService implements UserDetailsService {
                 .password(user.getPassword())
                 .build();
     }
+    public void login(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Input username : ");
+        String username = scanner.nextLine();
+        System.out.println("Input password : ");
+        String password = scanner.nextLine();
+        try {
+            User user = loginAsUser(username, password);
+            System.out.println(user);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            login();
+        }
+    }   // Demonstration method: Login as user by username and password
     public void changePassword(){
         Scanner scanner = new Scanner(System.in);
         System.out.println("Input username : ");
@@ -47,6 +61,21 @@ public class UserService implements UserDetailsService {
             changePassword();
         }
     }   // Demonstration method: Change password
+    private void changePassword(User user) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter your current password: ");
+        String password = scanner.nextLine();
+        System.out.println("New password: ");
+        String newPassword = scanner.nextLine();
+        System.out.println("Confirm password: ");
+        String confirmationPassword = scanner.nextLine();
+        try{
+            changePassword(user,password,newPassword,confirmationPassword);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            changePassword(user);
+        }
+    }   // Demonstration method: Change password of the user
     public void forgotPasswordDemo(){
         try {
             // Page 1 : Take email and send OTP
@@ -72,12 +101,12 @@ public class UserService implements UserDetailsService {
         return new UserDTO(user.getUserId(), user.getUsername(),
                 user.getEmail(),user.getUserRole());
     }
-    public UserDTO getUserById(Integer id){
+    public User getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()){
             throw new RuntimeException("User not found");
         }
-        return mapUserDTO(user.get());
+        return user.get();
     }   // Get user by user id
     public UserDTO getUserByUsernamePassword(String username, String password){
         return mapUserDTO(loginAsUser(username,password));
@@ -87,40 +116,11 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Incorrect current password.");
         }
     }   // Function : Verify current password
-    public void login(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Input username : ");
-        String username = scanner.nextLine();
-        System.out.println("Input password : ");
-        String password = scanner.nextLine();
-        try {
-            User user = loginAsUser(username, password);
-            System.out.println(user);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            login();
-        }
-    }   // Demonstration method: Login as user by username and password
     private User loginAsUser(String username, String password) {
         User user = findByUsername(username);
         verifyCurrentPassword(user,password);
         return user;
     }   // Function: Return a user by username and password
-    private void changePassword(User user) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your current password: ");
-        String password = scanner.nextLine();
-        System.out.println("New password: ");
-        String newPassword = scanner.nextLine();
-        System.out.println("Confirm password: ");
-        String confirmationPassword = scanner.nextLine();
-        try{
-            changePassword(user,password,newPassword,confirmationPassword);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            changePassword(user);
-        }
-    }   // Demonstration method: Change password after user login successful
     private void changePassword(User user, String currentPassword, String newPassword, String confirmationPassword) {
         try{
             verifyCurrentPassword(user,currentPassword);
