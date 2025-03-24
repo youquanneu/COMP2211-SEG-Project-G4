@@ -43,7 +43,7 @@ public class IndoorVenue extends Venue{
     public String toString(){
         return String.format(
                 """
-                        %s
+                        Category        : %s
                         Name            : %s
                         Building        : %s
                         Room Number     : %s

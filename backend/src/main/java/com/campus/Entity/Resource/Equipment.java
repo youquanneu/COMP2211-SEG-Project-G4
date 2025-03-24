@@ -31,14 +31,16 @@ public class Equipment extends Resource{
     public String toString(){
         return String.format(
                 """
-                        %s
+                        Category        : %s
                         Name            : %s
                         Serial Number   : %s
                         Open Time       : %s
                         Close Time      : %s
                         """,
                 getResourceCategory(),
-                getResourceName(),getSerialNumber(),
-                getOpenTime(),getCloseTime());
+                getResourceName(),
+                getSerialNumber(),
+                getOpenTime(),
+                getCloseTime());
     }
 }

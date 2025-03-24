@@ -83,6 +83,9 @@ public class User {
                         Role       : %s
                         UserId     : %s
                         """,
-                getUsername(),getEmail(),getUserRole(),getUserId());
+                getUsername(),
+                getEmail(),
+                getUserRole(),
+                getUserId());
     }
 }

@@ -1,6 +1,6 @@
 package com.campus.Entity.Reservation;
 
-import com.campus.Classification.Approval;
+import com.campus.Classification.Status;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
@@ -18,7 +18,7 @@ public class Reservation {
         setResource(resource);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
-        setApproval(checkResource(resource));
+        setStatus(checkResource(resource));
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,15 +34,18 @@ public class Reservation {
     @NotNull
     private LocalDateTime reservationEnding;
     @NotNull
-    private Approval approval;
+    private Status status;
     public void changeReservationStartingTime(LocalDateTime reservationStarting){
         setReservationStarting(reservationStarting);
     }
     public void changeReservationEndingTime(LocalDateTime reservationEnding){
         setReservationEnding(reservationEnding);
     }
-    public void changeReservationApproval(Approval approval){
-        setApproval(approval);
+    public void initializeStatus(){
+        setStatus(checkResource(getResource()));
+    }
+    public void changeReservationStatus(Status status){
+        setStatus(status);
     }
     public Integer getReservationId() {
         return reservationId;
@@ -59,8 +62,8 @@ public class Reservation {
     public LocalDateTime getReservationEnding() {
         return reservationEnding;
     }
-    public Approval getApproval() {
-        return approval;
+    public Status getApproval() {
+        return status;
     }
     private void setBooker(User user) {
         this.booker = user;
@@ -74,26 +77,30 @@ public class Reservation {
     private void setReservationEnding(LocalDateTime reservationEnding) {
         this.reservationEnding = reservationEnding;
     }
-    private void setApproval(Approval approval) {
-        this.approval = approval;
+    private void setStatus(Status status) {
+        this.status = status;
     }
-    private Approval checkResource(Resource resource) {
+    private Status checkResource(Resource resource) {
         Restriction restriction = resource.getRestriction();
         return switch (restriction) {
-            case Restricted         -> Approval.Rejected;   // Prevent user accidentally book restricted resource
-            case ApprovalRequired   -> Approval.Pending;    // Pending if resource required approval
-            default                 -> Approval.Approved;   // Else approve the reservation
+            case Restricted         -> Status.Rejected;   // Prevent user accidentally book restricted resource
+            case ApprovalRequired   -> Status.Pending;    // Pending if resource required approval
+            default                 -> Status.Approved;   // Else approve the reservation
         };
     }
     public String toString(){
         return String.format(
                 """
-                        Id              : %s
-                        Resources       : %s
+                        Reservation Id  : %s
+                        Booker          : %s
+                        Resource        : %s
                         Starting Time   : %s
                         Ending Time     : %s
                         """,
-                getReservationId(), getResource().getResourceName(),
-                getReservationStarting(),getReservationEnding());
+                getReservationId(),
+                getBooker().getUsername(),
+                getResource().getResourceName(),
+                getReservationStarting(),
+                getReservationEnding());
     }
 }
