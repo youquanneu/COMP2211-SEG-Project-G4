@@ -1,10 +1,5 @@
 package com.campus.Controller;
 
-import com.campus.Classification.Approval;
-import com.campus.Entity.Reservation.Booking;
-import com.campus.Entity.Reservation.Reservation;
-import com.campus.Entity.User.User;
-import com.campus.Service.Reservation.BookingService;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.EquipmentService;
 import com.campus.Service.Resource.IndoorVenueService;
@@ -30,10 +25,8 @@ public class UserController implements CommandLineRunner{
     private ReservationService reservationService;
     @Autowired
     private IndoorVenueService indoorVenueService;
-    @Autowired
-    private BookingService bookingService;
     @Override
     public void run(String... args) throws Exception {
-        System.out.println( bookingService.getBookingById(2));
+        reservationService.createNewReservation();
     }
 }

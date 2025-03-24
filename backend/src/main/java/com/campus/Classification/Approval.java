@@ -1,5 +1,5 @@
 package com.campus.Classification;
 
 public enum Approval {
-    Pending, Approved, Rejected;
+    Approved, Pending, Rejected;
 }

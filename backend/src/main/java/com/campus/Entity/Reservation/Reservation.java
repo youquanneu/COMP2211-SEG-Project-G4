@@ -1,7 +1,9 @@
 package com.campus.Entity.Reservation;
 
 import com.campus.Classification.Approval;
+import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
+import com.campus.Entity.User.User;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,28 +12,29 @@ import java.time.LocalDateTime;
 @Entity
 public class Reservation {
     public Reservation(){}
-    public Reservation(Resource resource,
+    public Reservation(User booker, Resource resource,
                        LocalDateTime reservationStarting, LocalDateTime reservationEnding){
-        setResources(resource);
+        setBooker(booker);
+        setResource(resource);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
-        setApproval(Approval.Pending);
+        setApproval(checkResource(resource));
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reservationId;
     @NotNull
     @ManyToOne
-    private Resource resources;
+    private User booker;
+    @NotNull
+    @ManyToOne
+    private Resource resource;
     @NotNull
     private LocalDateTime reservationStarting;
     @NotNull
     private LocalDateTime reservationEnding;
     @NotNull
     private Approval approval;
-    @ManyToOne
-    @JoinColumn(name = "bookingId")
-    private Booking booking;
     public void changeReservationStartingTime(LocalDateTime reservationStarting){
         setReservationStarting(reservationStarting);
     }
@@ -44,8 +47,11 @@ public class Reservation {
     public Integer getReservationId() {
         return reservationId;
     }
-    public Resource getResources() {
-        return resources;
+    public User getBooker() {
+        return booker;
+    }
+    public Resource getResource() {
+        return resource;
     }
     public LocalDateTime getReservationStarting() {
         return reservationStarting;
@@ -56,8 +62,11 @@ public class Reservation {
     public Approval getApproval() {
         return approval;
     }
-    private void setResources(Resource resources) {
-        this.resources = resources;
+    private void setBooker(User user) {
+        this.booker = user;
+    }
+    private void setResource(Resource resources) {
+        this.resource = resources;
     }
     private void setReservationStarting(LocalDateTime reservationStarting) {
         this.reservationStarting = reservationStarting;
@@ -68,6 +77,14 @@ public class Reservation {
     private void setApproval(Approval approval) {
         this.approval = approval;
     }
+    private Approval checkResource(Resource resource) {
+        Restriction restriction = resource.getRestriction();
+        return switch (restriction) {
+            case Restricted         -> Approval.Rejected;   // Prevent user accidentally book restricted resource
+            case ApprovalRequired   -> Approval.Pending;    // Pending if resource required approval
+            default                 -> Approval.Approved;   // Else approve the reservation
+        };
+    }
     public String toString(){
         return String.format(
                 """
@@ -76,7 +93,7 @@ public class Reservation {
                         Starting Time   : %s
                         Ending Time     : %s
                         """,
-                getReservationId(),getResources().getResourceName(),
+                getReservationId(), getResource().getResourceName(),
                 getReservationStarting(),getReservationEnding());
     }
 }

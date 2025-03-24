@@ -39,7 +39,7 @@ public class Resource {
     private Restriction restriction;
     @JsonProperty("ResourceCategory")
     private ResourceCategory resourceCategory;
-    @OneToMany(mappedBy = "resources")
+    @OneToMany(mappedBy = "resource")
     private List<Reservation> booking;
     public void changeResourceName(String resourceName){
         setResourceName(resourceName);

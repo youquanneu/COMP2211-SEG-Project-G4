@@ -1,7 +1,6 @@
 package com.campus.Entity.User;
 
 import com.campus.Entity.Event.Event;
-import com.campus.Entity.Reservation.Booking;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,8 +35,8 @@ public class User {
     @NotNull
     @JsonProperty("UserRole")
     private UserRole userRole;
-    @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
-    private List<Booking> bookings;
+    @OneToMany
+    private List<Reservation> reservations;
     @ManyToMany
     private List<Event> events;
     public void changePassword(String password){
