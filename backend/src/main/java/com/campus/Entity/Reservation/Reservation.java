@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 public class Reservation {
     public Reservation(){}
     public Reservation(User booker, Resource resource,
-                       LocalDateTime reservationStarting, LocalDateTime reservationEnding){
+                       LocalDateTime reservationStarting,
+                       LocalDateTime reservationEnding){
         setBooker(booker);
         setResource(resource);
         setReservationStarting(reservationStarting);
@@ -62,7 +63,7 @@ public class Reservation {
     public LocalDateTime getReservationEnding() {
         return reservationEnding;
     }
-    public Status getApproval() {
+    public Status getStatus() {
         return status;
     }
     private void setBooker(User user) {
@@ -96,11 +97,13 @@ public class Reservation {
                         Resource        : %s
                         Starting Time   : %s
                         Ending Time     : %s
+                        Status          : %s
                         """,
                 getReservationId(),
                 getBooker().getUsername(),
                 getResource().getResourceName(),
                 getReservationStarting(),
-                getReservationEnding());
+                getReservationEnding(),
+                getStatus());
     }
 }

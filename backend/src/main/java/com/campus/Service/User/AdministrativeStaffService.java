@@ -2,12 +2,15 @@ package com.campus.Service.User;
 
 import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
+import com.campus.Classification.Status;
+import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.Equipment;
 import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Entity.Resource.OutdoorVenue;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
+import com.campus.Repository.Reservation.ReservationRepository;
 import com.campus.Repository.Resource.EquipmentRepository;
 import com.campus.Repository.Resource.IndoorVenueRepository;
 import com.campus.Repository.Resource.ResourceRepository;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -241,4 +245,21 @@ public class AdministrativeStaffService{
     private void deleteResource(Resource resource){
         resourceRepository.delete(resource);
     }   // Base Function : Delete the resource from database
+
+    @Autowired
+    private ReservationRepository reservationRepository;
+    public List<Reservation> getPendingReservationList(){
+        return reservationRepository.findReservationByStatus(Status.Pending);
+    }
+    public Reservation approveReservation(Reservation reservation){
+        reservation.changeReservationStatus(Status.Approved);
+        return reservationRepository.save(reservation);
+    }
+    public Reservation rejectReservation(Reservation reservation){
+        reservation.changeReservationStatus(Status.Rejected);
+        return reservationRepository.save(reservation);
+    }
+    public List<Reservation> filterReservation(Integer reservationId, User booker, Resource resource, LocalDateTime reservationAfter, LocalDateTime reservationBefore, Status status){
+        return reservationRepository.filterReservation(reservationId,booker,resource,reservationAfter,reservationBefore,status);
+    }
 }

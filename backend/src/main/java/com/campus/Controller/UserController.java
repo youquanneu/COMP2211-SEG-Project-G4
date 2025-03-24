@@ -1,6 +1,10 @@
 package com.campus.Controller;
 
+import com.campus.Classification.Status;
 import com.campus.Entity.Reservation.Reservation;
+import com.campus.Entity.Resource.Resource;
+import com.campus.Entity.User.User;
+import com.campus.Repository.Reservation.ReservationRepository;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.EquipmentService;
 import com.campus.Service.Resource.IndoorVenueService;
@@ -28,7 +32,10 @@ public class UserController implements CommandLineRunner{
     private ReservationService reservationService;
     @Autowired
     private IndoorVenueService indoorVenueService;
+    @Autowired
+    private ReservationRepository reservationRepository;
     @Override
     public void run(String... args) throws Exception {
+        reservationService.cancelCurrentReservation();
     }
 }
