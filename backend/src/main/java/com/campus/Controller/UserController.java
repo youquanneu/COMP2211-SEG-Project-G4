@@ -20,22 +20,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/user")
 public class UserController implements CommandLineRunner{
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AdministrativeStaffService administrativeStaffService;
-    @Autowired
-    private EquipmentService equipmentService;
-    @Autowired
-    private ResourceService resourceService;
-    @Autowired
-    private ReservationService reservationService;
-    @Autowired
-    private IndoorVenueService indoorVenueService;
-    @Autowired
-    private ReservationRepository reservationRepository;
     @Override
     public void run(String... args) throws Exception {
-        reservationService.cancelCurrentReservation();
     }
 }
