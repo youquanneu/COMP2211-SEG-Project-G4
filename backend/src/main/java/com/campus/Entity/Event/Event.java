@@ -1,6 +1,6 @@
 package com.campus.Entity.Event;
 
-import com.campus.Classification.Approval;
+import com.campus.Classification.Status;
 import com.campus.Entity.Resource.Venue;
 import com.campus.Entity.User.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,7 +21,7 @@ public class Event {
         setEventEnding(eventEnding);
         setEventDescription(eventDescription);
         setVenues(venues);
-        setApproval(Approval.Pending);
+        setApproval(Status.Pending);
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,8 +35,8 @@ public class Event {
     @ManyToMany
     private List<Venue> venues;
     @NotNull
-    @JsonProperty("Approval")
-    private Approval approval;
+    @JsonProperty("Status")
+    private Status status;
     public void changeEventTitle(String eventTitle){
         setEventTitle(eventTitle);
     };
@@ -52,8 +52,8 @@ public class Event {
     public void changeEventVenue(List<Venue> venues){
         setVenues(venues);
     }
-    public void changeApproval(Approval approval){
-        setApproval(approval);
+    public void changeApproval(Status status){
+        setApproval(status);
     }
     public Integer getEventId() {
         return eventId;
@@ -73,8 +73,8 @@ public class Event {
     public List<Venue> getVenues() {
         return venues;
     }
-    public Approval getApproval() {
-        return approval;
+    public Status getApproval() {
+        return status;
     }
     private void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
@@ -91,7 +91,7 @@ public class Event {
     private void setVenues(List<Venue> venues) {
         this.venues = venues;
     }
-    private void setApproval(Approval approval) {
-        this.approval = approval;
+    private void setApproval(Status status) {
+        this.status = status;
     }
 }

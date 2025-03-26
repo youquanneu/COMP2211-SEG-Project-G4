@@ -1,6 +1,5 @@
 package com.campus.DataTransferObject.Reservation;
 
-import com.campus.Classification.Approval;
 import com.campus.DataTransferObject.Resource.ResourceDTO;
 import com.campus.DataTransferObject.User.UserDTO;
 
@@ -9,25 +8,26 @@ import java.util.List;
 
 public class ReservationDTO {
     public ReservationDTO(){}
-    public ReservationDTO(UserDTO booker, List<ResourceDTO> resources,
-                          LocalDateTime reservationStarting, LocalDateTime reservationEnding,
-                          Approval approval){
-        setBooker(booker);
-        setResources(resources);
+    public ReservationDTO(Integer reservationId, ResourceDTO resourceDTO,
+                          LocalDateTime reservationStarting, LocalDateTime reservationEnding){
+        setReservationId(reservationId);
+        setResourceDTO(resourceDTO);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
-        setApproval(approval);
     }
-    private UserDTO booker;
-    private List<ResourceDTO> resources;
+    private Integer reservationId;
+    private UserDTO userDTO;
+    private ResourceDTO resourceDTO;
     private LocalDateTime reservationStarting;
     private LocalDateTime reservationEnding;
-    private Approval approval;
-    public UserDTO getBooker() {
-        return booker;
+    public Integer getReservationId() {
+        return reservationId;
     }
-    public List<ResourceDTO> getResources() {
-        return resources;
+    public UserDTO getUserDTO() {
+        return userDTO;
+    }
+    public ResourceDTO getResourceDTO() {
+        return resourceDTO;
     }
     public LocalDateTime getReservationStarting() {
         return reservationStarting;
@@ -35,14 +35,14 @@ public class ReservationDTO {
     public LocalDateTime getReservationEnding() {
         return reservationEnding;
     }
-    public Approval getApproval() {
-        return approval;
+    private void setReservationId(Integer reservationId) {
+        this.reservationId = reservationId;
     }
-    private void setBooker(UserDTO booker) {
-        this.booker = booker;
+    private void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
     }
-    private void setResources(List<ResourceDTO> resources) {
-        this.resources = resources;
+    private void setResourceDTO(ResourceDTO resourceDTO) {
+        this.resourceDTO = resourceDTO;
     }
     private void setReservationStarting(LocalDateTime reservationStarting) {
         this.reservationStarting = reservationStarting;
@@ -50,7 +50,5 @@ public class ReservationDTO {
     private void setReservationEnding(LocalDateTime reservationEnding) {
         this.reservationEnding = reservationEnding;
     }
-    private void setApproval(Approval approval) {
-        this.approval = approval;
-    }
+
 }

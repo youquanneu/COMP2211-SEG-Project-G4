@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToMany;
 import java.time.LocalTime;
 import java.util.List;
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Venue extends Resource{
     public Venue(){}
     public Venue(String resourceName,

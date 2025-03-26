@@ -21,6 +21,7 @@ public class Resource {
                     Restriction restriction,
                     ResourceCategory resourceCategory){
         setResourceName(resourceName);
+        checkOpenAndCloseTime(openTime,closeTime);
         setOpenTime(openTime);
         setCloseTime(closeTime);
         setRestriction(restriction);
@@ -34,10 +35,11 @@ public class Resource {
     private LocalTime openTime;
     private LocalTime closeTime;
     @NotNull
+    @JsonProperty("Restriction")
     private Restriction restriction;
     @JsonProperty("ResourceCategory")
     private ResourceCategory resourceCategory;
-    @ManyToMany(mappedBy = "resources")
+    @OneToMany(mappedBy = "resource")
     private List<Reservation> booking;
     public void changeResourceName(String resourceName){
         setResourceName(resourceName);
@@ -48,13 +50,7 @@ public class Resource {
     public void changeCloseTime(LocalTime closeTime){
         setCloseTime(closeTime);
     }
-    public void setToNonRestriction(Restriction restriction){
-        setRestriction(restriction);
-    }
-    public void setToApprovalRequired(Restriction restriction){
-        setRestriction(restriction);
-    }
-    public void setToRestricted(Restriction restriction){
+    public void changeRestriction(Restriction restriction){
         setRestriction(restriction);
     }
     public Integer getResourceId() {
@@ -90,7 +86,12 @@ public class Resource {
     private void setResourceCategory(ResourceCategory resourceCategory) {
         this.resourceCategory = resourceCategory;
     }
-    public String toString(){
-        return getResourceId()+getResourceName()+getResourceCategory();
+    private void checkOpenAndCloseTime(LocalTime openTime, LocalTime closeTime){
+        if ((openTime == null || closeTime == null)&&(openTime != closeTime)){
+            throw new RuntimeException("Open Time and Close Time should be either both null or both not null");
+        }
+        else if (openTime!=null && openTime.isAfter(closeTime)){
+            throw new RuntimeException("Close Time should be after Open Time");
+        }
     }
 }

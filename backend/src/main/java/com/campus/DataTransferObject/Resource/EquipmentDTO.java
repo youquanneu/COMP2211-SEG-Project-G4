@@ -4,10 +4,10 @@ import java.time.LocalTime;
 
 public class EquipmentDTO extends ResourceDTO{
     public EquipmentDTO(){}
-    public EquipmentDTO(String resourceName,
+    public EquipmentDTO(Integer resourceId, String resourceName,
                         LocalTime openTime, LocalTime closeTime,
                         String serialNumber){
-        super(resourceName, openTime, closeTime);
+        super(resourceId,resourceName, openTime, closeTime);
         setSerialNumber(serialNumber);
     }
     private String serialNumber;

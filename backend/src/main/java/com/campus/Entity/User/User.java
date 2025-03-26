@@ -35,6 +35,10 @@ public class User {
     @NotNull
     @JsonProperty("UserRole")
     private UserRole userRole;
+    @OneToMany
+    private List<Reservation> reservations;
+    @ManyToMany
+    private List<Event> events;
     public void changePassword(String password){
         setPassword(password);
     }
@@ -79,10 +83,9 @@ public class User {
                         Role       : %s
                         UserId     : %s
                         """,
-                getUsername(),getEmail(),getUserRole(),getUserId());
+                getUsername(),
+                getEmail(),
+                getUserRole(),
+                getUserId());
     }
-    @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL)
-    private List<Reservation> reservations;
-    @ManyToMany
-    private List<Event> events;
 }
