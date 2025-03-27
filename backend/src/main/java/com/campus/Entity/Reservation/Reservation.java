@@ -19,7 +19,7 @@ public class Reservation {
         setResource(resource);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
-        setStatus(checkResource(resource));
+        setStatus(initializeStatus());
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,9 +41,6 @@ public class Reservation {
     }
     public void changeReservationEndingTime(LocalDateTime reservationEnding){
         setReservationEnding(reservationEnding);
-    }
-    public void initializeStatus(){
-        setStatus(checkResource(getResource()));
     }
     public void changeReservationStatus(Status status){
         setStatus(status);
@@ -81,8 +78,8 @@ public class Reservation {
     private void setStatus(Status status) {
         this.status = status;
     }
-    private Status checkResource(Resource resource) {
-        Restriction restriction = resource.getRestriction();
+    public Status initializeStatus() {
+        Restriction restriction = getResource().getRestriction();
         return switch (restriction) {
             case Restricted         -> Status.Rejected;   // Prevent user accidentally book restricted resource
             case ApprovalRequired   -> Status.Pending;    // Pending if resource required approval

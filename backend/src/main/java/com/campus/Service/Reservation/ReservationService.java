@@ -110,7 +110,7 @@ public class ReservationService {
         newReservationValidation(resource,reservationStarting,reservationEnding);
         return new Reservation(user,resource,reservationStarting,reservationEnding);
     }   // Function : Create a new reservation after check the time validation
-    public void checkEditValidation(User booker, Reservation reservation){
+    private void checkEditValidation(User booker, Reservation reservation){
         boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
         boolean isInitialBooker = Objects.equals(reservation.getBooker().getUserId(), booker.getUserId());
         if (!(isAdministrator||isInitialBooker)){

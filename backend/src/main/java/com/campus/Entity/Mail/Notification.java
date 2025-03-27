@@ -1,5 +1,6 @@
 package com.campus.Entity.Mail;
 
+import com.campus.Classification.Status;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -11,5 +12,5 @@ public abstract class Notification {
     private Integer notificationId;
     private String recipientEmail;
     private LocalDateTime notificationTime;
-    private Boolean notificationSend;
+    private Status status;
 }

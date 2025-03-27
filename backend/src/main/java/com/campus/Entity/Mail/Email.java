@@ -1,6 +1,6 @@
 package com.campus.Entity.Mail;
 
-public class EmailLayout {
+public class Email {
     private String subject;
     private String header;
     private String footer;
