@@ -8,6 +8,9 @@ import com.campus.Entity.Resource.Equipment;
 import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Entity.Resource.OutdoorVenue;
 import com.campus.Entity.Resource.Resource;
+import com.campus.Entity.User.AdministrativeStaff;
+import com.campus.Entity.User.Lecturer;
+import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
 import com.campus.Repository.Reservation.ReservationRepository;
@@ -85,14 +88,29 @@ public class AdministrativeStaffService{
         }
     }   // Demonstration method: List out user by role
     public User registerNewUser(User user) {
-        Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(user.getUsername(), user.getEmail());
+        checkExistingUser(user.getUsername(), user.getEmail());
+        encodeUserPassword(user);
+        return saveUser(user);
+    }   // Function: Register a new user only if non-duplicate email or username
+    private void checkExistingUser(String username, String email){
+        Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username,email);
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with this email or username already exists.");
         }
+    }
+    private void encodeUserPassword(User user){
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.changePassword(encodedPassword);
-        return saveUser(user);
-    }   // Function: Register a new user only if non-duplicate email or username
+    }
+    public Student registerNewStudent(Student student) {
+        return (Student) saveUser(student);
+    }   // Function: Register a new student
+    public Lecturer registerNewUser(Lecturer lecturer) {
+        return (Lecturer) saveUser(lecturer);
+    }   // Function: Register a new lecturer
+    public User registerNewAdmin(AdministrativeStaff administrativeStaff) {
+        return saveUser(administrativeStaff);
+    }   // Function: Register a new administrativeStaff
     private User registerNewUser(String username, String email, String password, UserRole userRole) {
         Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username, email);
         if (existingUser.isPresent()) {

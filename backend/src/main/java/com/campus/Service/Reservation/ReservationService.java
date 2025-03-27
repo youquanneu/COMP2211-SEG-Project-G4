@@ -75,7 +75,8 @@ public class ReservationService {
             System.out.println("Input End: yyyy-mm-ddTHH:mm:ss");
             String endingTime = scanner.nextLine();
             LocalDateTime reservationEnding = LocalDateTime.parse(endingTime);
-            return saveReservation(changeReservationTime(reservation, reservationStarting, reservationEnding));
+            checkEditValidation(user,reservation);
+            return saveReservation(rescheduleReservation(reservation, reservationStarting, reservationEnding));
         }catch (Exception e){
             System.out.println(e.getMessage());
             modifyCurrentReservation();
@@ -90,7 +91,7 @@ public class ReservationService {
             System.out.println(getMyReservationList(user));
             System.out.println("Input reservation Id : ");
             Reservation reservation = getReservationById(scanner.nextInt());
-            checkCancellationValidation(reservation,user);
+            checkEditValidation(user,reservation);
             System.out.println("Confirmation : 1.Confirm 2.Cancel");
             if (scanner.nextInt()==1){
                 System.out.println(cancelReservation(reservation)+ "\nSuccessfully cancelled");
@@ -109,22 +110,22 @@ public class ReservationService {
         newReservationValidation(resource,reservationStarting,reservationEnding);
         return new Reservation(user,resource,reservationStarting,reservationEnding);
     }   // Function : Create a new reservation after check the time validation
-    public Reservation changeReservationTime(Reservation reservation,
-                                      LocalDateTime reservationStarting,
-                                      LocalDateTime reservationEnding){
-        changeReservationValidation(reservation,reservationStarting,reservationEnding);
+    public void checkEditValidation(User booker, Reservation reservation){
+        boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
+        boolean isInitialBooker = Objects.equals(reservation.getBooker().getUserId(), booker.getUserId());
+        if (!(isAdministrator||isInitialBooker)){
+            throw new RuntimeException("You are not allowed to edit the reservation");
+        }
+    }   // Function : Prevent users edit a reservation not belongs to them
+    public Reservation rescheduleReservation(Reservation reservation,
+                                             LocalDateTime reservationStarting,
+                                             LocalDateTime reservationEnding){
+        rescheduleReservationValidation(reservation,reservationStarting,reservationEnding);
         reservation.changeReservationStartingTime(reservationStarting);
         reservation.changeReservationEndingTime(reservationEnding);
         reservation.initializeStatus();
         return reservationRepository.save(reservation);
     }   // Function : Change reservation's period after check the time validation
-    public void checkCancellationValidation(Reservation reservation, User booker){
-        boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
-        boolean isInitialBooker = Objects.equals(reservation.getBooker().getUserId(), booker.getUserId());
-        if (!(isAdministrator||isInitialBooker)){
-            throw new RuntimeException("You are not allowed to cancel the reservation");
-        }
-    }   // Function : Prevent users cancel a reservation not belongs to them
     public Reservation cancelReservation(Reservation reservation){
         if (reservation.getStatus().equals(Status.Rejected)){
             throw new RuntimeException("Cancellation of a rejected reservation is not allowed");
@@ -137,10 +138,10 @@ public class ReservationService {
         checkTimeAvailability(resource,reservationStarting,reservationEnding);
         checkNewReservationConflict(resource,reservationStarting,reservationEnding);
     }   // Check if the reservation is valid and doesn't conflict with existing reservations
-    private void changeReservationValidation(Reservation reservation,LocalDateTime reservationStarting, LocalDateTime reservationEnding){
+    private void rescheduleReservationValidation(Reservation reservation, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         checkTimeValidity(reservationStarting,reservationEnding);
         checkTimeAvailability(reservation.getResource(),reservationStarting,reservationEnding);
-        checkReservationChangesConflict(reservation,reservationStarting,reservationEnding);
+        checkRescheduleReservationConflict(reservation,reservationStarting,reservationEnding);
     }   // Check if the reservation is valid and doesn't conflict with other existing reservations
     private void checkTimeValidity(LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         if (reservationStarting == null || reservationEnding == null){
@@ -182,7 +183,7 @@ public class ReservationService {
             throw new RuntimeException("Reservation with time conflict found");
         }
     }   // Check if new reservation conflict with existing reservation
-    private void checkReservationChangesConflict(Reservation reservation, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
+    private void checkRescheduleReservationConflict(Reservation reservation, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         List<Reservation> conflictReservation = reservationRepository.filterOtherConflictReservation
                 (
                         reservation.getReservationId(),

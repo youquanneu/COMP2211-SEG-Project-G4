@@ -8,26 +8,30 @@ import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Event {
     public Event(){}
     public Event(String eventTitle,
-                 LocalDateTime eventStarting, LocalDateTime eventEnding,
-                 String eventDescription,List<Venue> venues){
+                 LocalDateTime eventStarting,
+                 LocalDateTime eventEnding,
+                 String eventDescription,
+                 List<Venue> venues,
+                 List<User> organizer){
         setEventTitle(eventTitle);
         setEventStarting(eventStarting);
         setEventEnding(eventEnding);
         setEventDescription(eventDescription);
         setVenues(venues);
-        setApproval(Status.Pending);
+        setOrganizer(organizer);
+        setParticipant(new ArrayList<>());
+        setStatus(Status.Pending);
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer eventId;
-    @ManyToMany
-    private List<User> organizer;
     private String eventTitle;
     private LocalDateTime eventStarting;
     private LocalDateTime eventEnding;
@@ -37,6 +41,10 @@ public class Event {
     @NotNull
     @JsonProperty("Status")
     private Status status;
+    @ManyToMany
+    private List<User> organizer;
+    @ManyToMany
+    private List<User> participant;
     public void changeEventTitle(String eventTitle){
         setEventTitle(eventTitle);
     };
@@ -52,8 +60,8 @@ public class Event {
     public void changeEventVenue(List<Venue> venues){
         setVenues(venues);
     }
-    public void changeApproval(Status status){
-        setApproval(status);
+    public void changeStatus(Status status){
+        setStatus(status);
     }
     public Integer getEventId() {
         return eventId;
@@ -73,8 +81,14 @@ public class Event {
     public List<Venue> getVenues() {
         return venues;
     }
-    public Status getApproval() {
+    public Status getStatus() {
         return status;
+    }
+    public List<User> getOrganizer() {
+        return organizer;
+    }
+    public List<User> getParticipant() {
+        return participant;
     }
     private void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
@@ -91,7 +105,13 @@ public class Event {
     private void setVenues(List<Venue> venues) {
         this.venues = venues;
     }
-    private void setApproval(Status status) {
+    private void setStatus(Status status) {
         this.status = status;
+    }
+    private void setOrganizer(List<User> organizer) {
+        this.organizer = organizer;
+    }
+    private void setParticipant(List<User> participant) {
+        this.participant = participant;
     }
 }
