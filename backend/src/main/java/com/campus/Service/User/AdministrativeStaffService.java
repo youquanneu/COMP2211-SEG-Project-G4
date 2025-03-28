@@ -1,6 +1,5 @@
 package com.campus.Service.User;
 
-import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
 import com.campus.Classification.Status;
 import com.campus.Entity.Reservation.Reservation;
@@ -8,9 +7,6 @@ import com.campus.Entity.Resource.Equipment;
 import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Entity.Resource.OutdoorVenue;
 import com.campus.Entity.Resource.Resource;
-import com.campus.Entity.User.AdministrativeStaff;
-import com.campus.Entity.User.Lecturer;
-import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
 import com.campus.Repository.Reservation.ReservationRepository;
@@ -18,8 +14,6 @@ import com.campus.Repository.Resource.EquipmentRepository;
 import com.campus.Repository.Resource.IndoorVenueRepository;
 import com.campus.Repository.Resource.ResourceRepository;
 import com.campus.Repository.User.UserRepository;
-import com.campus.Service.Resource.EquipmentService;
-import com.campus.Service.Resource.ResourceService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 
 @Service
 public class AdministrativeStaffService{
@@ -133,22 +126,22 @@ public class AdministrativeStaffService{
             return null;
         }
     }
-    private Equipment addNewEquipment(Equipment equipment) {
+    private void addNewEquipment(Equipment equipment) {
         Optional<Equipment> existingEquipment = equipmentRepository.findBySerialNumberEqualsIgnoreCase(equipment.getSerialNumber());
         if (existingEquipment.isPresent()) {
             throw new RuntimeException("Equipment already exists.");
         }
-        return (Equipment) saveResource(equipment);
+        saveResource(equipment);
     }   // Function: Add a new equipment only if non-duplicate serial number
-    private IndoorVenue addNewIndoorVenue(IndoorVenue indoorVenue){
+    private void addNewIndoorVenue(IndoorVenue indoorVenue){
         Optional<IndoorVenue> existingIndoorVenue = indoorVenueRepository.findIndoorVenueByBuildingEqualsIgnoreCaseAndRoomNumberEqualsIgnoreCase(indoorVenue.getBuilding(), indoorVenue.getRoomNumber());
         if (existingIndoorVenue.isPresent()){
             throw new RuntimeException("Indoor Venue already exist");
         }
-        return (IndoorVenue) saveResource(indoorVenue);
+        saveResource(indoorVenue);
     }   // Function : Add a new indoor venue only if non-duplicate building and room number
-    private OutdoorVenue addNewOutdoorVenue(OutdoorVenue outdoorVenue){
-        return (OutdoorVenue) saveResource(outdoorVenue);
+    private void addNewOutdoorVenue(OutdoorVenue outdoorVenue){
+        saveResource(outdoorVenue);
     }   // Function : Add a new outdoor venue
     public Resource changeResourceName(Resource resource, String name){
         resource.changeResourceName(name);
