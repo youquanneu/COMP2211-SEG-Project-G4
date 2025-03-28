@@ -5,6 +5,7 @@ import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 

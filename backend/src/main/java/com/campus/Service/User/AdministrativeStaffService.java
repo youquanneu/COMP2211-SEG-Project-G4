@@ -20,6 +20,7 @@ import com.campus.Repository.Resource.ResourceRepository;
 import com.campus.Repository.User.UserRepository;
 import com.campus.Service.Resource.EquipmentService;
 import com.campus.Service.Resource.ResourceService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,81 +37,30 @@ public class AdministrativeStaffService{
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    public void register(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Input username : ");
-        String username = scanner.nextLine();
-        System.out.println("Input email : ");
-        String email = scanner.nextLine();
-        System.out.println("Input password : ");
-        String password = scanner.nextLine();
-        System.out.println("Input type: 1.Student 2.Lecturer 3.AdministrativeStaff ");
-        UserRole userRole;
-        int type = scanner.nextInt();
-        if (type ==1){
-            userRole = UserRole.Student;
-        } else if (type==2) {
-            userRole = UserRole.Lecturer;
-        }else {
-            userRole = UserRole.AdministrativeStaff;
-        }
-        try {
-            User u = new User(username, email, password, userRole);
-            registerNewUser(u);
-            //User u = registerNewUser(username, email, password, userRole);
-            System.out.println("User register successful : \n" + u);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            register();
-        }
-    }   // Demonstration method: Register a new user
-    public void allUser(){
-        List<User> userList = getAllUsers();
-        for (User user : userList) {
-            System.out.println(user.toString());
-        }
-    }   // Demonstration method: List out all user
-    public void userByRole() {
-        System.out.println("Select type: 1.Student 2.Lecturer 3.AdministrativeStaff ");
-        UserRole userRole;
-        Scanner scanner = new Scanner(System.in);
-        int type = scanner.nextInt();
-        if (type ==1){
-            userRole = UserRole.Student;
-        } else if (type==2) {
-            userRole = UserRole.Lecturer;
-        }else {
-            userRole = UserRole.AdministrativeStaff;
-        }
-        List<User> roleList = getUserByUserRole(userRole);
-        for (User user : roleList) {
-            System.out.println(user.toString());
-        }
-    }   // Demonstration method: List out user by role
+
     public User registerNewUser(User user) {
-        checkExistingUser(user.getUsername(), user.getEmail());
-        encodeUserPassword(user);
-        return saveUser(user);
-    }   // Function: Register a new user only if non-duplicate email or username
+        try {
+            checkExistingUser(user.getUsername(), user.getEmail());
+            encodeUserPassword(user);
+            saveUser(user);
+            System.out.println("User register successful : \n" + user);
+            return user;
+        }catch (Exception e){
+            System.out.println("User register unsuccessful : \n" + user);
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }   // Final Function: Register a new user only if non-duplicate email or username
     private void checkExistingUser(String username, String email){
         Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username,email);
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with this email or username already exists.");
         }
-    }
-    private void encodeUserPassword(User user){
+    }   // Function : Prevent user register with same username or email
+    private void encodeUserPassword(@NotNull User user){
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.changePassword(encodedPassword);
-    }
-    public Student registerNewStudent(Student student) {
-        return (Student) saveUser(student);
-    }   // Function: Register a new student
-    public Lecturer registerNewUser(Lecturer lecturer) {
-        return (Lecturer) saveUser(lecturer);
-    }   // Function: Register a new lecturer
-    public User registerNewAdmin(AdministrativeStaff administrativeStaff) {
-        return saveUser(administrativeStaff);
-    }   // Function: Register a new administrativeStaff
+    }   // Function : Encode the user password
     private User registerNewUser(String username, String email, String password, UserRole userRole) {
         Optional<User> existingUser = userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(username, email);
         if (existingUser.isPresent()) {
@@ -119,28 +69,28 @@ public class AdministrativeStaffService{
         String encodedPassword = passwordEncoder.encode(password);
         User newUser = new User(username, email, encodedPassword, userRole);
         return saveUser(newUser);
-    }   // Function: Register a new user only if non-duplicate email or username
-    private User modifyUsername(User user, String username){
+    }   // Alt-Function: Register a new user only if non-duplicate email or username
+    public User modifyUsername(@NotNull User user, String username){
         user.changeUsername(username);
         return saveUser(user);
     }   // Function : Change the user's username
-    private User modifyEmail(User user, String email){
+    public User modifyEmail(@NotNull User user, String email){
         user.changeEmail(email);
         return saveUser(user);
     }   // Function : Change the user's email
     private User saveUser(User user){
         return userRepository.save(user);
     }   // Base Function : Insert the user into database
-    private void deleteUser(User user){
+    public void deleteUser(User user){
         userRepository.delete(user);
     }   // Base Function : Delete the user from database
-    private List<User> getAllUsers(){
+    public List<User> getAllUsers(){
         return userRepository.findAll();
     }   // Base Function: Get a list of all user
-    private List<User> filterUsers(Integer userId,String username, String email, UserRole userRole){
+    public List<User> filterUsers(Integer userId,String username, String email, UserRole userRole){
         return userRepository.findUserByFilter(userId,username,email,userRole);
     }   // Base Function : Filter user
-    private List<User> getUserByUserRole(UserRole userRole){
+    public List<User> getUserByUserRole(UserRole userRole){
         return userRepository.findUserByUserRole(userRole);
     }   // Base Function: Get a list of user base on role
 
