@@ -1,8 +1,12 @@
 package com.campus.Controller;
 
+import com.campus.Classification.Restriction;
 import com.campus.Classification.Status;
 import com.campus.Classification.UserRole;
 import com.campus.Entity.Reservation.Reservation;
+import com.campus.Entity.Resource.Equipment;
+import com.campus.Entity.Resource.IndoorVenue;
+import com.campus.Entity.Resource.OutdoorVenue;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.AdministrativeStaff;
 import com.campus.Entity.User.Lecturer;
@@ -21,81 +25,65 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
 
 @RestController
 @RequestMapping("/user")
 public class UserController implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
-        testRegisterUser();
+        testNewReservation();
     }
     @Autowired
     private AdministrativeStaffService administrativeStaffService;
     @Autowired
     private UserService userService;
-    public void testRegisterUser(){
-        List<User> userForRegister = userListForRegisterTest();
-        for (User user : userForRegister){
-            administrativeStaffService.registerNewUser(user);
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
+    private ReservationService reservationService;
+    public void testNewReservation(){
+        for (Reservation reservation : reservationsTestList()){
+                reservationService.saveReservation(reservation);
         }
     }
-    private List<User> userListForRegisterTest(){
-        List<User> userList = new ArrayList<>();
-        User student1 = new Student("student1","student1@gmail.com","passwordStd1");
-        User student2 = new Student("student2","student2@gmail.com","passwordStd2");
-        User student3 = new Student("student2","student3@gmail.com","passwordStd3");
-        User lecturer1 = new Lecturer("lecturer1","lecturer1@gmail.com","passwordLec1");
-        User lecturer2 = new Lecturer("lecturer2","lecturer1@gmail.com","passwordLec2");
-        User administrativeStaff = new AdministrativeStaff("Admin1","Admin1@gmail.com","adminPassword");
-        userList.add(student1);
-        userList.add(student2);
-        userList.add(student3);
-        userList.add(lecturer1);
-        userList.add(lecturer2);
-        userList.add(administrativeStaff);
-        return userList;
-    }
-    private void testModifyUserInformation(){
-        User user = userService.getUserById(1);
-        administrativeStaffService.modifyUsername(user,"Alex");
-        administrativeStaffService.modifyEmail(user,"Alex@gmail.com");
-    }
-    private void testDeleteUser(){
-        User user = userService.getUserById(2);
-        administrativeStaffService.deleteUser(user);
-    }
-    private void testFilterUsers(){
-        System.out.println("No filtering : ");
-        System.out.println(administrativeStaffService.getAllUsers());
-        System.out.println();
-        System.out.println("Find by user Id : ");
-        System.out.println(administrativeStaffService.filterUsers(3,
-                null,null,null));
-        System.out.println();
-        System.out.println("Filter by user username : ");
-        System.out.println(administrativeStaffService.filterUsers(null,
-                "de",null,null));
-        System.out.println();
-        System.out.println("Filter by user email : ");
-        System.out.println(administrativeStaffService.filterUsers(null,
-                null,"tu",null));
-        System.out.println();
-        System.out.println("Filter by user user role and username: ");
-        System.out.println(administrativeStaffService.filterUsers(null,
-                "1",null, UserRole.Student));
-        System.out.println();
-    }
-    private void testGetByRole(){
-        System.out.println("Student: ");
-        System.out.println(administrativeStaffService.getUserByUserRole(UserRole.Student));
-        System.out.println();
-        System.out.println("Lecturer: ");
-        System.out.println(administrativeStaffService.getUserByUserRole(UserRole.Lecturer));
-        System.out.println();
-        System.out.println("Administrative Staff: ");
-        System.out.println(administrativeStaffService.getUserByUserRole(UserRole.AdministrativeStaff));
-        System.out.println();
+    private List<Reservation> reservationsTestList(){
+        List<Reservation> reservations =new ArrayList<>();
+        Reservation reservation1 = reservationService.createNewReservation(
+                userService.getUserById(1),
+                resourceService.getResourceByID(2),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1));
+        Reservation reservation2 = reservationService.createNewReservation(
+                userService.getUserById(1),
+                resourceService.getResourceByID(6),
+                LocalDateTime.now().plusDays(2),
+                LocalDateTime.now().plusWeeks(1));
+        Reservation reservation3 = reservationService.createNewReservation(
+                userService.getUserById(1),
+                resourceService.getResourceByID(3),
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.now().plusDays(1));
+        Reservation reservation4 = reservationService.createNewReservation(
+                userService.getUserById(4),
+                resourceService.getResourceByID(2),
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1));
+        Reservation reservation5 = reservationService.createNewReservation(
+                userService.getUserById(4),
+                resourceService.getResourceByID(2),
+                LocalDateTime.now().plusDays(2),
+                LocalDateTime.now().plusWeeks(1));
+        reservations.add(reservation1);
+        reservations.add(reservation2);
+        reservations.add(reservation3);
+        reservations.add(reservation4);
+        reservations.add(reservation5);
+        reservations.removeIf(Objects::isNull);
+        return reservations;
     }
 }

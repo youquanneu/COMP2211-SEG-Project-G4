@@ -107,8 +107,15 @@ public class ReservationService {
     public Reservation createNewReservation(User user, Resource resource,
                                             LocalDateTime reservationStarting,
                                             LocalDateTime reservationEnding){
-        newReservationValidation(resource,reservationStarting,reservationEnding);
-        return new Reservation(user,resource,reservationStarting,reservationEnding);
+        try {
+            newReservationValidation(resource,reservationStarting,reservationEnding);
+            return new Reservation(user,resource,reservationStarting,reservationEnding);
+        }
+        catch (Exception e){
+            System.out.println("Reservation Fail : \n");
+            System.out.println(e.getMessage());
+            return null;
+        }
     }   // Function : Create a new reservation after check the time validation
     private void checkEditValidation(User booker, Reservation reservation){
         boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
