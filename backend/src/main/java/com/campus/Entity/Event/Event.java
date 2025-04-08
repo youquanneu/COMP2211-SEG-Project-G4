@@ -45,23 +45,8 @@ public class Event {
     private List<User> organizer;
     @ManyToMany
     private List<User> participant;
-    public void changeEventTitle(String eventTitle){
-        setEventTitle(eventTitle);
-    };
-    public void changeEventStartingTime(LocalDateTime eventStarting){
-        setEventStarting(eventStarting);
-    }
-    public void changeEventEndingTime(LocalDateTime eventEnding){
-        setEventEnding(eventEnding);
-    }
-    public void changeEventDescription(String eventDescription){
-        setEventDescription(eventDescription);
-    }
-    public void changeEventVenue(List<Venue> venues){
-        setVenues(venues);
-    }
-    public void changeStatus(Status status){
-        setStatus(status);
+    public void addParticipant(User user){
+        this.participant.add(user);
     }
     public Integer getEventId() {
         return eventId;

@@ -41,20 +41,6 @@ public class UserService implements UserDetailsService {
                 .password(user.getPassword())
                 .build();
     }   // ???????????????????
-    public void login(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Input username : ");
-        String username = scanner.nextLine();
-        System.out.println("Input password : ");
-        String password = scanner.nextLine();
-        try {
-            User user = loginByUsername(username, password);
-            System.out.println(user);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            login();
-        }
-    }
     private UserDTO mapUserDTO(User user){
         return new UserDTO(user.getUserId(), user.getUsername(),
                 user.getEmail(),user.getUserRole());

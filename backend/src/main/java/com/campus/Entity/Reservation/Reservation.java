@@ -36,10 +36,8 @@ public class Reservation {
     private LocalDateTime reservationEnding;
     @NotNull
     private Status status;
-    public void changeReservationStartingTime(LocalDateTime reservationStarting){
+    public void changeReservationTime(LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         setReservationStarting(reservationStarting);
-    }
-    public void changeReservationEndingTime(LocalDateTime reservationEnding){
         setReservationEnding(reservationEnding);
     }
     public void changeReservationStatus(Status status){

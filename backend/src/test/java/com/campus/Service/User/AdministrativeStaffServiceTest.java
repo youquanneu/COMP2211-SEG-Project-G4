@@ -44,16 +44,19 @@ public class AdministrativeStaffServiceTest {
         userList.add(administrativeStaff);
         return userList;
     }
-    private void testModifyUserInformation(){
+    @org.junit.Test
+    public void testModifyUserInformation(){
         User user = userService.getUserById(1);
         administrativeStaffService.modifyUsername(user,"Alex");
         administrativeStaffService.modifyEmail(user,"Alex@gmail.com");
     }
-    private void testDeleteUser(){
+    @org.junit.Test
+    public void testDeleteUser(){
         User user = userService.getUserById(3);
         administrativeStaffService.deleteUser(user);
     }
-    private void testGetByRole(){
+    @org.junit.Test
+    public void testGetByRole(){
         System.out.println("Student: ");
         System.out.println(administrativeStaffService.getUserByUserRole(UserRole.Student));
         System.out.println();
@@ -64,7 +67,8 @@ public class AdministrativeStaffServiceTest {
         System.out.println(administrativeStaffService.getUserByUserRole(UserRole.AdministrativeStaff));
         System.out.println();
     }
-    private void testFilterUsers(){
+    @org.junit.Test
+    public void testFilterUsers(){
         System.out.println("No filtering : ");
         System.out.println(administrativeStaffService.getAllUsers());
         System.out.println();
@@ -85,7 +89,7 @@ public class AdministrativeStaffServiceTest {
                 "1",null, UserRole.Student));
         System.out.println();
     }
-
+    @org.junit.Test
     public void testAddNewResource(){
         for (Resource resource: testResourceList()) {
             administrativeStaffService.addNewResource(resource  );
@@ -111,6 +115,7 @@ public class AdministrativeStaffServiceTest {
         resourceList.add(outdoorVenue2);
         return resourceList;
     }
+    @org.junit.Test
     public void testChangeInfo(){
         Resource resource = resourceService.getResourceByID(1);
         administrativeStaffService.changeResourceName(resource,"Computer");
@@ -118,6 +123,7 @@ public class AdministrativeStaffServiceTest {
         administrativeStaffService.changeCloseTime(resource,null);
         administrativeStaffService.changeRestriction(resource,Restriction.ApprovalRequired);
     }
+    @org.junit.Test
     public void testDeleteResource(){
         administrativeStaffService.deleteResource(resourceService.getResourceByID(4));
     }

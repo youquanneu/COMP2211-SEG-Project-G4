@@ -16,7 +16,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Scanner;
 
 @Service
 public class ReservationService {
@@ -39,71 +38,6 @@ public class ReservationService {
     public List<Reservation> getMyReservationList(User user){
         return reservationRepository.findReservationByBooker(user);
     }
-    public Reservation createNewReservation(){
-        try {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Input user Id : ");
-            User user = userService.getUserById(scanner.nextInt());
-            System.out.println("Input resource Id : ");
-            Resource resource = resourceService.getResourceByID(scanner.nextInt());
-            String removeBlank = scanner.nextLine();
-            System.out.println("Input Start: yyyy-mm-ddTHH:mm:ss");
-            String startingTime = scanner.nextLine();
-            LocalDateTime reservationStarting = LocalDateTime.parse(startingTime);
-            System.out.println("Input End: yyyy-mm-ddTHH:mm:ss");
-            String endingTime = scanner.nextLine();
-            LocalDateTime reservationEnding = LocalDateTime.parse(endingTime);
-            return saveReservation(createNewReservation(user,resource, reservationStarting, reservationEnding));
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            createNewReservation();
-            return null;
-        }
-    }   // Demonstration Method : Create a new reservation and add into database
-    public Reservation modifyCurrentReservation(){
-        try {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Input user Id : ");
-            User user = userService.getUserById(scanner.nextInt());
-            System.out.println(getMyReservationList(user));
-            System.out.println("Input reservation Id : ");
-            Reservation reservation = getReservationById(scanner.nextInt());
-            String removeBlank = scanner.nextLine();
-            System.out.println("Input Start: yyyy-mm-ddTHH:mm:ss");
-            String startingTime = scanner.nextLine();
-            LocalDateTime reservationStarting = LocalDateTime.parse(startingTime);
-            System.out.println("Input End: yyyy-mm-ddTHH:mm:ss");
-            String endingTime = scanner.nextLine();
-            LocalDateTime reservationEnding = LocalDateTime.parse(endingTime);
-            checkEditValidation(user,reservation);
-            return saveReservation(rescheduleReservation(reservation, reservationStarting, reservationEnding));
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            modifyCurrentReservation();
-            return null;
-        }
-    }   // Demonstration Method : Change current reservation
-    public void cancelCurrentReservation(){
-        try {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Input user Id : ");
-            User user = userService.getUserById(scanner.nextInt());
-            System.out.println(getMyReservationList(user));
-            System.out.println("Input reservation Id : ");
-            Reservation reservation = getReservationById(scanner.nextInt());
-            checkEditValidation(user,reservation);
-            System.out.println("Confirmation : 1.Confirm 2.Cancel");
-            if (scanner.nextInt()==1){
-                System.out.println(cancelReservation(reservation)+ "\nSuccessfully cancelled");
-            }else {
-                System.out.println("Operation cancel");
-            }
-
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            cancelCurrentReservation();
-        }
-    }   // Demonstration Method : Cancel a reservation
     public Reservation createNewReservation(User user, Resource resource,
                                             LocalDateTime reservationStarting,
                                             LocalDateTime reservationEnding){
@@ -117,7 +51,7 @@ public class ReservationService {
             return null;
         }
     }   // Function : Create a new reservation after check the time validation
-    private void checkEditValidation(User booker, Reservation reservation){
+    void checkEditValidation(User booker, Reservation reservation){
         boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
         boolean isInitialBooker = Objects.equals(reservation.getBooker().getUserId(), booker.getUserId());
         if (!(isAdministrator||isInitialBooker)){
@@ -128,8 +62,7 @@ public class ReservationService {
                                              LocalDateTime reservationStarting,
                                              LocalDateTime reservationEnding){
         rescheduleReservationValidation(reservation,reservationStarting,reservationEnding);
-        reservation.changeReservationStartingTime(reservationStarting);
-        reservation.changeReservationEndingTime(reservationEnding);
+        reservation.changeReservationTime(reservationStarting, reservationEnding);
         reservation.initializeStatus();
         return reservationRepository.save(reservation);
     }   // Function : Change reservation's period after check the time validation
