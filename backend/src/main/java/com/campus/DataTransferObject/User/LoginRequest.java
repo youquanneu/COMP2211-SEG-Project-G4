@@ -2,20 +2,20 @@ package com.campus.DataTransferObject.User;
 
 public class LoginRequest {
     public LoginRequest(){}
-    public LoginRequest(String username, String password){
-        setUsername(username);
+    public LoginRequest(String email, String password){
+        setEmail(email);
         setPassword(password);
     }
-    private String username;
+    private String email;
     private String password;
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
     public String getPassword() {
         return password;
     }
-    private void setUsername(String username) {
-        this.username = username;
+    private void setEmail(String email) {
+        this.email = email;
     }
     private void setPassword(String password) {
         this.password = password;

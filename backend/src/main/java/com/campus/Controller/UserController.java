@@ -3,6 +3,8 @@ package com.campus.Controller;
 import com.campus.Classification.Restriction;
 import com.campus.Classification.Status;
 import com.campus.Classification.UserRole;
+import com.campus.DataTransferObject.User.LoginRequest;
+import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.*;
@@ -22,6 +24,8 @@ import com.campus.Service.User.UserService;
 import org.jetbrains.annotations.TestOnly;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -33,14 +37,60 @@ import java.util.Scanner;
 
 @RestController
 @RequestMapping("/user")
-public class UserController implements CommandLineRunner{
-    @Override
-    public void run(String... args) throws Exception {
-        User user = userService.getUserById(5);
-        eventService.registerForEvent(2,user);
+@CrossOrigin(origins = "http://localhost:3000")
+public class UserController implements CommandLineRunner {
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        try {
+            UserDTO userDTO = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+            userService.loadUserByUsername(userDTO.getUsername());
+            return ResponseEntity.ok(userDTO);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
-    @Autowired
-    private AdministrativeStaffService administrativeStaffService;
+//    @PostMapping("/forgot-password")
+//    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+//        // Implement logic to handle forgot password (e.g., send OTP via email)
+//        System.out.println("Forgot password request for: " + forgotPasswordRequest.getEmail());
+//        return ResponseEntity.ok("OTP sent successfully (simulated)");
+//    }
+//
+//    @PostMapping("/verify-otp")
+//    public ResponseEntity<?> verifyOTP(@RequestBody OTPVerificationRequest otpVerificationRequest) {
+//        // Implement logic to verify the OTP
+//        System.out.println("Verifying OTP: " + otpVerificationRequest.getOtp());
+//        // You might want to check if the OTP matches the one sent for the user
+//        if (otpVerificationRequest.getOtp() != null && otpVerificationRequest.getOtp().equals("123456")) { // Example OTP
+//            return ResponseEntity.ok("OTP verified successfully");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
+//        }
+//    }
+//
+//    @PostMapping("/reset-password")
+//    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+//        // Implement logic to update the user's password
+//        System.out.println("Resetting password for user");
+//        if (resetPasswordRequest.getNewPassword() != null &&
+//                resetPasswordRequest.getNewPassword().equals(resetPasswordRequest.getConfirmPassword()) &&
+//                resetPasswordRequest.getNewPassword().length() >= 6) {
+//            return ResponseEntity.ok("Password reset successfully");
+//        } else {
+//            return ResponseEntity.badRequest().body("Passwords do not match or are too short");
+//        }
+//    }
+
+//    @GetMapping("/user-data")
+//    public ResponseEntity<?> getUserData() {
+//        // In a real application, you would likely need authentication to get the current user's data
+//        // For now, let's return some sample data
+//        UserResponse user = new UserResponse("John Doe", "john.doe@example.com");
+//        return ResponseEntity.ok(user);
+//    }
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -51,6 +101,11 @@ public class UserController implements CommandLineRunner{
     private ReservationService reservationService;
     @Autowired
     private EventService eventService;
+    @Override
+    public void run(String... args) throws Exception {
+    }
+    @Autowired
+    private AdministrativeStaffService administrativeStaffService;
     public void testRegisterUser(){
         List<User> userForRegister = userListForRegisterTest();
         for (User user : userForRegister){

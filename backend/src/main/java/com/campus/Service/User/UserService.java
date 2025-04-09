@@ -45,6 +45,11 @@ public class UserService implements UserDetailsService {
         return new UserDTO(user.getUserId(), user.getUsername(),
                 user.getEmail(),user.getUserRole());
     }
+
+    public UserDTO login(String email, String password){
+        return mapUserDTO(loginByEmail(email,password));
+    }
+
     public User getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()){
