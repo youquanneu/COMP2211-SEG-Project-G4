@@ -1,12 +1,16 @@
 package com.campus.DataTransferObject.User;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LoginRequest {
     public LoginRequest(){}
     public LoginRequest(String email, String password){
         setEmail(email);
         setPassword(password);
     }
+    @JsonProperty
     private String email;
+    @JsonProperty
     private String password;
     public String getEmail() {
         return email;

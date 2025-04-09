@@ -47,6 +47,8 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO login(String email, String password){
+        System.out.println("Input email : " + email);
+        System.out.println("Input password : " + password);
         return mapUserDTO(loginByEmail(email,password));
     }
 

@@ -1,6 +1,7 @@
 package com.campus.DataTransferObject.User;
 
 import com.campus.Classification.UserRole;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 public class UserDTO {

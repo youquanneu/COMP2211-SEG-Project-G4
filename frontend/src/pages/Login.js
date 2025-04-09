@@ -38,30 +38,30 @@ function Login() {
       return;
     }
     try {
-      const response = await fetch('http://localhost:8082/user/login', {
+      const response = await fetch('http://172.20.144.1:8082/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.text();
         console.log('Login successful:', data);
-
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
           navigate('/userhome');
         }, 2000);
-      } else {
-        const error = await response.text(); // Or response.json()
+      }
+      else {
+        const error = await response.text();
         console.error('Login failed:', error);
         setErrorMessage(error || 'Login failed. Please try again.');
         setShowError(true);
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error during login:', error);
       setErrorMessage('Failed to connect to the server.');
       setShowError(true);
