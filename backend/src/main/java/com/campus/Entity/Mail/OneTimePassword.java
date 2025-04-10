@@ -1,8 +1,15 @@
 package com.campus.Entity.Mail;
 
+import jakarta.persistence.Entity;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Random;
 
 public class OneTimePassword{
+    public static void main(String[] args) {
+        OneTimePassword o = new OneTimePassword();
+        System.out.println(o);
+    }
     public OneTimePassword(){
         setOtpPrefix(randomPrefix());
         setOtpSuffix(randomSuffix());

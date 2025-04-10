@@ -2,10 +2,12 @@ package com.campus.Service.User;
 
 
 import com.campus.DataTransferObject.User.UserDTO;
+import com.campus.Entity.Mail.OneTimePassword;
 import com.campus.Entity.User.User;
 
 import com.campus.Repository.User.UserRepository;
 import com.campus.Service.Mail.EmailSenderService;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 @Service
 public class UserService implements UserDetailsService {
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
     @Autowired
     private UserRepository userRepository;
     @Lazy
@@ -45,6 +49,12 @@ public class UserService implements UserDetailsService {
         return new UserDTO(user.getUserId(), user.getUsername(),
                 user.getEmail(),user.getUserRole());
     }
+
+    public UserDTO login(String email, String password){
+        logger.info("Email : " + email + " ; password : " + password);
+        return mapUserDTO(loginByEmail(email,password));
+    }
+
     public User getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()){
@@ -104,8 +114,8 @@ public class UserService implements UserDetailsService {
     }   // Return new password after validation checking
     public User forgotPassword(String email, String inputOTP){
         User user = findUserByEmail(email);
-        String givenOTP = emailSenderService.sendOTP(email);
-        matchOTP(givenOTP,inputOTP);
+        OneTimePassword givenOTP = emailSenderService.sendOTP(email);
+        matchOTP(givenOTP.toString(),inputOTP);
         return user;
     }
     private void matchOTP(String givenOTP, String inputOTP){

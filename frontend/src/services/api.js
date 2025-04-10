@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 // base URL for API - will connect to backend later
-const API_URL = 'http://localhost:8080/api';
+export function getAPI_URL(path) {
+  return `http://localhost:8082/${path}`;
+}
 
 // User authentication
 export const loginUser = async (credentials) => {
