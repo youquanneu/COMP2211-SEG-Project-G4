@@ -12,10 +12,10 @@ import java.util.Random;
 public class EmailSenderService {
     @Autowired
     private JavaMailSender javaMailSender;
-    public String sendOTP(String email){
+    public OneTimePassword sendOTP(String email){
         OneTimePassword oneTimePassword = new OneTimePassword();
         sendEmail(email,"Your OTP",oneTimePassword.toString());
-        return oneTimePassword.toString();
+        return oneTimePassword ;
     }
     public void sendEventReminder(String email, String information){
         sendEmail(email,"Event Reminder",information);

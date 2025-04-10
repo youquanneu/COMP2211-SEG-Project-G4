@@ -5,6 +5,7 @@ import com.campus.Classification.UserRole;
 import com.campus.DataTransferObject.User.LoginRequest;
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.Event.Event;
+import com.campus.Entity.Mail.OneTimePassword;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.*;
 import com.campus.Entity.User.AdministrativeStaff;
@@ -12,6 +13,7 @@ import com.campus.Entity.User.Lecturer;
 import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Service.Event.EventService;
+import com.campus.Service.Mail.EmailSenderService;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.ResourceService;
 import com.campus.Service.Resource.VenueService;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -32,6 +35,10 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/user")
 public class UserController implements CommandLineRunner {
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private EmailSenderService emailSenderService;
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         System.out.println("Run login request body");
@@ -45,12 +52,16 @@ public class UserController implements CommandLineRunner {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
-    @Autowired
-    private UserService userService;
+    @PostMapping("/getOtp")
+    public ResponseEntity<?> requestOTP(@RequestBody String email){
+        OneTimePassword oneTimePassword = emailSenderService.sendOTP(email);
+        return ResponseEntity.ok(oneTimePassword.getOtpPrefix());
+    }
+
+
+
+
     @Override
     public void run(String... args) throws Exception {
-        UserDTO userDTO = userService.login("student1@gmail.com","passwordStd1");
-        System.out.println(userDTO.getUserId());
-        System.out.println(userDTO.getUsername());
     }
 }

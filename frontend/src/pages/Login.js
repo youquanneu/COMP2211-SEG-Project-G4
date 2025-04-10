@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../modules/auth/LoginForm';
 import ForgotPasswordForm from '../modules/auth/ForgotPasswordForm';
@@ -7,15 +7,17 @@ import ChangePasswordForm from '../modules/auth/ChangePasswordForm';
 import ErrorModal from '../components/ErrorModal';
 import SuccessModal from '../components/SuccessModal';
 import logo from '../assets/logo.png';
+import {getAPI_URL} from "../services/api";
 
 function Login() {
   const [currentForm, setCurrentForm] = useState('login');
-  const [otp, setOtp] = useState(null);
+  const [otpPrefix, setOtpPrefix] = useState(null);
   const [isForgotFlow, setIsForgotFlow] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
+  const emailRef = useRef(null);
 
   // Force light theme on login page mount
   useEffect(() => {
@@ -29,30 +31,28 @@ function Login() {
     root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
   }, []);
 
-  const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
+  // const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
 
   const handleLogin = async (email, password) => {
     if (!email || !email.includes('@') || !password || password.length < 6) {
       setErrorMessage('Please enter a valid email and password (minimum 6 characters).');
       setShowError(true);
       return;
-    }
+    }   // + Check user input of email and password
     try {
-      const response = await fetch('http://172.20.144.1:8082/user/login', {
+      const response = await fetch(getAPI_URL("user/login"), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-      });
+      });   // + Post data from form to backend
       if (response.ok) {
-        const data = await response.text();
-        console.log('Login successful:', data);
-        setShowSuccess(true);
-        setTimeout(() => {
-          setShowSuccess(false);
-          navigate('/userhome');
-        }, 2000);
+        const data = await response.json();
+        console.log('Account found:', data);
+        const otpPrefix = await sendOTP(data.email)
+        setOtpPrefix(otpPrefix)
+        setCurrentForm('otp')
       }
       else {
         const error = await response.text();
@@ -67,6 +67,68 @@ function Login() {
       setShowError(true);
     }
   };
+  const sendOTP = async (email)=>{
+      const otpResponse = await fetch(getAPI_URL(`user/getOtp`),{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+      if(!otpResponse.ok){
+        const error = await otpResponse.text();
+      }
+      if(emailRef) {
+        emailRef.current.value = email
+      }
+      return otpResponse.json()
+  }
+  const matchOTP = async (email,enteredOTP)=>{
+    const response = await fetch(getAPI_URL(`user/matchOtp`),{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({email,enteredOTP }),
+    })
+    if(!response.ok){
+      const error = await response.text();
+    }
+    return response.json()
+  }
+  const handleOTPVerify = (email,enteredOTP) => {
+    if (!enteredOTP || enteredOTP.length !== 6) {
+      setErrorMessage('Please enter a valid 6-digit OTP.');
+      setShowError(true);
+      return;
+    }
+    //verifying...
+    const otpMatching= matchOTP(emailRef.current.value,enteredOTP)
+    if(otpMatching) {
+      //after verify
+      setOtpPrefix(null);
+      if (isForgotFlow) {
+        setCurrentForm('changePassword');
+      } else {
+        // Reset to light theme on successful login
+        const root = document.documentElement;
+        localStorage.setItem('darkTheme', 'false'); // Reset to light in storage
+        root.style.setProperty('--background-color', '#fff');
+        root.style.setProperty('--text-color', '#333');
+        root.style.setProperty('--secondary-text-color', '#555');
+        root.style.setProperty('--button-bg-start', '#0077B6');
+        root.style.setProperty('--button-bg-end', '#005888');
+        root.style.setProperty('--border-color', '#ddd');
+        root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
+
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigate('/userhome');
+        }, 2000); // 2-second delay to show the message
+      }
+    }
+  };
 
   const handleForgotPassword = (email) => {
     if (!email || !email.includes('@')) {
@@ -74,40 +136,10 @@ function Login() {
       setShowError(true);
       return;
     }
-    setOtp(generateOTP());
+    setOtpPrefix(generateOTP());
     setIsForgotFlow(true);
     setCurrentForm('otp');
   };
-
-  const handleOTPVerify = (enteredOTP) => {
-    if (!enteredOTP || enteredOTP.length !== 6 || parseInt(enteredOTP) !== otp) {
-      setErrorMessage('Please enter a valid 6-digit OTP.');
-      setShowError(true);
-      return;
-    }
-    setOtp(null);
-    if (isForgotFlow) {
-      setCurrentForm('changePassword');
-    } else {
-      // Reset to light theme on successful login
-      const root = document.documentElement;
-      localStorage.setItem('darkTheme', 'false'); // Reset to light in storage
-      root.style.setProperty('--background-color', '#fff');
-      root.style.setProperty('--text-color', '#333');
-      root.style.setProperty('--secondary-text-color', '#555');
-      root.style.setProperty('--button-bg-start', '#0077B6');
-      root.style.setProperty('--button-bg-end', '#005888');
-      root.style.setProperty('--border-color', '#ddd');
-      root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
-
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        navigate('/userhome');
-      }, 2000); // 2-second delay to show the message
-    }
-  };
-
   const handlePasswordUpdate = (newPassword, confirmPassword) => {
     if (!newPassword || newPassword.length < 6 || newPassword !== confirmPassword) {
       setErrorMessage('Passwords must match and be at least 6 characters.');
@@ -132,9 +164,10 @@ function Login() {
   return (
     <div className="container">
       <img src={logo} alt="Logo" className="login-logo" />
+      <input type="hidden" ref={emailRef}/>
       {currentForm === 'login' && <LoginForm onLogin={handleLogin} onForgot={() => setCurrentForm('forgot')} />}
       {currentForm === 'forgot' && <ForgotPasswordForm onSubmit={handleForgotPassword} onBack={() => setCurrentForm('login')} />}
-      {currentForm === 'otp' && <OTPForm otp={otp} onVerify={handleOTPVerify} />}
+      {currentForm === 'otp' && <OTPForm otp={otpPrefix} onVerify={handleOTPVerify} />}
       {currentForm === 'changePassword' && <ChangePasswordForm onUpdate={handlePasswordUpdate} />}
       {showError && <ErrorModal message={errorMessage} onClose={closeErrorModal} />}
       {showSuccess && (
