@@ -2,6 +2,7 @@ package com.campus.Controller;
 
 import com.campus.Classification.Restriction;
 import com.campus.Classification.UserRole;
+import com.campus.DataTransferObject.Mail.EmailDTO;
 import com.campus.DataTransferObject.User.LoginRequest;
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.Event.Event;
@@ -19,6 +20,7 @@ import com.campus.Service.Resource.ResourceService;
 import com.campus.Service.Resource.VenueService;
 import com.campus.Service.User.AdministrativeStaffService;
 import com.campus.Service.User.UserService;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpStatus;
@@ -53,15 +55,17 @@ public class UserController implements CommandLineRunner {
         }
     }
     @PostMapping("/getOtp")
-    public ResponseEntity<?> requestOTP(@RequestBody String email){
-        OneTimePassword oneTimePassword = emailSenderService.sendOTP(email);
+    public ResponseEntity<?> requestOTP(@RequestBody EmailDTO emailDTO){
+        System.out.println("Send OTP on going : "  + emailDTO.getEmail());
+        OneTimePassword oneTimePassword = emailSenderService.sendOTP(emailDTO.getEmail());
         return ResponseEntity.ok(oneTimePassword.getOtpPrefix());
     }
     @PostMapping("/matchOtp")
     public ResponseEntity<?> matchOTP(@RequestBody String email, String otp){
         return ResponseEntity.ok(email + " , " + otp);
     }
-
+    @Autowired
+    private AdministrativeStaffService administrativeStaffService;
     @Override
     public void run(String... args) throws Exception {
     }

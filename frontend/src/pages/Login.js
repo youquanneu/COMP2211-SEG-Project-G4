@@ -31,7 +31,7 @@ function Login() {
     root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
   }, []);
 
-  // const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
+   const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
 
   const handleLogin = async (email, password) => {
     if (!email || !email.includes('@') || !password || password.length < 6) {
@@ -49,7 +49,7 @@ function Login() {
       });   // Post data to backend
       if (response.ok) {
         const data = await response.json();         // Get object json data
-        console.log('Account matches successful : ', data);
+        console.log('Account matches successful : ', data)
         const otpPrefix = await sendOTP(data.email) // Send OTP through email
         console.log(otpPrefix)
         setOtpPrefix(otpPrefix)
@@ -68,8 +68,8 @@ function Login() {
       setShowError(true);
     }
   };
-  const sendOTP = async (email)=>{
-      const otpResponse = await fetch(getAPI_URL(`user/getOtp`),{
+  async function sendOTP (email){
+      const otpResponse = await fetch(getAPI_URL("user/getOtp"),{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,22 +82,10 @@ function Login() {
       if(emailRef) {
         emailRef.current.value = email
       }
-      return otpResponse.json()
-  }
-  const matchOTP = async (email,enteredOTP)=>{
-    const response = await fetch(getAPI_URL(`user/matchOtp`),{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({email,enteredOTP}), //vvv-123456
-    })
-    if(!response.ok){
-      const error = await response.text();
-    }
-    return response.json()
+      return otpResponse.text()
   }
   const handleOTPVerify = (email,enteredOTP) => {
+    console.log(enteredOTP)
     if (!enteredOTP || enteredOTP.length !== 6) {
       setErrorMessage('Please enter a valid 6-digit OTP.');
       setShowError(true);
@@ -130,6 +118,19 @@ function Login() {
       }
     }
   };
+  async function matchOTP (email,enteredOTP) {
+      const response = await fetch(getAPI_URL("user/matchOtp"),{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({email,enteredOTP}),
+      })
+      if(!response.ok){
+        const error = await response.text();
+      }
+      return response.text
+    }
 
   const handleForgotPassword = (email) => {
     if (!email || !email.includes('@')) {

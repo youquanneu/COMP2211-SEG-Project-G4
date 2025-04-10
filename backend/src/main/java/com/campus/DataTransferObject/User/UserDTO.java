@@ -13,9 +13,13 @@ public class UserDTO {
         setEmail(email);
         setUserRole(userRole);
     }
+    @JsonProperty
     private Integer userId;
+    @JsonProperty
     private String username;
+    @JsonProperty
     private String email;
+    @JsonProperty
     private UserRole userRole;
     public UserRole getUserRole() {
         return userRole;
