@@ -57,9 +57,10 @@ public class UserController implements CommandLineRunner {
         OneTimePassword oneTimePassword = emailSenderService.sendOTP(email);
         return ResponseEntity.ok(oneTimePassword.getOtpPrefix());
     }
-
-
-
+    @PostMapping("/matchOtp")
+    public ResponseEntity<?> matchOTP(@RequestBody String email, String otp){
+        return ResponseEntity.ok(email + " , " + otp);
+    }
 
     @Override
     public void run(String... args) throws Exception {

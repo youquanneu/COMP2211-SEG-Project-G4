@@ -38,7 +38,7 @@ function Login() {
       setErrorMessage('Please enter a valid email and password (minimum 6 characters).');
       setShowError(true);
       return;
-    }   // + Check user input of email and password
+    }   // Check user input of email and password
     try {
       const response = await fetch(getAPI_URL("user/login"), {
         method: 'POST',
@@ -46,11 +46,12 @@ function Login() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-      });   // + Post data from form to backend
+      });   // Post data to backend
       if (response.ok) {
-        const data = await response.json();
-        console.log('Account found:', data);
-        const otpPrefix = await sendOTP(data.email)
+        const data = await response.json();         // Get object json data
+        console.log('Account matches successful : ', data);
+        const otpPrefix = await sendOTP(data.email) // Send OTP through email
+        console.log(otpPrefix)
         setOtpPrefix(otpPrefix)
         setCurrentForm('otp')
       }
@@ -89,7 +90,7 @@ function Login() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({email,enteredOTP }),
+      body: JSON.stringify({email,enteredOTP}), //vvv-123456
     })
     if(!response.ok){
       const error = await response.text();
@@ -105,11 +106,11 @@ function Login() {
     //verifying...
     const otpMatching= matchOTP(emailRef.current.value,enteredOTP)
     if(otpMatching) {
-      //after verify
       setOtpPrefix(null);
       if (isForgotFlow) {
         setCurrentForm('changePassword');
-      } else {
+      }
+      else {
         // Reset to light theme on successful login
         const root = document.documentElement;
         localStorage.setItem('darkTheme', 'false'); // Reset to light in storage
