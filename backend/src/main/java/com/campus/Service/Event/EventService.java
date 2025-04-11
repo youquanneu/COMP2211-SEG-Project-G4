@@ -43,5 +43,4 @@ public class EventService {
             System.out.println("Register successfully");
         }
     }
-
 }

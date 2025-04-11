@@ -1,6 +1,7 @@
 package com.campus.Service.Mail;
 
 import com.campus.Entity.Mail.OneTimePassword;
+import com.campus.Repository.Mail.OneTimePasswordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,12 +11,15 @@ import java.util.Random;
 
 @Service
 public class EmailSenderService {
+
     @Autowired
     private JavaMailSender javaMailSender;
-    public OneTimePassword sendOTP(String email){
-        OneTimePassword oneTimePassword = new OneTimePassword();
+    @Autowired
+    private OneTimePasswordService oneTimePasswordService;
+    public String sendOTP(String email){
+        OneTimePassword oneTimePassword = oneTimePasswordService.generateOTP(email);
         sendEmail(email,"Your OTP",oneTimePassword.toString());
-        return oneTimePassword ;
+        return oneTimePassword.getOtpPrefix() ;
     }
     public void sendEventReminder(String email, String information){
         sendEmail(email,"Event Reminder",information);

@@ -1,18 +1,21 @@
 package com.campus.Entity.Mail;
 
-import jakarta.persistence.Entity;
+import com.campus.Entity.User.User;
+import jakarta.persistence.*;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
+@Entity
 public class OneTimePassword{
-    public static void main(String[] args) {
-        OneTimePassword o = new OneTimePassword();
-        System.out.println(o);
-    }
-    public OneTimePassword(){
+    public OneTimePassword(){}
+    public OneTimePassword(String email){
         setOtpPrefix(randomPrefix());
         setOtpSuffix(randomSuffix());
+        setEmail(email);
+        setCreatedTime(LocalDateTime.now());
     }
     private String randomPrefix(){
         StringBuilder prefix = new StringBuilder();
@@ -32,19 +35,39 @@ public class OneTimePassword{
         }
         return suffix.toString();
     }   // Function : Generate a 6 digits suffix
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer otpID;
     private String otpPrefix;
     private String otpSuffix;
+    private String email;
+    private LocalDateTime createdTime;
+    public Integer getOtpID() {
+        return otpID;
+    }
     public String getOtpPrefix() {
         return otpPrefix;
     }
     public String getOtpSuffix() {
         return otpSuffix;
     }
+    public String getEmail() {
+        return email;
+    }
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
     private void setOtpPrefix(String otpPrefix) {
         this.otpPrefix = otpPrefix;
     }
     private void setOtpSuffix(String otpSuffix) {
         this.otpSuffix = otpSuffix;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    private void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
     }
     @Override
     public String toString() {

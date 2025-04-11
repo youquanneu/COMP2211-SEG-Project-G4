@@ -124,7 +124,7 @@ function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({email,enteredOTP}),
+        body: JSON.stringify({email,otpPrefix,enteredOTP}),
       })
       if(!response.ok){
         const error = await response.text();

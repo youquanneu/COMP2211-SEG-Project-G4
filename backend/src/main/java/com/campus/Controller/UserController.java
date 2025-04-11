@@ -3,6 +3,7 @@ package com.campus.Controller;
 import com.campus.Classification.Restriction;
 import com.campus.Classification.UserRole;
 import com.campus.DataTransferObject.Mail.EmailDTO;
+import com.campus.DataTransferObject.Mail.OneTimePasswordDTO;
 import com.campus.DataTransferObject.User.LoginRequest;
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.Event.Event;
@@ -15,6 +16,7 @@ import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Service.Event.EventService;
 import com.campus.Service.Mail.EmailSenderService;
+import com.campus.Service.Mail.OneTimePasswordService;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.ResourceService;
 import com.campus.Service.Resource.VenueService;
@@ -41,13 +43,15 @@ public class UserController implements CommandLineRunner {
     private UserService userService;
     @Autowired
     private EmailSenderService emailSenderService;
+    @Autowired
+    private OneTimePasswordService oneTimePasswordService;
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         System.out.println("Run login request body");
         try {
             System.out.println("Try user login service");
             UserDTO userDTO = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-            System.out.println("Get userDTO" + userDTO);
+            System.out.println("Get userDTO" + userDTO.getUsername());
             return ResponseEntity.ok(userDTO);
         }catch (Exception e){
             System.out.println("Get exception : " + e.getMessage());
@@ -57,15 +61,27 @@ public class UserController implements CommandLineRunner {
     @PostMapping("/getOtp")
     public ResponseEntity<?> requestOTP(@RequestBody EmailDTO emailDTO){
         System.out.println("Send OTP on going : "  + emailDTO.getEmail());
-        OneTimePassword oneTimePassword = emailSenderService.sendOTP(emailDTO.getEmail());
-        return ResponseEntity.ok(oneTimePassword.getOtpPrefix());
+        String prefixToShow = emailSenderService.sendOTP(emailDTO.getEmail());
+        return ResponseEntity.ok(prefixToShow);
     }
     @PostMapping("/matchOtp")
-    public ResponseEntity<?> matchOTP(@RequestBody String email, String otp){
-        return ResponseEntity.ok(email + " , " + otp);
+    public ResponseEntity<?> matchOTP(@RequestBody OneTimePasswordDTO oneTimePasswordDTO){
+        try {
+            System.out.println("Email : " + oneTimePasswordDTO.getEmail() + " with OTP : " +
+                    oneTimePasswordDTO.getOtpPrefix() + "-" + oneTimePasswordDTO.getEnteredOTP());
+            oneTimePasswordService.matchOneTimePassword(
+                    oneTimePasswordDTO.getEmail(),
+                    oneTimePasswordDTO.getOtpPrefix(),
+                    oneTimePasswordDTO.getEnteredOTP());
+            return ResponseEntity.ok("OTP Matches");
+        }catch (Exception e){
+            System.out.println("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
     @Autowired
     private AdministrativeStaffService administrativeStaffService;
+
     @Override
     public void run(String... args) throws Exception {
     }

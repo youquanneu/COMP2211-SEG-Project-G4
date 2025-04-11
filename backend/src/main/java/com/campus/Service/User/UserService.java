@@ -114,13 +114,6 @@ public class UserService implements UserDetailsService {
     }   // Return new password after validation checking
     public User forgotPassword(String email, String inputOTP){
         User user = findUserByEmail(email);
-        OneTimePassword givenOTP = emailSenderService.sendOTP(email);
-        matchOTP(givenOTP.toString(),inputOTP);
         return user;
     }
-    private void matchOTP(String givenOTP, String inputOTP){
-        if (!givenOTP.equals(inputOTP)){
-            throw new RuntimeException("OTP not matches");
-        }
-    }   // Change password if OTP verification successful
 }
