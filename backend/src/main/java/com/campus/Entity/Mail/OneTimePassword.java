@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -38,9 +39,13 @@ public class OneTimePassword{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer otpID;
+    @NotNull
     private String otpPrefix;
+    @NotNull
     private String otpSuffix;
+    @NotNull
     private String email;
+    @NotNull
     private LocalDateTime createdTime;
     public Integer getOtpID() {
         return otpID;

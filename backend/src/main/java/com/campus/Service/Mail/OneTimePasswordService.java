@@ -6,6 +6,7 @@ import com.campus.Repository.Mail.OneTimePasswordRepository;
 import com.campus.Service.User.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Service
 public class OneTimePasswordService {
+    @Lazy
     @Autowired
     private UserService userService;
     @Autowired

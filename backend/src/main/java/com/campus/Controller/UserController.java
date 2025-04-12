@@ -59,7 +59,7 @@ public class UserController implements CommandLineRunner{
     }
     @PostMapping("/matchOtp")
     public ResponseEntity<?> matchOTP(@RequestBody OneTimePasswordDTO oneTimePasswordDTO){
-        logger.info("Matching OTP : " + oneTimePasswordDTO);
+        logger.info("Matching OTP : " + oneTimePasswordDTO.getEmail() + " , " + oneTimePasswordDTO.getOtpPrefix() + "-" + oneTimePasswordDTO.getEnteredOTP());
         try {
             UserDTO userDTO = oneTimePasswordService.matchOneTimePassword(
                     oneTimePasswordDTO.getEmail(),
