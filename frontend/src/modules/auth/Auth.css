@@ -1,70 +1,87 @@
+/* src/pages/Login.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full viewport height */
+  width: 100%;
+  max-width: 400px; /* Matches Home.js container width */
+  margin: 0 auto; /* Horizontal centering fallback */
+  padding: 10px; /* Mobile-friendly padding */
+  box-sizing: border-box;
+  background-color: var(--background-color, #fff); /* Uses theme from useEffect */
+  color: var(--text-color, #333);
+}
+
 .login-logo {
   display: block;
   margin: 20px auto 15px auto; /* Center and add spacing */
-  width: 300px; /* Adjust size as needed */
+  width: 200px; /* Smaller for mobile */
   height: auto;
 }
 
 .form-group {
-  margin-bottom: 15px; /* Reduced for mobile */
+  margin-bottom: 15px;
+  width: 100%; /* Ensure form takes container width */
 }
 
 label {
   display: block;
-  color: #555;
-  font-size: 14px; /* Smaller font for mobile */
+  color: var(--secondary-text-color, #555);
+  font-size: 14px;
   margin-bottom: 5px;
-  text-align: left; /* Align labels left for readability */
+  text-align: left;
 }
 
 input {
   width: 100%;
-  padding: 10px; /* Slightly smaller padding */
-  border: 1px solid #ddd;
-  border-radius: 6px; /* Softer corners */
-  font-size: 14px; /* Mobile-friendly font size */
-  box-sizing: border-box; /* Ensure padding doesn’t overflow */
+  padding: 10px;
+  border: 1px solid var(--border-color, #ddd);
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
 input:focus {
   outline: none;
-  border-color: #0077B6;
+  border-color: var(--button-bg-start, #0077B6);
 }
 
 button {
   width: 100%;
-  padding: 10px; /* Reduced for mobile */
-  background: linear-gradient(to right, #0077B6, #005888);
+  padding: 10px;
+  background: linear-gradient(to right, var(--button-bg-start, #0077B6), var(--button-bg-end, #005888));
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: 14px; /* Smaller font */
+  font-size: 14px;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
 
 button:hover {
-  transform: translateY(-2px); /* Still works on mobile if supported */
+  transform: translateY(-2px);
 }
 
 .otp-display {
   text-align: center;
-  margin-bottom: 15px; /* Reduced spacing */
+  margin-bottom: 15px;
 }
 
 .otp-display span {
   display: block;
-  color: #555;
-  font-size: 12px; /* Smaller for mobile */
+  color: var(--secondary-text-color, #555);
+  font-size: 12px;
   margin-bottom: 5px;
 }
 
 #generatedOTP {
-  font-size: 24px; /* Slightly smaller for mobile */
+  font-size: 24px;
   font-weight: bold;
-  color: #0077B6;
+  color: var(--button-bg-start, #0077B6);
   background: #f5f5f5;
-  padding: 8px; /* Reduced padding */
+  padding: 8px;
   border-radius: 6px;
   letter-spacing: 2px;
 }
@@ -72,8 +89,8 @@ button:hover {
 .forgot-link,
 .back-link {
   text-align: center;
-  color: #0077B6;
-  font-size: 14px; /* Smaller for mobile */
+  color: var(--button-bg-start, #0077B6);
+  font-size: 14px;
   margin-top: 10px;
   cursor: pointer;
   text-decoration: underline;
@@ -81,24 +98,27 @@ button:hover {
 
 .forgot-link:hover,
 .back-link:hover {
-  color: #005888;
+  color: var(--button-bg-end, #005888);
 }
 
 h2 {
   text-align: center;
-  color: #333;
-  margin-bottom: 15px; /* Reduced spacing */
-  font-size: 20px; /* Smaller for mobile */
+  color: var(--text-color, #333);
+  margin-bottom: 15px;
+  font-size: 20px;
 }
 
-/* Media query for larger screens (optional) */
+/* Media query for larger screens */
 @media (min-width: 768px) {
   .container {
-    padding: 20px; /* Slightly larger on desktop */
+    padding: 20px;
+  }
+  .login-logo {
+    width: 300px; /* Larger logo on desktop */
   }
   input,
   button {
-    font-size: 16px; /* Default size for larger screens */
+    font-size: 16px;
   }
   h2 {
     font-size: 24px;

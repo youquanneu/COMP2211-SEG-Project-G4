@@ -15,7 +15,7 @@ function UserHome() {
     if (selectedPage === 'userbooking') {
       navigate('/userbooking');
     } else if (selectedPage === 'calendar') {
-      navigate('/calendar');
+      navigate('/usercalendar');
     } else if (selectedPage === 'emergency') {
       navigate('/emergency');
     }

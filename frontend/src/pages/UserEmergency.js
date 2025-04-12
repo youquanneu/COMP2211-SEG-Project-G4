@@ -20,7 +20,7 @@ function UserEmergency() {
     console.log('Navigating to:', selectedPage); // Debug: Log dropdown navigation
     if (selectedPage === 'userbooking') {
       navigate('/userbooking');
-    } else if (selectedPage === 'calendar') {
+    } else if (selectedPage === 'usercalendar') {
       navigate('/calendar');
     } else if (selectedPage === 'emergency') {
       navigate('/emergency');
