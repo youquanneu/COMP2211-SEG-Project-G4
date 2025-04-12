@@ -16,9 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 @Service
 public class UserService implements UserDetailsService {
+    private static final Logger logger = Logger.getLogger(UserService.class.getName());
     @Autowired
     private UserRepository userRepository;
     @Lazy
@@ -40,11 +42,25 @@ public class UserService implements UserDetailsService {
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .build();
-    }   // ???????????????????
+    }
     private UserDTO mapUserDTO(User user){
         return new UserDTO(user.getUserId(), user.getUsername(),
                 user.getEmail(),user.getUserRole());
     }
+    public UserDTO login(String email, String password){
+        logger.info("Email : " + email);
+        return mapUserDTO(loginByEmail(email,password));
+    }
+    public UserDTO getUserByUsernamePassword(String username, String password){
+        return mapUserDTO(loginByUsername(username,password));
+    }   // Get user by username and password
+    public UserDTO getUserByEmailPassword(String email, String password){
+        return mapUserDTO(loginByEmail(email,password));
+    }   // Get user by email and password
+    public UserDTO getUserByEmail(String email){
+        return mapUserDTO(findUserByEmail(email));
+    }
+
     public User getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()){
@@ -52,9 +68,6 @@ public class UserService implements UserDetailsService {
         }
         return user.get();
     }   // Get user by user id
-    public UserDTO getUserByUsernamePassword(String username, String password){
-        return mapUserDTO(loginByUsername(username,password));
-    }   // Get user by username and password
     User loginByUsername(String username, String password) {
         User user = findUserByUsername(username);
         verifyCurrentPassword(user,password);

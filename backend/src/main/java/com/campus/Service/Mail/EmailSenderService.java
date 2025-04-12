@@ -6,16 +6,16 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
-
 @Service
 public class EmailSenderService {
     @Autowired
     private JavaMailSender javaMailSender;
+    @Autowired
+    private OneTimePasswordService oneTimePasswordService;
     public String sendOTP(String email){
-        OneTimePassword oneTimePassword = new OneTimePassword();
+        OneTimePassword oneTimePassword = oneTimePasswordService.generateOTP(email);
         sendEmail(email,"Your OTP",oneTimePassword.toString());
-        return oneTimePassword.toString();
+        return oneTimePassword.getOtpPrefix() ;
     }
     public void sendEventReminder(String email, String information){
         sendEmail(email,"Event Reminder",information);

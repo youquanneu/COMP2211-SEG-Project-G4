@@ -27,15 +27,15 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        String username = request.getUsername();
+        String email = request.getEmail();
         String password = request.getPassword();
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username,password)
+                    new UsernamePasswordAuthenticationToken(email,password)
             );
             org.springframework.security.core.userdetails.User user =
                     (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-            UserDTO userDTO = userService.getUserByUsernamePassword(username,password);
+            UserDTO userDTO = userService.getUserByEmailPassword(email,password);
 
             String token = jwtService.generateToken(user);
 
