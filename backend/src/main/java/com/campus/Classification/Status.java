@@ -1,5 +1,5 @@
 package com.campus.Classification;
 
 public enum Status {
-    Approved, Pending, Rejected, Cancelled, Sent;
+    Approved, Pending, Rejected, Cancelled, Sent, Solved;
 }

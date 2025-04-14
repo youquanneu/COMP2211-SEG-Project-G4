@@ -7,9 +7,8 @@ import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import com.campus.Repository.Reservation.ReservationRepository;
 import com.campus.Service.Mail.NotificationService;
-import com.campus.Service.Resource.ResourceService;
-import com.campus.Service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,10 +21,7 @@ import java.util.Optional;
 public class ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ResourceService resourceService;
+    @Lazy
     @Autowired
     private NotificationService notificationService;
     public Reservation getReservationById(Integer reservationId){
@@ -44,18 +40,11 @@ public class ReservationService {
     public Reservation createNewReservation(User user, Resource resource,
                                             LocalDateTime reservationStarting,
                                             LocalDateTime reservationEnding){
-        try {
-            newReservationValidation(resource,reservationStarting,reservationEnding);
-            Reservation reservation = new Reservation(user,resource,reservationStarting,reservationEnding);
-            saveReservation(reservation);
-            notificationService.reservationNotification(reservation);
-            return reservation;
-        }
-        catch (Exception e){
-            System.out.println("Reservation Fail : \n");
-            System.out.println(e.getMessage());
-            return null;
-        }
+        newReservationValidation(resource,reservationStarting,reservationEnding);
+        Reservation reservation = new Reservation(user,resource,reservationStarting,reservationEnding);
+        saveReservation(reservation);
+        notificationService.reservationNotification(reservation);
+        return reservation;
     }   // Function : Create a new reservation after check the time validation
     void checkEditValidation(User booker, Reservation reservation){
         boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);

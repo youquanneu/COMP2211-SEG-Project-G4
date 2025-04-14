@@ -48,6 +48,12 @@ public class Event {
     public void addParticipant(User user){
         this.participant.add(user);
     }
+    public void deleteParticipant(User user){
+        this.participant.remove(user);
+    }
+    public void approveEvent(){setStatus(Status.Approved);}
+    public void rejectEvent(){setStatus(Status.Rejected);}
+    public void cancelEvent(){setStatus(Status.Cancelled);}
     public Integer getEventId() {
         return eventId;
     }

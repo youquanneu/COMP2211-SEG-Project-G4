@@ -5,8 +5,10 @@ import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import com.campus.Repository.Event.EventRepository;
+import com.campus.Service.Mail.NotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +20,9 @@ import java.util.Optional;
 public class EventService {
     @Autowired
     private EventRepository eventRepository;
+    @Lazy
+    @Autowired
+    private NotificationService notificationService;
     public Event getEventById(Integer id){
         Optional<Event> event = eventRepository.findById(id);
         if (event.isEmpty()){
@@ -29,18 +34,22 @@ public class EventService {
         return eventRepository.save(event);
     }
     @Transactional
-    public void registerForEvent(Integer eventId, User user){
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        if (eventOptional.isEmpty()){
-            throw new RuntimeException("Event data inconsistency found");
-        }
-        Event eventGet = eventOptional.get();
-        if (LocalDateTime.now().isAfter(eventGet.getEventEnding())) {
+    public void registerForEvent(Event event, User user){
+        if (LocalDateTime.now().isAfter(event.getEventEnding())) {
             throw new RuntimeException("Event has been closed");
         }
         else {
-            eventGet.addParticipant(user);
+            event.addParticipant(user);
+            notificationService.generateEventNotification(event,user);
             System.out.println("Register successfully");
         }
+    }
+    public void rescheduleEvent(){
+
+    }
+    public Event cancelledEvent(Event event){
+        event.cancelEvent();
+        notificationService.cancelledEventNotification(event);
+        return eventRepository.save(event);
     }
 }
