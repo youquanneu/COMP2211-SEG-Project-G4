@@ -6,6 +6,7 @@ import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import com.campus.Repository.Reservation.ReservationRepository;
+import com.campus.Service.Mail.NotificationService;
 import com.campus.Service.Resource.ResourceService;
 import com.campus.Service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class ReservationService {
     private UserService userService;
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private NotificationService notificationService;
     public Reservation getReservationById(Integer reservationId){
         Optional<Reservation> reservation = reservationRepository.findById(reservationId);
         if (reservation.isEmpty()){
@@ -32,7 +35,7 @@ public class ReservationService {
         }
         return reservation.get();
     }
-    public Reservation saveReservation(Reservation reservation){
+    Reservation saveReservation(Reservation reservation){
         return reservationRepository.save(reservation);
     }
     public List<Reservation> getMyReservationList(User user){
@@ -43,7 +46,10 @@ public class ReservationService {
                                             LocalDateTime reservationEnding){
         try {
             newReservationValidation(resource,reservationStarting,reservationEnding);
-            return new Reservation(user,resource,reservationStarting,reservationEnding);
+            Reservation reservation = new Reservation(user,resource,reservationStarting,reservationEnding);
+            saveReservation(reservation);
+            notificationService.reservationNotification(reservation);
+            return reservation;
         }
         catch (Exception e){
             System.out.println("Reservation Fail : \n");
@@ -64,13 +70,16 @@ public class ReservationService {
         rescheduleReservationValidation(reservation,reservationStarting,reservationEnding);
         reservation.changeReservationTime(reservationStarting, reservationEnding);
         reservation.initializeStatus();
-        return reservationRepository.save(reservation);
+        reservationRepository.save(reservation);
+        notificationService.rescheduleReservationNotification(reservation);
+        return reservation;
     }   // Function : Change reservation's period after check the time validation
     public Reservation cancelReservation(Reservation reservation){
         if (reservation.getStatus().equals(Status.Rejected)){
             throw new RuntimeException("Cancellation of a rejected reservation is not allowed");
         }
         reservation.changeReservationStatus(Status.Cancelled);
+        notificationService.cancelledReservationNotification(reservation);
         return reservationRepository.save(reservation);
     }   // Function : Cancel an active or pending approved reservation
     private void newReservationValidation(Resource resource, LocalDateTime reservationStarting, LocalDateTime reservationEnding){

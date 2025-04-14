@@ -25,6 +25,9 @@ public abstract class Notification {
     public void notificationSend(){
         setStatus(Status.Sent);
     }
+    public void notificationCancelled(){
+        setStatus(Status.Cancelled);
+    }
     public User getRecipient() {
         return recipient;
     }

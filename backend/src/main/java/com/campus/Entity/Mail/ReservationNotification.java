@@ -22,4 +22,19 @@ public class ReservationNotification extends Notification{
     private void setReservation(Reservation reservation) {
         this.reservation = reservation;
     }
+    public String toString(){
+        return String.format(
+                """
+                        Good day, %s
+                        Your have a reservation of
+                        %s
+                        from %s to %s
+                        This is reminder for you.
+                        Thank you.
+                        """,
+                getRecipient().getUsername(),
+                getReservation().getResource(),
+                getReservation().getReservationStarting(),
+                getReservation().getReservationEnding());
+    }
 }

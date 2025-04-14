@@ -8,7 +8,6 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
-
 public class EventNotification extends Notification{
     public EventNotification(){}
     public EventNotification(User participant,
@@ -24,5 +23,19 @@ public class EventNotification extends Notification{
     }
     private void setEvent(Event event) {
         this.event = event;
+    }
+    public String toString(){
+        return String.format(
+                """
+                        Good day, %s
+                        Event "%s" will held on %s
+                        %s
+                        This is reminder for you.
+                        Thank you.
+                        """,
+                getRecipient().getUsername(),
+                getEvent().getEventTitle(),
+                getEvent().getEventStarting(),
+                getEvent().getEventDescription());
     }
 }

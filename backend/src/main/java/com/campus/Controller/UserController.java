@@ -4,8 +4,10 @@ import com.campus.DataTransferObject.Main.EmailDTO;
 import com.campus.DataTransferObject.Main.OneTimePasswordDTO;
 import com.campus.DataTransferObject.User.LoginRequest;
 import com.campus.DataTransferObject.User.UserDTO;
+import com.campus.Entity.Reservation.Reservation;
 import com.campus.Service.Event.EventService;
 import com.campus.Service.Mail.EmailSenderService;
+import com.campus.Service.Mail.NotificationService;
 import com.campus.Service.Mail.OneTimePasswordService;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.ResourceService;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 @RestController
@@ -84,5 +87,7 @@ public class UserController implements CommandLineRunner{
     private ReservationService reservationService;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private NotificationService notificationService;
 
 }
