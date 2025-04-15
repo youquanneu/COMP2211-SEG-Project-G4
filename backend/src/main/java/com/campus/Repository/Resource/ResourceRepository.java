@@ -3,7 +3,6 @@ package com.campus.Repository.Resource;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Classification.ResourceCategory;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -8,6 +8,7 @@ import com.campus.Entity.Resource.Equipment;
 import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Entity.Resource.OutdoorVenue;
 import com.campus.Entity.Resource.Resource;
+import com.campus.Entity.User.AdministrativeStaff;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
 import com.campus.Repository.Event.EventRepository;
@@ -15,6 +16,7 @@ import com.campus.Repository.Reservation.ReservationRepository;
 import com.campus.Repository.Resource.EquipmentRepository;
 import com.campus.Repository.Resource.IndoorVenueRepository;
 import com.campus.Repository.Resource.ResourceRepository;
+import com.campus.Repository.User.AdministrativeStaffRepository;
 import com.campus.Repository.User.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,14 @@ import java.util.Optional;
 @Service
 public class AdministrativeStaffService{
     @Autowired
+    private AdministrativeStaffRepository administrativeStaffRepository;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    public List<AdministrativeStaff> getAllAdmin(){
+        return administrativeStaffRepository.findAll();
+    }
     public User registerNewUser(User user) {
         try {
             checkExistingUser(user.getUsername(), user.getEmail());
@@ -107,7 +113,6 @@ public class AdministrativeStaffService{
     public List<User> getUserByUserRole(UserRole userRole){
         return userRepository.findUserByUserRole(userRole);
     }   // Base Function: Get a list of user base on role
-
     @Autowired
     private ResourceRepository resourceRepository;
     @Autowired

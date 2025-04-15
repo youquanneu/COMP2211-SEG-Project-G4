@@ -3,6 +3,7 @@ package com.campus.Entity.Mail;
 import com.campus.Classification.Status;
 import com.campus.Entity.User.User;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 @Entity
@@ -18,9 +19,12 @@ public abstract class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer notificationId;
+    @NotNull
     @ManyToOne
     private User recipient;
+    @NotNull
     private LocalDateTime notificationTime;
+    @NotNull
     private Status status;
     public void notificationSend(){
         setStatus(Status.Sent);

@@ -1,8 +1,6 @@
 package com.campus.Service.Event;
 
 import com.campus.Entity.Event.Event;
-import com.campus.Entity.Resource.IndoorVenue;
-import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import com.campus.Repository.Event.EventRepository;
 import com.campus.Service.Mail.NotificationService;
@@ -12,8 +10,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,7 +44,6 @@ public class EventService {
 
     }
     public Event cancelledEvent(Event event){
-        event.cancelEvent();
         notificationService.cancelledEventNotification(event);
         return eventRepository.save(event);
     }

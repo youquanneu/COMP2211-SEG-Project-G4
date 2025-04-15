@@ -1,8 +1,11 @@
 package com.campus.DataTransferObject.User;
 
 import com.campus.Classification.UserRole;
+import com.campus.Entity.User.User;
+import com.campus.Service.User.UserService;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserDTO {
     public UserDTO(){}
@@ -13,13 +16,16 @@ public class UserDTO {
         setEmail(email);
         setUserRole(userRole);
     }
+    public static UserDTO mapper(User user){
+        return new UserDTO(user.getUserId(), user.getUsername(), user.getEmail(), user.getUserRole());
+    }
     @JsonProperty
     private Integer userId;
     @JsonProperty
     private String username;
     @JsonProperty
     private String email;
-    @JsonProperty
+    @JsonProperty("UserRole")
     private UserRole userRole;
     public UserRole getUserRole() {
         return userRole;

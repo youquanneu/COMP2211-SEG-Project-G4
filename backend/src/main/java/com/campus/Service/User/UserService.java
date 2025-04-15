@@ -1,6 +1,5 @@
 package com.campus.Service.User;
 
-
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.User.User;
 
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.logging.Logger;
 
 @Service
@@ -43,24 +41,22 @@ public class UserService implements UserDetailsService {
                 .password(user.getPassword())
                 .build();
     }
-    private UserDTO mapUserDTO(User user){
-        return new UserDTO(user.getUserId(), user.getUsername(),
-                user.getEmail(),user.getUserRole());
-    }
-    public UserDTO login(String email, String password){
+    public User login(String email, String password){
         logger.info("Email : " + email);
-        return mapUserDTO(loginByEmail(email,password));
+        return loginByEmail(email,password);
     }
-    public UserDTO getUserByUsernamePassword(String username, String password){
-        return mapUserDTO(loginByUsername(username,password));
+    public User getUserByUsernamePassword(String username, String password){
+        return loginByUsername(username,password);
     }   // Get user by username and password
-    public UserDTO getUserByEmailPassword(String email, String password){
-        return mapUserDTO(loginByEmail(email,password));
+    public User getUserByEmailPassword(String email, String password){
+        return loginByEmail(email,password);
     }   // Get user by email and password
-    public UserDTO getUserByEmail(String email){
-        return mapUserDTO(findUserByEmail(email));
+    public User getUserByEmail(String email){
+        return findUserByEmail(email);
     }
-
+    public User revMapper(UserDTO userDTO){
+        return getUserById(userDTO.getUserId());
+    }
     public User getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()){

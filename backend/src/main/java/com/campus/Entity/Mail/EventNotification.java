@@ -4,6 +4,7 @@ import com.campus.Entity.Event.Event;
 import com.campus.Entity.User.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ public class EventNotification extends Notification{
         super(participant, notificationTime);
         setEvent(event);
     }
+    @NotNull
     @ManyToOne
     private Event event;
     public Event getEvent() {

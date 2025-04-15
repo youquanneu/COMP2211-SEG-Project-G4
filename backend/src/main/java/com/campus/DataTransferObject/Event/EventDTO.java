@@ -2,6 +2,7 @@ package com.campus.DataTransferObject.Event;
 
 import com.campus.DataTransferObject.Resource.VenueDTO;
 import com.campus.DataTransferObject.User.UserDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,11 +19,17 @@ public class EventDTO {
         setEventDescription(eventDescription);
         setVenues(venues);
     }
+    @JsonProperty
     private List<UserDTO> organizer;
+    @JsonProperty
     private String eventTitle;
+    @JsonProperty
     private LocalDateTime eventStarting;
+    @JsonProperty
     private LocalDateTime eventEnding;
+    @JsonProperty
     private String eventDescription;
+    @JsonProperty
     private List<VenueDTO> venues;
     public List<UserDTO> getOrganizer() {
         return organizer;

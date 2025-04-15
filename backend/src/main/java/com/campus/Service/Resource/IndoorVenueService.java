@@ -1,6 +1,5 @@
 package com.campus.Service.Resource;
 
-import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.IndoorVenue;
 import com.campus.Repository.Resource.IndoorVenueRepository;

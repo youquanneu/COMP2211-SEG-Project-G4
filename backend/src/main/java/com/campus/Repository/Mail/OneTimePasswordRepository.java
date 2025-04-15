@@ -13,7 +13,6 @@ import java.util.Optional;
 public interface OneTimePasswordRepository extends JpaRepository<OneTimePassword,Integer> {
     @Transactional
     void deleteAllByEmail(String email);
-
     @Modifying
     @Transactional
     @Query("DELETE FROM OneTimePassword otp WHERE otp.createdTime <= :time")

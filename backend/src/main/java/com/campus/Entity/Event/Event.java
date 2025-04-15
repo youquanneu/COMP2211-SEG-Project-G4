@@ -1,9 +1,7 @@
 package com.campus.Entity.Event;
 
-import com.campus.Classification.Status;
 import com.campus.Entity.Resource.Venue;
 import com.campus.Entity.User.User;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,26 +19,26 @@ public class Event {
                  List<Venue> venues,
                  List<User> organizer){
         setEventTitle(eventTitle);
+        checkStartAndEndTime(eventStarting,eventEnding);
         setEventStarting(eventStarting);
         setEventEnding(eventEnding);
         setEventDescription(eventDescription);
         setVenues(venues);
         setOrganizer(organizer);
         setParticipant(new ArrayList<>());
-        setStatus(Status.Pending);
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer eventId;
+    @NotNull
     private String eventTitle;
+    @NotNull
     private LocalDateTime eventStarting;
+    @NotNull
     private LocalDateTime eventEnding;
     private String eventDescription;
     @ManyToMany
     private List<Venue> venues;
-    @NotNull
-    @JsonProperty("Status")
-    private Status status;
     @ManyToMany
     private List<User> organizer;
     @ManyToMany
@@ -51,9 +49,6 @@ public class Event {
     public void deleteParticipant(User user){
         this.participant.remove(user);
     }
-    public void approveEvent(){setStatus(Status.Approved);}
-    public void rejectEvent(){setStatus(Status.Rejected);}
-    public void cancelEvent(){setStatus(Status.Cancelled);}
     public Integer getEventId() {
         return eventId;
     }
@@ -71,9 +66,6 @@ public class Event {
     }
     public List<Venue> getVenues() {
         return venues;
-    }
-    public Status getStatus() {
-        return status;
     }
     public List<User> getOrganizer() {
         return organizer;
@@ -96,13 +88,15 @@ public class Event {
     private void setVenues(List<Venue> venues) {
         this.venues = venues;
     }
-    private void setStatus(Status status) {
-        this.status = status;
-    }
     private void setOrganizer(List<User> organizer) {
         this.organizer = organizer;
     }
     private void setParticipant(List<User> participant) {
         this.participant = participant;
+    }
+    private void checkStartAndEndTime(LocalDateTime startTime, LocalDateTime endingTime){
+        if (startTime==null || endingTime == null || startTime.isAfter(endingTime)){
+            throw new RuntimeException("Time shouldn't be null or end before start");
+        }
     }
 }

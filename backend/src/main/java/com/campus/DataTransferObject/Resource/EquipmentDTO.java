@@ -1,5 +1,7 @@
 package com.campus.DataTransferObject.Resource;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalTime;
 
 public class EquipmentDTO extends ResourceDTO{
@@ -10,6 +12,7 @@ public class EquipmentDTO extends ResourceDTO{
         super(resourceId,resourceName, openTime, closeTime);
         setSerialNumber(serialNumber);
     }
+    @JsonProperty
     private String serialNumber;
     public String getSerialNumber() {
         return serialNumber;

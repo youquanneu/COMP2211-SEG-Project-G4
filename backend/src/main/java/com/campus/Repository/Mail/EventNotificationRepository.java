@@ -17,7 +17,7 @@ public interface EventNotificationRepository extends JpaRepository<EventNotifica
     List<EventNotification> findEventNotificationByEvent(Event event);
     @Query("select eventNotification from EventNotification eventNotification "+
             "where  (eventNotification.notificationTime <= :currentTime)  "+
-            "and    (eventNotification.status = 1)"
+            "and    (eventNotification.status           = 1)"
     )   // 1 in status is referred to pending
     List<EventNotification> findEventNotificationsNotSend(@Param("currentTime") LocalDateTime currentTime);
 }

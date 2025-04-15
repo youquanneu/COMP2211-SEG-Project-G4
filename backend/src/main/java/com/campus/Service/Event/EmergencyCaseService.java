@@ -22,7 +22,11 @@ public class EmergencyCaseService {
         return emergencyCase.get();
     }
     public EmergencyCase reportNewCase(EmergencyCase emergencyCase){
-        emailSenderService.sendEmergencyCase(emergencyCase);
+        emailSenderService.reportNewEmergency(emergencyCase);
         return emergencyCaseRepository.save(emergencyCase);
+    }
+    public EmergencyCase informEmergencyCase(EmergencyCase emergencyCase){
+        emailSenderService.alertEmergency(emergencyCase);
+        return emergencyCase;
     }
 }

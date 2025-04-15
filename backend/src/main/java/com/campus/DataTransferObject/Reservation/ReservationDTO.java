@@ -2,6 +2,7 @@ package com.campus.DataTransferObject.Reservation;
 
 import com.campus.DataTransferObject.Resource.ResourceDTO;
 import com.campus.DataTransferObject.User.UserDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,10 +16,15 @@ public class ReservationDTO {
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
     }
+    @JsonProperty
     private Integer reservationId;
+    @JsonProperty
     private UserDTO userDTO;
+    @JsonProperty
     private ResourceDTO resourceDTO;
+    @JsonProperty
     private LocalDateTime reservationStarting;
+    @JsonProperty
     private LocalDateTime reservationEnding;
     public Integer getReservationId() {
         return reservationId;

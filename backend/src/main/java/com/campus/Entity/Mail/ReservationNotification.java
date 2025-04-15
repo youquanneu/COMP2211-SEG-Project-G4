@@ -3,6 +3,7 @@ package com.campus.Entity.Mail;
 import com.campus.Entity.Reservation.Reservation;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ public class ReservationNotification extends Notification{
         super(reservation.getBooker(),notificationTime);
         setReservation(reservation);
     }
+    @NotNull
     @ManyToOne
     private Reservation reservation;
     public Reservation getReservation() {

@@ -3,6 +3,7 @@ package com.campus.Entity.Event;
 import com.campus.Classification.Status;
 import com.campus.Entity.Resource.Venue;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -21,10 +22,17 @@ public class EmergencyCase {
     private Integer emergencyCaseId;
     @ManyToOne
     private Venue location;
+    @NotNull
     private String content;
+    @NotNull
     private String reporter;
+    @NotNull
     private LocalDateTime reportedTime;
+    @NotNull
     private Status status;
+    public void solvedEmergencyCase(){
+        setStatus(Status.Solved);
+    }
     public Integer getEmergencyCaseId() {
         return emergencyCaseId;
     }

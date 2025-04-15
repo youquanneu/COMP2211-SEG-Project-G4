@@ -1,4 +1,4 @@
-package com.campus.DataTransferObject.Main;
+package com.campus.DataTransferObject.Mail;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

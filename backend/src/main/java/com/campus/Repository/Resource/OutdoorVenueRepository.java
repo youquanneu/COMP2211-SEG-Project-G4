@@ -1,6 +1,5 @@
 package com.campus.Repository.Resource;
 
-import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.OutdoorVenue;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -16,8 +16,8 @@ public interface ReservationNotificationRepository extends JpaRepository<Reserva
     @Transactional
     List<ReservationNotification> findReservationNotificationsByReservation(Reservation reservation);
     @Query("select reservationNotification from ReservationNotification reservationNotification "+
-            "where  (reservationNotification.notificationTime <= :currentTime)  "+
-            "and    (reservationNotification.status = 1)"
+            "where  (reservationNotification.notificationTime   <=  :currentTime)  "+
+            "and    (reservationNotification.status             =   1)"
     )   // 1 in status is referred to pending
     List<ReservationNotification> findReservationNotificationsNotSend(@Param("currentTime")LocalDateTime currentTime);
 }

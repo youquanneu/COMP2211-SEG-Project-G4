@@ -17,10 +17,10 @@ public interface UserRepository extends JpaRepository<User,Integer> {
     Optional<User> findByUsernameEqualsIgnoreCase(String username);
     Optional<User> findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(String username, String email);
     @Query("select user from User user "+
-            "where  (:userId    is null or user.userId      = :userId)  "+
+            "where  (:userId    is null or user.userId          = :userId)  "+
             "and    (:username  is null or upper(user.username) like concat('%',upper(:username),'%'))"+
             "and    (:email     is null or upper(user.email)    like concat('%',upper(:email),'%'))"+
-            "and    (:userRole  is null or user.userRole    = :userRole)"
+            "and    (:userRole  is null or user.userRole        = :userRole)"
     )
     List<User> findUserByFilter(@Param("userId")    Integer userId  ,
                                 @Param("username")  String username ,

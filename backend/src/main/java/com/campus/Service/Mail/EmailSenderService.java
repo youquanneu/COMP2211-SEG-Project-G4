@@ -1,11 +1,11 @@
 package com.campus.Service.Mail;
 
-import com.campus.Classification.UserRole;
 import com.campus.Entity.Event.EmergencyCase;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Mail.EventNotification;
 import com.campus.Entity.Mail.OneTimePassword;
 import com.campus.Entity.Mail.ReservationNotification;
+import com.campus.Entity.User.AdministrativeStaff;
 import com.campus.Entity.User.User;
 import com.campus.Service.User.AdministrativeStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +39,16 @@ public class EmailSenderService {
     public void sendEventCancelNews(User user, Event event){
         sendEmail(user.getEmail(),"The following event has been cancelled",event.toString());
     }
-    public void sendEmergencyCase(EmergencyCase emergencyCase){
-        List<User> admin = administrativeStaffService.getUserByUserRole(UserRole.AdministrativeStaff);
-        for (User user : admin){
+    public void reportNewEmergency(EmergencyCase emergencyCase){
+        List<AdministrativeStaff> admins = administrativeStaffService.getAllAdmin();
+        for (User user : admins){
             sendEmail(user.getEmail(), "Emergency Case Reported",emergencyCase.toString());
+        }
+    }
+    public void alertEmergency(EmergencyCase emergencyCase){
+        List<User> users = administrativeStaffService.getAllUsers();
+        for (User user : users){
+            sendEmail(user.getEmail(), "Emergency Case To Be Mention",emergencyCase.toString());
         }
     }
     private void sendEmail(String email, String subject, String emailContent){
