@@ -8,6 +8,7 @@ import ChangePasswordForm from '../modules/auth/ChangePasswordForm';
 import ErrorModal from '../components/ErrorModal';
 import SuccessModal from '../components/SuccessModal';
 import logo from '../assets/logo.png';
+import {getAPI_URL} from "../services/api";
 
 function Login() {
   const [currentForm, setCurrentForm] = useState('login');
@@ -42,12 +43,15 @@ function Login() {
         return;
       }
 
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-      const { token, user } = response.data;
+      const response = await axios.post(getAPI_URL("auth/login"), { email, password });
+      const { token, userDTO } = response.data;
 
       // Store token and role
       localStorage.setItem('token', token);
-      localStorage.setItem('userRole', user.role);
+      console.log("set token : " + token);
+      localStorage.setItem('userRole', userDTO.UserRole);
+      console.log("set userRole : " + userDTO.userRole);
+
       setUserEmail(email);
       setOtp(response.data.otp || null); // If backend sends OTP
       setIsForgotFlow(false);
@@ -65,10 +69,11 @@ function Login() {
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
-        navigate(user.role === 'admin' ? '/adminhome' : '/userhome');
+        navigate(userDTO.userRole === 'AdministrativeStaff' ? '/adminhome' : '/userhome');
       }, 2000);
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.');
+    console.log(error)
+      setErrorMessage(error.response?.data || 'Login failed. Please try again.');
       setShowError(true);
     }
   };
