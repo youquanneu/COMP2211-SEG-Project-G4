@@ -7,7 +7,7 @@
     color: var(--text-color, #333);
     width: 100%;
     padding: 10px;
-    box-sizing: border-box; /* Ensure padding doesn't add to width */
+    box-sizing: border-box; 
   }
   
   .events-header {
@@ -48,7 +48,6 @@
     width: 100%;
   }
   
-  /* Keep the original card styling */
   .event-card {
     display: flex;
     align-items: center;
@@ -76,7 +75,7 @@
   
   .event-details {
     flex: 1;
-    overflow: hidden; /* Prevent content from pushing card wider */
+    overflow: hidden; 
   }
   
   .event-details h3 {
