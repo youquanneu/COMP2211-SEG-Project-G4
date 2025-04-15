@@ -1,7 +1,7 @@
-// src/pages/UserBooking.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
+import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
 import './UserBooking.css';
 
@@ -11,41 +11,64 @@ function UserBooking() {
   const [date, setDate] = useState(null);
   const [time, setTime] = useState('');
   const [bookingDetails, setBookingDetails] = useState(null);
+  const [error, setError] = useState('');
+  const [resources, setResources] = useState([]); // Store fetched resources
   const navigate = useNavigate();
 
-  const handleBook = () => {
+  // Fetch resources on mount
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/resources');
+        console.log('API Response:', response.data); // Inspect this data
+        setResources(response.data);
+      } catch (err) {
+        setError('Failed to load resources.');
+        console.error(err);
+      }
+    };
+    fetchResources();
+  }, []);
+
+  const handleBook = async () => {
     if (resource && purpose && date && time) {
-      setBookingDetails({
-        resource,
-        purpose,
-        date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-        time,
+      const formattedDate = date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
       });
+      const bookingData = { resource, purpose, date: formattedDate, time };
+
+      try {
+        const response = await axios.post('http://localhost:8080/api/bookings', bookingData);
+        setBookingDetails(response.data); // Assuming the API response contains the booking details
+        setError('');
+      } catch (err) {
+        setError('Failed to save booking. Please try again.');
+        console.error(err);
+      }
     } else {
-      alert('Please select all options before booking.');
+      setError('Please select all options before booking.');
     }
   };
 
   const handleBack = () => {
-    const userRole = localStorage.getItem('userRole');
-    if (userRole === 'admin') {
-      navigate('/adminhome'); // Navigate to AdminHome if user is admin
-    } else {
-      navigate('/userhome'); // Navigate to UserHome if user is not admin
-    }
+    navigate('/userhome');
   };
 
   return (
     <div className="booking-container">
       <h1>Book a Resource</h1>
+      {error && <p className="error-message">{error}</p>}
       <div className="form-group">
         <label>Resources</label>
         <select value={resource} onChange={(e) => setResource(e.target.value)}>
           <option value="">Select Resource</option>
-          <option value="Lecture Room, 3R001">Lecture Room, 3R001</option>
-          <option value="Lecture Room, 3R002">Lecture Room, 3R002</option>
-          <option value="Lecture Room, 3R003">Lecture Room, 3R003</option>
-          <option value="Computer Lab, 3R101">Computer Lab, 3R101</option>
+          {resources.map((res) => (
+            <option key={res.id} value={res.name}>
+              {res.name}
+            </option>
+          ))}
         </select>
       </div>
       <div className="form-group">
@@ -82,7 +105,9 @@ function UserBooking() {
         </select>
       </div>
       <button onClick={handleBook}>Book</button>
-      <button onClick={handleBack} className="back-button">Back</button>
+      <button onClick={handleBack} className="back-button">
+        Back
+      </button>
       {bookingDetails && (
         <div className="booking-details">
           <h2>Your Booking</h2>
