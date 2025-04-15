@@ -1,56 +1,61 @@
-/* src/pages/Booking.css */
 .booking-container {
   width: 90%;
   max-width: 400px;
-  background: var(--background-color);
+  background: var(--background-color, #fff);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px var(--shadow-color);
-  margin: 0 auto;
-  text-align: center;
+  box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.1));
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .booking-container h1 {
-  color: var(--text-color);
-  font-size: calc(var(--font-size-base) * 1.375); 
+  color: var(--text-color, #333);
+  font-size: calc(var(--font-size-base, 16px) * 1.375);
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .form-group {
   margin-bottom: 15px;
   text-align: left;
+  width: 100%;
 }
 
 .form-group label {
   display: block;
-  color: var(--secondary-text-color);
-  font-size: calc(var(--font-size-base) * 0.875);
+  color: var(--secondary-text-color, #555);
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
   margin-bottom: 5px;
 }
 
-.form-group select {
+.form-group select,
+.form-group .date-picker {
   width: 100%;
   padding: 10px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #ddd);
   border-radius: 6px;
-  font-size: calc(var(--font-size-base) * 0.875); 
-  background: var(--background-color);
-  color: var(--text-color);
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
+  background: var(--background-color, #fff);
+  color: var(--text-color, #333);
 }
 
-.form-group select:focus {
+.form-group select:focus,
+.form-group .date-picker:focus {
   outline: none;
-  border-color: var(--button-bg-start);
+  border-color: var(--button-bg-start, #0077B6);
 }
 
 button {
   width: 100%;
   padding: 10px;
-  background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(to right, var(--button-bg-start, #0077B6), var(--button-bg-end, #005888));
   color: white;
   border: none;
   border-radius: 6px;
-  font-size: calc(var(--font-size-base) * 0.875); 
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
   cursor: pointer;
   transition: transform 0.2s ease;
   margin-bottom: 10px;
@@ -61,54 +66,72 @@ button:hover {
 }
 
 .back-button {
-  background: linear-gradient(to right, #6c757d, #5a6268);
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(to right, var(--button-bg-start, #0077B6), var(--button-bg-end, #005888));
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: calc(var(--font-size-base, 16px) * 0.875); /* ~14px */
+  cursor: pointer;
+  min-height: 44px;
+  margin: 10px auto !important;
+  display: block;
+  text-align: center;
+  transition: transform 0.2s;
 }
 
 .back-button:hover {
-  background: #5a6268;
+  transform: translateY(-2px);
 }
 
 .booking-details {
   margin-top: 20px;
   padding: 15px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #ddd);
   border-radius: 6px;
-  background: var(--border-color);
+  background: var(--border-color, #f9f9f9);
   text-align: left;
+  width: 100%;
 }
 
 .booking-details h2 {
-  color: var(--text-color);
-  font-size: calc(var(--font-size-base) * 1.125); 
+  color: var(--text-color, #333);
+  font-size: calc(var(--font-size-base, 16px) * 1.125);
   margin-bottom: 10px;
 }
 
 .booking-details p {
-  color: var(--secondary-text-color);
-  font-size: calc(var(--font-size-base) * 0.875);
+  color: var(--secondary-text-color, #555);
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
   margin: 5px 0;
 }
 
 @media (min-width: 768px) {
   .booking-container {
     padding: 25px;
+    margin: 30px auto;
   }
   .booking-container h1 {
-    font-size: calc(var(--font-size-base) * 1.625); 
+    font-size: calc(var(--font-size-base, 16px) * 1.625);
   }
   .form-group label {
-    font-size: calc(var(--font-size-base) * 1);
+    font-size: calc(var(--font-size-base, 16px) * 1);
   }
-  .form-group select {
-    font-size: calc(var(--font-size-base) * 1); 
+  .form-group select,
+  .form-group .date-picker {
+    font-size: calc(var(--font-size-base, 16px) * 1);
   }
   button {
-    font-size: calc(var(--font-size-base) * 1); 
+    font-size: calc(var(--font-size-base, 16px) * 1);
+  }
+  .back-button {
+    font-size: calc(var(--font-size-base, 16px) * 1);
   }
   .booking-details h2 {
-    font-size: calc(var(--font-size-base) * 1.25);
+    font-size: calc(var(--font-size-base, 16px) * 1.25);
   }
   .booking-details p {
-    font-size: calc(var(--font-size-base) * 1); 
+    font-size: calc(var(--font-size-base, 16px) * 1);
   }
 }

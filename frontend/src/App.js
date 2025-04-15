@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
@@ -11,7 +10,8 @@ import UserEmergency from './pages/UserEmergency';
 import UserProfile from './pages/UserProfile';
 import AdminHome from './pages/AdminHome';
 import AdminUserManagement from './pages/AdminUserManagement';
-import AdminEmergency from './pages/AdminEmergency'; // Added
+import AdminEmergency from './pages/AdminEmergency';
+import UserEvent from './pages/UserEvent';
 
 function App() {
   useEffect(() => {
@@ -19,12 +19,10 @@ function App() {
     const savedDarkTheme = localStorage.getItem('darkTheme') === 'true';
     const savedFontSize = localStorage.getItem('fontSize');
 
-    // Set default font size to Medium (16px) only if not set (first run)
     if (savedFontSize === null) {
       localStorage.setItem('fontSize', 'Medium');
     }
 
-    // Apply font size based on saved value (or default Medium)
     switch (savedFontSize || 'Medium') {
       case 'Small':
         root.style.setProperty('--font-size-base', '12px');
@@ -39,12 +37,10 @@ function App() {
         root.style.setProperty('--font-size-base', '16px');
     }
 
-    // Set default theme to light only if not set (first run)
     if (localStorage.getItem('darkTheme') === null) {
       localStorage.setItem('darkTheme', 'false');
     }
 
-    // Apply theme based on saved value
     if (savedDarkTheme) {
       root.style.setProperty('--background-color', '#333');
       root.style.setProperty('--text-color', '#fff');
@@ -76,9 +72,9 @@ function App() {
       <Route path="/userprofile" element={<UserProfile />} />
       <Route path="/adminhome" element={<AdminHome />} />
       <Route path="/usermanagement" element={<AdminUserManagement />} />
-      <Route path="/adminemergency" element={<AdminEmergency />} /> {/* Added */}
-      {/* Placeholder route for Resource Management */}
-      <Route path="/resourcemanagement" element={<div>Resource Management Page (To Be Developed)</div>} />
+      <Route path="/adminemergency" element={<AdminEmergency />} />
+      <Route path="/events" element={<UserEvent />} />
+      <Route path="/resourcemanagement" element={<div>Resource Management Page</div>} />
     </Routes>
   );
 }

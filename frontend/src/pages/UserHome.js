@@ -14,6 +14,8 @@ function UserHome() {
     const selectedPage = event.target.value;
     if (selectedPage === 'userbooking') {
       navigate('/userbooking');
+    } else if (selectedPage === 'events') {
+      navigate('/events');
     } else if (selectedPage === 'calendar') {
       navigate('/usercalendar');
     } else if (selectedPage === 'emergency') {

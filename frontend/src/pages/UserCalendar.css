@@ -103,7 +103,18 @@ button:hover {
 }
 
 .back-button {
-  background: linear-gradient(to right, #6c757d, #5a6268); 
+  margin: 15px 0;
+  padding: 10px;
+  background: linear-gradient(to right, var(--button-bg-start, #0077B6), var(--button-bg-end, #005888));
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  min-height: 44px;
+  transition: transform 0.2s;
 }
 
 .back-button:hover {
