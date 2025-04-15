@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import axios from 'axios';
@@ -10,18 +10,35 @@ function UserBooking() {
   const [purpose, setPurpose] = useState('');
   const [date, setDate] = useState(null);
   const [time, setTime] = useState('');
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [bookingDetails, setBookingDetails] = useState(null);
   const [error, setError] = useState('');
-  const [resources, setResources] = useState([]); // Store fetched resources
+  const [resources, setResources] = useState([]);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
+
+  // Send log to backend
+  const sendLog = async (action, value) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return; // Skip if no token
+      await axios.post(
+        'http://localhost:8080/api/logs',
+        { action, value },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error('Log error:', err.message);
+    }
+  };
 
   // Fetch resources on mount
   useEffect(() => {
     const fetchResources = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/resources');
-        console.log('API Response:', response.data); // Debug: Inspect the data
-        // Ensure response.data is an array
+        console.log('API Response:', response.data);
         if (Array.isArray(response.data)) {
           setResources(response.data);
         } else {
@@ -36,7 +53,55 @@ function UserBooking() {
     fetchResources();
   }, []);
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Fetch available time slots
+  const handleSearchTimes = async () => {
+    await sendLog('search_times', 'Clicked to fetch time slots');
+    if (!resource || !purpose || !date) {
+      setError('Please select Resource, Purpose, and Date first.');
+      return;
+    }
+    try {
+      const formattedDate = date.toISOString().split('T')[0];
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:8080/api/bookings/available-times', {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { resource, date: formattedDate },
+      });
+      if (Array.isArray(response.data)) {
+        setAvailableTimes(response.data);
+        setShowDropdown(true);
+        setError('');
+      } else {
+        setError('Invalid time slot data format.');
+        console.error('Expected an array, got:', response.data);
+      }
+    } catch (err) {
+      setError('Failed to load available times. Please try again.');
+      console.error('Fetch error:', err.message, err.response?.data);
+    }
+  };
+
+  const handleSelectTime = (slot) => {
+    setTime(slot);
+    setShowDropdown(false);
+    sendLog('select_time', slot);
+  };
+
   const handleBook = async () => {
+    await sendLog('book', 'Clicked Book button');
     if (resource && purpose && date && time) {
       const formattedDate = date.toLocaleDateString('en-US', {
         month: 'long',
@@ -44,7 +109,6 @@ function UserBooking() {
         year: 'numeric',
       });
       const bookingData = { resource, purpose, date: formattedDate, time };
-
       try {
         const response = await axios.post('http://localhost:8080/api/bookings', bookingData);
         setBookingDetails(response.data);
@@ -59,6 +123,7 @@ function UserBooking() {
   };
 
   const handleBack = () => {
+    sendLog('back', 'Clicked Back button');
     navigate('/userhome');
   };
 
@@ -68,12 +133,16 @@ function UserBooking() {
       {error && <p className="error-message">{error}</p>}
       <div className="form-group">
         <label>Resources</label>
-        <select value={resource} onChange={(e) => setResource(e.target.value)}>
+        <select
+          value={resource}
+          onChange={(e) => {
+            setResource(e.target.value);
+            sendLog('select_resource', e.target.value || 'None');
+          }}
+        >
           <option value="">Select Resource</option>
           {resources.map((res) => {
-            // Debug: Log each resource object
             console.log('Rendering resource:', res);
-            // Try multiple possible property names with fallback
             const resourceName =
               res.name ||
               res.resourceName ||
@@ -90,7 +159,13 @@ function UserBooking() {
       </div>
       <div className="form-group">
         <label>Purpose</label>
-        <select value={purpose} onChange={(e) => setPurpose(e.target.value)}>
+        <select
+          value={purpose}
+          onChange={(e) => {
+            setPurpose(e.target.value);
+            sendLog('select_purpose', e.target.value || 'None');
+          }}
+        >
           <option value="">Select Purpose</option>
           <option value="Meeting">Meeting</option>
           <option value="Presentation">Presentation</option>
@@ -102,7 +177,10 @@ function UserBooking() {
         <label>Date</label>
         <DatePicker
           selected={date}
-          onChange={(selectedDate) => setDate(selectedDate)}
+          onChange={(selectedDate) => {
+            setDate(selectedDate);
+            sendLog('select_date', selectedDate ? selectedDate.toISOString().split('T')[0] : 'None');
+          }}
           dateFormat="MMMM d, yyyy"
           placeholderText="Select a date"
           minDate={new Date()}
@@ -114,12 +192,31 @@ function UserBooking() {
       </div>
       <div className="form-group">
         <label>Time</label>
-        <select value={time} onChange={(e) => setTime(e.target.value)}>
-          <option value="">Select Time</option>
-          <option value="09:00-10:00">09:00 - 10:00</option>
-          <option value="10:00-11:00">10:00 - 11:00</option>
-          <option value="13:00-14:00">13:00 - 14:00</option>
-        </select>
+        <div className="time-input-wrapper" ref={dropdownRef}>
+          <input
+            type="text"
+            value={time || 'Select Time'}
+            readOnly
+            className="time-input"
+            onClick={handleSearchTimes}
+          />
+          <span className="search-icon" onClick={handleSearchTimes}>
+            🔍
+          </span>
+          {showDropdown && availableTimes.length > 0 && (
+            <ul className="time-dropdown">
+              {availableTimes.map((slot) => (
+                <li
+                  key={slot}
+                  className="time-option"
+                  onClick={() => handleSelectTime(slot)}
+                >
+                  {slot}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
       <button onClick={handleBook}>Book</button>
       <button onClick={handleBack} className="back-button">
