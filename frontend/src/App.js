@@ -2,8 +2,10 @@
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import Event from './pages/Event';
 import Login from './pages/Login';
 import UserHome from './pages/UserHome';
+import UserEvent from './pages/UserEvent';
 import UserBooking from './pages/UserBooking';
 import Settings from './pages/Settings';
 import UserCalendar from './pages/UserCalendar';
@@ -65,9 +67,10 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/event" element={<Event />} />
       <Route path="/login" element={<Login />} />
       <Route path="/userhome" element={<UserHome />} />
-      <Route path="/events" element={<UserEvent />} />
+      <Route path="/userevent" element={<UserEvent />} />
       <Route path="/userbooking" element={<UserBooking />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/calendar" element={<UserCalendar />} />

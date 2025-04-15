@@ -14,11 +14,13 @@ function UserHome() {
     const selectedPage = event.target.value;
     if (selectedPage === 'userbooking') {
       navigate('/userbooking');
+    } else if (selectedPage === 'userevent') {
+      navigate('/userevent');
     } else if (selectedPage === 'calendar') {
       navigate('/calendar');
     } else if (selectedPage === 'emergency') {
       navigate('/emergency');
-    } else if (selectedPage === 'dashboard') {
+    } else if (selectedPage === 'home') {
       navigate('/userhome');
     }
   };
@@ -48,8 +50,8 @@ function UserHome() {
         <img src={logo} alt="Logo" className="dashboard-logo" />
         <div className="nav-wrapper">
           <select className="nav-dropdown" onChange={handleNavigation}>
-            <option value="dashboard">Dashboard</option>
-            <option value="events">Events</option>
+            <option value="home">Home</option>
+            <option value="userevent">Events</option>
             <option value="directory">Directory</option>
             <option value="emergency">Emergency</option>
             <option value="userbooking">Booking</option>

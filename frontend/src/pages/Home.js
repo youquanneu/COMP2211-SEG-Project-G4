@@ -28,6 +28,8 @@ function Home() {
       navigate('/login');
     } else if (selectedPage === 'emergency') {
       navigate('/emergency'); // Navigate to the emergency page
+    } else if (selectedPage === 'event') {
+      navigate('/event'); // Navigate to the events page
     }
   };
 
@@ -46,7 +48,7 @@ function Home() {
         <div className="nav-wrapper">
           <select className="nav-dropdown" onChange={handleNavigation}>
             <option value="home">Home</option>
-            <option value="events">Events</option>
+            <option value="event">Events</option>
             <option value="directory">Directory</option>
             <option value="emergency">Emergency</option>
           </select>

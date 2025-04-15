@@ -1,0 +1,258 @@
+.events-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--background-color, #fff);
+    color: var(--text-color, #333);
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box; /* Ensure padding doesn't add to width */
+  }
+  
+  .events-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 10px 0;
+  }
+  
+  .events-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  
+  .events-header h1 {
+    font-size: 18px;
+    margin: 0;
+    text-align: center;
+    color: var(--text-color, #333);
+  }
+  
+  .events-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    padding: 0;
+  }
+  
+  .events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  /* Keep the original card styling */
+  .event-card {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .event-card:hover {
+    background-color: var(--hover-bg, #e0e0e0);
+  }
+  
+  .event-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+  
+  .event-details {
+    flex: 1;
+    overflow: hidden; /* Prevent content from pushing card wider */
+  }
+  
+  .event-details h3 {
+    font-size: 13px;
+    margin: 0 0 4px;
+    color: var(--text-color, #333);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate long titles */
+  }
+  
+  .event-details p {
+    font-size: 11px;
+    margin: 2px 0;
+    color: var(--secondary-text-color, #555);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate long text */
+  }
+  
+  .back-button {
+    margin: 15px 0;
+    padding: 10px;
+    background: linear-gradient(to right, var(--button-bg-start, #0077B6), var(--button-bg-end, #005888));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+    min-height: 44px;
+    transition: transform 0.2s;
+  }
+  
+  .back-button:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Rest of your CSS remains unchanged */
+  .event-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  .popup-content {
+    background-color: var(--background-color, #fff);
+    padding: 15px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 350px;
+    position: relative;
+    box-shadow: 0 4px 8px var(--shadow-color, rgba(0, 0, 0, 0.1));
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    color: var(--text-color, #333);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .popup-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .popup-content h2 {
+    font-size: 16px;
+    margin: 0 0 10px;
+    color: var(--text-color, #333);
+  }
+  
+  .popup-content p {
+    font-size: 12px;
+    margin: 5px 0;
+    color: var(--secondary-text-color, #555);
+  }
+  
+  @media (min-width: 768px) {
+    .events-container {
+      padding: 20px;
+    }
+  
+    .events-header {
+      padding: 15px 0;
+    }
+  
+    .events-logo {
+      width: 150px;
+      margin-bottom: 15px;
+    }
+  
+    .events-header h1 {
+      font-size: 24px;
+    }
+  
+    .events-content {
+      padding: 0 20px;
+    }
+  
+    .events-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+  
+    .event-card {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 15px;
+    }
+  
+    .event-image {
+      width: 100%;
+      height: 150px;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  
+    .event-details h3 {
+      font-size: 18px;
+      white-space: normal; /* Allow wrapping on desktop */
+    }
+  
+    .event-details p {
+      font-size: 14px;
+      white-space: normal; /* Allow wrapping on desktop */
+    }
+  
+    .back-button {
+      width: auto;
+      max-width: 200px;
+    }
+  
+    .popup-content {
+      padding: 20px;
+      max-width: 500px;
+      max-height: none;
+      overflow-y: visible;
+    }
+  
+    .popup-image {
+      height: 200px;
+      margin-bottom: 15px;
+    }
+  
+    .popup-content h2 {
+      font-size: 20px;
+    }
+  
+    .popup-content p {
+      font-size: 14px;
+    }
+  }
