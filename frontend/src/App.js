@@ -11,10 +11,13 @@ import Settings from './pages/Settings';
 import UserCalendar from './pages/UserCalendar';
 import UserEmergency from './pages/UserEmergency';
 import UserProfile from './pages/UserProfile';
-import AdminHome from './pages/AdminHome';
+import AdminDashboard from './pages/AdminDashboard';
 import AdminUserManagement from './pages/AdminUserManagement';
 import AdminEmergency from './pages/AdminEmergency';
+import AdminAddEvent from './pages/AdminAddEvent';
 import AdminResourceManagement from './pages/AdminResourceManagement';
+import AdminVenueManagement from './pages/AdminVenueManagement'; // New import
+import AdminEquipmentManagement from './pages/AdminEquipmentManagement'; // New import
 import EquipmentApproval from './pages/EquipmentApproval'; // Import the new page (to be created)
 
 function App() {
@@ -76,10 +79,13 @@ function App() {
       <Route path="/calendar" element={<UserCalendar />} />
       <Route path="/emergency" element={<UserEmergency />} />
       <Route path="/userprofile" element={<UserProfile />} />
-      <Route path="/adminhome" element={<AdminHome />} />
+      <Route path="/admindashboard" element={<AdminDashboard />} />
+      <Route path="/adminaddevent" element={<AdminAddEvent />} />
       <Route path="/usermanagement" element={<AdminUserManagement />} />
       <Route path="/adminemergency" element={<AdminEmergency />} />
       <Route path="/resourcemanagement" element={<AdminResourceManagement />} />
+      <Route path="/adminvenuemanagement" element={<AdminVenueManagement />} /> {/* New route */}
+      <Route path="/adminequipmentmanagement" element={<AdminEquipmentManagement />} /> {/* New route */}
       <Route path="/equipmentapproval" element={<EquipmentApproval />} />
     </Routes>
   );
