@@ -20,11 +20,11 @@ function UserBooking() {
     const fetchResources = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/resources');
-        console.log('API Response:', response.data); // Inspect this data
+        console.log('API Response:', response.data); // Debug: Inspect the data
         setResources(response.data);
       } catch (err) {
         setError('Failed to load resources.');
-        console.error(err);
+        console.error('Fetch error:', err);
       }
     };
     fetchResources();
@@ -41,11 +41,11 @@ function UserBooking() {
 
       try {
         const response = await axios.post('http://localhost:8080/api/bookings', bookingData);
-        setBookingDetails(response.data); // Assuming the API response contains the booking details
+        setBookingDetails(response.data);
         setError('');
       } catch (err) {
         setError('Failed to save booking. Please try again.');
-        console.error(err);
+        console.error('Booking error:', err);
       }
     } else {
       setError('Please select all options before booking.');
@@ -64,11 +64,16 @@ function UserBooking() {
         <label>Resources</label>
         <select value={resource} onChange={(e) => setResource(e.target.value)}>
           <option value="">Select Resource</option>
-          {resources.map((res) => (
-            <option key={res.id} value={res.name}>
-              {res.name}
-            </option>
-          ))}
+          {resources.map((res) => {
+            // Debug: Log each resource object
+            console.log('Rendering resource:', res);
+            const resourceName = res.name || res.resourceName || 'Unknown Resource';
+            return (
+              <option key={res.id} value={resourceName}>
+                {resourceName}
+              </option>
+            );
+          })}
         </select>
       </div>
       <div className="form-group">
