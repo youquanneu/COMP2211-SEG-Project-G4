@@ -1,5 +1,6 @@
 package com.campus.Entity.Reservation;
 
+import com.campus.Classification.Purpose;
 import com.campus.Classification.Status;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
@@ -12,11 +13,14 @@ import java.time.LocalDateTime;
 @Entity
 public class Reservation {
     public Reservation(){}
-    public Reservation(User booker, Resource resource,
+    public Reservation(User booker,
+                       Resource resource,
+                       Purpose purpose,
                        LocalDateTime reservationStarting,
                        LocalDateTime reservationEnding){
         setBooker(booker);
         setResource(resource);
+        setPurpose(purpose);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
         setStatus(initializeStatus());
@@ -30,6 +34,8 @@ public class Reservation {
     @NotNull
     @ManyToOne
     private Resource resource;
+//    @NotNull
+    private Purpose purpose;
     @NotNull
     private LocalDateTime reservationStarting;
     @NotNull
@@ -52,6 +58,9 @@ public class Reservation {
     public Resource getResource() {
         return resource;
     }
+    public Purpose getPurpose() {
+        return purpose;
+    }
     public LocalDateTime getReservationStarting() {
         return reservationStarting;
     }
@@ -66,6 +75,9 @@ public class Reservation {
     }
     private void setResource(Resource resources) {
         this.resource = resources;
+    }
+    private void setPurpose(Purpose purpose) {
+        this.purpose = purpose;
     }
     private void setReservationStarting(LocalDateTime reservationStarting) {
         this.reservationStarting = reservationStarting;

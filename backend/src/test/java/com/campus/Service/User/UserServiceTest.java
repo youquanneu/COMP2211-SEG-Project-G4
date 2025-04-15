@@ -2,9 +2,14 @@ package com.campus.Service.User;
 
 import com.campus.Entity.User.User;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Scanner;
 
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
 public class UserServiceTest {
     private UserService userService;
     @Test

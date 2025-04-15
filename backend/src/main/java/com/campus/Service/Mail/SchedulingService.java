@@ -12,16 +12,16 @@ public class SchedulingService {
     }
     @Autowired
     private NotificationService notificationService;
-    @Scheduled(fixedDelay = 300000)
-    private void removeExpiryOTP() {
-        oneTimePasswordService.deleteExpiredOTP();
-    }
-    @Scheduled(fixedDelay = 60000)
-    private void sendReservationNotification() {
-        notificationService.sendReservationNotification();
-    }
-    @Scheduled(fixedDelay = 300000)
-    private void sendEventNotification() {
-        notificationService.sendEventNotification();
-    }
+//    @Scheduled(fixedDelay = 300000)
+//    private void removeExpiryOTP() {
+//        oneTimePasswordService.deleteExpiredOTP();
+//    }
+//    @Scheduled(fixedDelay = 60000)
+//    private void sendReservationNotification() {
+//        notificationService.sendReservationNotification();
+//    }
+//    @Scheduled(fixedDelay = 300000)
+//    private void sendEventNotification() {
+//        notificationService.sendEventNotification();
+//    }
 }

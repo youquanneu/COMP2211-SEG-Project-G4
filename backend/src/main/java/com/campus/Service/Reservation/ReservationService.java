@@ -1,5 +1,6 @@
 package com.campus.Service.Reservation;
 
+import com.campus.Classification.Purpose;
 import com.campus.Classification.Status;
 import com.campus.Classification.UserRole;
 import com.campus.Entity.Reservation.Reservation;
@@ -37,13 +38,15 @@ public class ReservationService {
     public List<Reservation> getMyReservationList(User user){
         return reservationRepository.findReservationByBooker(user);
     }
-    public Reservation createNewReservation(User user, Resource resource,
+    public Reservation createNewReservation(User user,
+                                            Resource resource,
+                                            Purpose purpose,
                                             LocalDateTime reservationStarting,
                                             LocalDateTime reservationEnding){
         try {
 
             newReservationValidation(resource, reservationStarting, reservationEnding);
-            Reservation reservation = new Reservation(user, resource, reservationStarting, reservationEnding);
+            Reservation reservation = new Reservation(user, resource, purpose, reservationStarting, reservationEnding);
             saveReservation(reservation);
             notificationService.reservationNotification(reservation);
             return reservation;

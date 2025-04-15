@@ -21,6 +21,8 @@ public class UserController implements CommandLineRunner{
     private static final Logger logger = Logger.getLogger(UserController.class.getName());
     @Override
     public void run(String... args) throws Exception {
+        System.out.println("——————————————————————————————————————————————————————————");
+        logger.info("Application start here");
     }
     @Autowired
     private UserService userService;

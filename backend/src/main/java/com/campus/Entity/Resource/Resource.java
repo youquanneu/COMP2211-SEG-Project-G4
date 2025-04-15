@@ -36,7 +36,7 @@ public class Resource {
     @NotNull
     private Restriction restriction;
     private ResourceCategory resourceCategory;
-    @OneToMany(mappedBy = "resource")
+    @OneToMany
     private List<Reservation> booking;
     public void changeResourceName(String resourceName){
         setResourceName(resourceName);

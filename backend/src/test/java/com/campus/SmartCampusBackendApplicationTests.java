@@ -8,5 +8,4 @@ class SmartCampusBackendApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

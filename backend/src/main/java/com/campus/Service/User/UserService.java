@@ -45,12 +45,6 @@ public class UserService implements UserDetailsService {
         logger.info("Email : " + email);
         return loginByEmail(email,password);
     }
-    public User getUserByUsernamePassword(String username, String password){
-        return loginByUsername(username,password);
-    }   // Get user by username and password
-    public User getUserByEmailPassword(String email, String password){
-        return loginByEmail(email,password);
-    }   // Get user by email and password
     public User getUserByEmail(String email){
         return findUserByEmail(email);
     }
@@ -64,12 +58,12 @@ public class UserService implements UserDetailsService {
         }
         return user.get();
     }   // Get user by user id
-    User loginByUsername(String username, String password) {
+    public User loginByUsername(String username, String password) {
         User user = findUserByUsername(username);
         verifyCurrentPassword(user,password);
         return user;
     }   // Function: Return a user by username and password
-    private User loginByEmail(String email, String password) {
+    public User loginByEmail(String email, String password) {
         User user = findUserByEmail(email);
         verifyCurrentPassword(user,password);
         return user;

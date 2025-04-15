@@ -25,7 +25,7 @@ public class UserDTO {
     private String username;
     @JsonProperty
     private String email;
-    @JsonProperty("UserRole")
+    @JsonProperty("userRole")
     private UserRole userRole;
     public UserRole getUserRole() {
         return userRole;

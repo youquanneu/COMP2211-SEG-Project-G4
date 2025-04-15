@@ -1,11 +1,12 @@
 package com.campus.Service.Reservation;
 
+import com.campus.Classification.Purpose;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import com.campus.Service.Resource.ResourceService;
 import com.campus.Service.User.UserService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,26 +29,31 @@ public class ReservationServiceTest {
         Reservation reservation1 = reservationService.createNewReservation(
                 userService.getUserById(1),
                 resourceService.getResourceByID(2),
+                Purpose.Workshop,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusHours(1));
         Reservation reservation2 = reservationService.createNewReservation(
                 userService.getUserById(1),
                 resourceService.getResourceByID(6),
+                Purpose.Meeting,
                 LocalDateTime.now().plusDays(2),
                 LocalDateTime.now().plusWeeks(1));
         Reservation reservation3 = reservationService.createNewReservation(
                 userService.getUserById(1),
                 resourceService.getResourceByID(3),
+                Purpose.Meeting,
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(1));
         Reservation reservation4 = reservationService.createNewReservation(
                 userService.getUserById(4),
                 resourceService.getResourceByID(2),
+                Purpose.Meeting,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusHours(1));
         Reservation reservation5 = reservationService.createNewReservation(
                 userService.getUserById(4),
                 resourceService.getResourceByID(2),
+                Purpose.Meeting,
                 LocalDateTime.now().plusDays(2),
                 LocalDateTime.now().plusWeeks(1));
         reservations.add(reservation1);
@@ -72,7 +78,7 @@ public class ReservationServiceTest {
             System.out.println("Input End: yyyy-mm-ddTHH:mm:ss");
             String endingTime = scanner.nextLine();
             LocalDateTime reservationEnding = LocalDateTime.parse(endingTime);
-            return reservationService.saveReservation(reservationService.createNewReservation(user,resource, reservationStarting, reservationEnding));
+            return reservationService.saveReservation(reservationService.createNewReservation(user,resource,Purpose.Presentation ,reservationStarting, reservationEnding));
         }catch (Exception e){
             System.out.println(e.getMessage());
             createNewReservation();
