@@ -67,6 +67,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/userhome" element={<UserHome />} />
+      <Route path="/events" element={<UserEvent />} />
       <Route path="/userbooking" element={<UserBooking />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/calendar" element={<UserCalendar />} />
