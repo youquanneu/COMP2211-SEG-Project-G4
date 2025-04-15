@@ -21,10 +21,16 @@ function UserBooking() {
       try {
         const response = await axios.get('http://localhost:8080/api/resources');
         console.log('API Response:', response.data); // Debug: Inspect the data
-        setResources(response.data);
+        // Ensure response.data is an array
+        if (Array.isArray(response.data)) {
+          setResources(response.data);
+        } else {
+          setError('Invalid resource data format.');
+          console.error('Expected an array, got:', response.data);
+        }
       } catch (err) {
-        setError('Failed to load resources.');
-        console.error('Fetch error:', err);
+        setError('Failed to load resources. Check if backend is running.');
+        console.error('Fetch error:', err.message, err.response?.data);
       }
     };
     fetchResources();
@@ -45,7 +51,7 @@ function UserBooking() {
         setError('');
       } catch (err) {
         setError('Failed to save booking. Please try again.');
-        console.error('Booking error:', err);
+        console.error('Booking error:', err.message, err.response?.data);
       }
     } else {
       setError('Please select all options before booking.');
@@ -67,7 +73,13 @@ function UserBooking() {
           {resources.map((res) => {
             // Debug: Log each resource object
             console.log('Rendering resource:', res);
-            const resourceName = res.name || res.resourceName || 'Unknown Resource';
+            // Try multiple possible property names with fallback
+            const resourceName =
+              res.name ||
+              res.resourceName ||
+              res.title ||
+              `Resource ID ${res.id}` ||
+              'Unknown Resource';
             return (
               <option key={res.id} value={resourceName}>
                 {resourceName}
