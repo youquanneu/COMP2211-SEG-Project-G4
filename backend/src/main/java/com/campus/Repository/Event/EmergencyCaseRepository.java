@@ -14,13 +14,13 @@ import java.util.List;
 public interface EmergencyCaseRepository extends JpaRepository<EmergencyCase,Integer> {
     @Query("select emergencyCase from EmergencyCase emergencyCase "+
             "where  (:emergencyCaseId    is null or emergencyCase.emergencyCaseId      = :emergencyCaseId)  "+
-            "where  (:location    is null or emergencyCase.location      = :location)  "+
+            "and    (:location    is null or emergencyCase.location      = :location)  "+
             "and    (:content  is null or upper(emergencyCase.content) like concat('%',upper(:content),'%'))"+
             "and    (:reporter     is null or upper(emergencyCase.reporter)    like concat('%',upper(:reporter),'%'))"+
             "and    (:timeAfter  is null or emergencyCase.reportedTime    >= :timeAfter) " +
             "and    (:timeBefore  is null or emergencyCase.reportedTime    <= :timeBefore)"
     )
-    List<User> findUserByFilter(@Param("emergencyCaseId")    Integer emergencyCaseId  ,
+    List<EmergencyCase> findEmergencyCaseByFilter(@Param("emergencyCaseId")    Integer emergencyCaseId  ,
                                 @Param("location") Venue location ,
                                 @Param("content")   String content    ,
                                 @Param("username")  String reporter ,

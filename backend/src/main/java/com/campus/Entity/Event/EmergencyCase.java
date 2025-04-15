@@ -2,10 +2,7 @@ package com.campus.Entity.Event;
 
 import com.campus.Classification.Status;
 import com.campus.Entity.Resource.Venue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +19,7 @@ public class EmergencyCase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer emergencyCaseId;
+    @ManyToOne
     private Venue location;
     private String content;
     private String reporter;

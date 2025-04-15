@@ -9,6 +9,7 @@ import com.campus.Entity.Mail.ReservationNotification;
 import com.campus.Entity.User.User;
 import com.campus.Service.User.AdministrativeStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class EmailSenderService {
     private JavaMailSender javaMailSender;
     @Autowired
     private OneTimePasswordService oneTimePasswordService;
+    @Lazy
     @Autowired
     private AdministrativeStaffService administrativeStaffService;
     public String sendOTP(String email){

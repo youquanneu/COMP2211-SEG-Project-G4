@@ -31,7 +31,7 @@ public class ReservationService {
         }
         return reservation.get();
     }
-    Reservation saveReservation(Reservation reservation){
+    public Reservation saveReservation(Reservation reservation){
         return reservationRepository.save(reservation);
     }
     public List<Reservation> getMyReservationList(User user){
@@ -40,11 +40,16 @@ public class ReservationService {
     public Reservation createNewReservation(User user, Resource resource,
                                             LocalDateTime reservationStarting,
                                             LocalDateTime reservationEnding){
-        newReservationValidation(resource,reservationStarting,reservationEnding);
-        Reservation reservation = new Reservation(user,resource,reservationStarting,reservationEnding);
-        saveReservation(reservation);
-        notificationService.reservationNotification(reservation);
-        return reservation;
+        try {
+
+            newReservationValidation(resource, reservationStarting, reservationEnding);
+            Reservation reservation = new Reservation(user, resource, reservationStarting, reservationEnding);
+            saveReservation(reservation);
+            notificationService.reservationNotification(reservation);
+            return reservation;
+        }catch (Exception e){
+            return null;
+        }
     }   // Function : Create a new reservation after check the time validation
     void checkEditValidation(User booker, Reservation reservation){
         boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
