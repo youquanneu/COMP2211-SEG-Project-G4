@@ -32,7 +32,7 @@ function Login() {
   }, []);
 
   // Base API URL (adjust to your backend)
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = 'http://localhost:8080/api';
 
   const handleLogin = async (email, password) => {
     try {
