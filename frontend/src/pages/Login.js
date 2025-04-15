@@ -1,6 +1,6 @@
-// src/pages/Login.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import LoginForm from '../modules/auth/LoginForm';
 import ForgotPasswordForm from '../modules/auth/ForgotPasswordForm';
 import OTPForm from '../modules/auth/OTPForm';
@@ -17,9 +17,9 @@ function Login() {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [resetToken, setResetToken] = useState(''); 
   const navigate = useNavigate();
 
-  // Force light theme on login page mount
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--background-color', '#fff');
@@ -31,52 +31,27 @@ function Login() {
     root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
   }, []);
 
-  // Simulated admin emails (in a real app, this would come from a backend)
-  const adminEmails = ['admin@example.com', 'admin2@example.com'];
+  // Base API URL (adjust to your backend)
+  const API_URL = 'http://localhost:5000/api';
 
-  const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
+  const handleLogin = async (email, password) => {
+    try {
+      if (!email || !email.includes('@') || !password || password.length < 6) {
+        setErrorMessage('Please enter a valid email and password (minimum 6 characters).');
+        setShowError(true);
+        return;
+      }
 
-  const handleLogin = (email, password) => {
-    if (!email || !email.includes('@') || !password || password.length < 6) {
-      setErrorMessage('Please enter a valid email and password (minimum 6 characters).');
-      setShowError(true);
-      return;
-    }
-    setUserEmail(email);
-    setOtp(generateOTP());
-    setIsForgotFlow(false);
-    setCurrentForm('otp');
-  };
+      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const { token, user } = response.data;
 
-  const handleForgotPassword = (email) => {
-    if (!email || !email.includes('@')) {
-      setErrorMessage('Please enter a valid email.');
-      setShowError(true);
-      return;
-    }
-    setUserEmail(email);
-    setOtp(generateOTP());
-    setIsForgotFlow(true);
-    setCurrentForm('otp');
-  };
+      // Store token and role
+      localStorage.setItem('token', token);
+      localStorage.setItem('userRole', user.role);
+      setUserEmail(email);
+      setOtp(response.data.otp || null); // If backend sends OTP
+      setIsForgotFlow(false);
 
-  const handleOTPVerify = (enteredOTP) => {
-    if (!enteredOTP || enteredOTP.length !== 6 || parseInt(enteredOTP) !== otp) {
-      setErrorMessage('Please enter a valid 6-digit OTP.');
-      setShowError(true);
-      return;
-    }
-    setOtp(null);
-    if (isForgotFlow) {
-      setCurrentForm('changePassword');
-    } else {
-      // Determine user role
-      const userRole = adminEmails.includes(userEmail.toLowerCase()) ? 'admin' : 'user';
-
-      // Store the role in localStorage
-      localStorage.setItem('userRole', userRole);
-
-      // Reset to light theme on successful login
       const root = document.documentElement;
       localStorage.setItem('darkTheme', 'false');
       root.style.setProperty('--background-color', '#fff');
@@ -90,22 +65,98 @@ function Login() {
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
-        if (userRole === 'admin') {
-          navigate('/adminhome');
-        } else {
-          navigate('/userhome');
-        }
+        navigate(user.role === 'admin' ? '/adminhome' : '/userhome');
       }, 2000);
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.');
+      setShowError(true);
     }
   };
 
-  const handlePasswordUpdate = (newPassword, confirmPassword) => {
-    if (!newPassword || newPassword.length < 6 || newPassword !== confirmPassword) {
-      setErrorMessage('Passwords must match and be at least 6 characters.');
+  const handleForgotPassword = async (email) => {
+    try {
+      if (!email || !email.includes('@')) {
+        setErrorMessage('Please enter a valid email.');
+        setShowError(true);
+        return;
+      }
+
+      const response = await axios.post(`${API_URL}/auth/forgot-password`, { email });
+      setUserEmail(email);
+      setOtp(response.data.otp || null); // Adjust based on backend
+      setIsForgotFlow(true);
+      setCurrentForm('otp');
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || 'Failed to send OTP. Please try again.');
       setShowError(true);
-      return;
     }
-    setShowSuccess(true);
+  };
+
+  const handleOTPVerify = async (enteredOTP) => {
+    try {
+      if (!enteredOTP || enteredOTP.length !== 6) {
+        setErrorMessage('Please enter a valid 6-digit OTP.');
+        setShowError(true);
+        return;
+      }
+
+      const response = await axios.post(`${API_URL}/auth/verify-otp`, {
+        email: userEmail,
+        otp: enteredOTP,
+      });
+
+      setOtp(null);
+      if (isForgotFlow) {
+        setResetToken(response.data.resetToken || ''); // Store reset token
+        setCurrentForm('changePassword');
+      } else {
+        // For login flow, navigate (if backend requires OTP for login)
+        const { token, user } = response.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('userRole', user.role);
+
+        const root = document.documentElement;
+        localStorage.setItem('darkTheme', 'false');
+        root.style.setProperty('--background-color', '#fff');
+        root.style.setProperty('--text-color', '#333');
+        root.style.setProperty('--secondary-text-color', '#555');
+        root.style.setProperty('--button-bg-start', '#0077B6');
+        root.style.setProperty('--button-bg-end', '#005888');
+        root.style.setProperty('--border-color', '#ddd');
+        root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
+
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          navigate(user.role === 'admin' ? '/adminhome' : '/userhome');
+        }, 2000);
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || 'Invalid OTP. Please try again.');
+      setShowError(true);
+    }
+  };
+
+  const handlePasswordUpdate = async (newPassword, confirmPassword) => {
+    try {
+      if (!newPassword || newPassword.length < 6 || newPassword !== confirmPassword) {
+        setErrorMessage('Passwords must match and be at least 6 characters.');
+        setShowError(true);
+        return;
+      }
+
+      await axios.post(`${API_URL}/auth/change-password`, {
+        email: userEmail,
+        resetToken,
+        newPassword,
+      });
+
+      setResetToken('');
+      setShowSuccess(true);
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || 'Failed to update password. Please try again.');
+      setShowError(true);
+    }
   };
 
   const closeErrorModal = () => setShowError(false);
