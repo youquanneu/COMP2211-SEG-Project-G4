@@ -15,15 +15,17 @@ function UserHome() {
     if (selectedPage === 'userbooking') {
       navigate('/userbooking');
     } else if (selectedPage === 'calendar') {
-      navigate('/usercalendar');
+      navigate('/calendar');
     } else if (selectedPage === 'emergency') {
       navigate('/emergency');
+    } else if (selectedPage === 'dashboard') {
+      navigate('/userhome');
     }
   };
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
-    localStorage.removeItem('userRole'); // Clear role on logout
+    localStorage.removeItem('userRole');
     navigate('/');
   };
 
@@ -46,7 +48,7 @@ function UserHome() {
         <img src={logo} alt="Logo" className="dashboard-logo" />
         <div className="nav-wrapper">
           <select className="nav-dropdown" onChange={handleNavigation}>
-            <option value="home">Home</option>
+            <option value="dashboard">Dashboard</option>
             <option value="events">Events</option>
             <option value="directory">Directory</option>
             <option value="emergency">Emergency</option>

@@ -1,0 +1,84 @@
+/* src/pages/AdminResourceManagement.css */
+.admin-resource-management-container {
+    width: 90%;
+    max-width: 400px;
+    background: var(--background-color);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    margin: 20px auto;
+    text-align: center;
+  }
+  
+  .admin-resource-management-container h1 {
+    color: var(--text-color);
+    font-size: calc(var(--font-size-base) * 1.5);
+    margin-bottom: 20px;
+  }
+  
+  .action-button {
+    width: 200px;
+    padding: 8px;
+    background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: calc(var(--font-size-base) * 0.875);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin: 10px auto;
+    display: block;
+  }
+  
+  .action-button:hover {
+    transform: translateY(-2px);
+  }
+  
+  .back-button {
+    width: 120px;
+    padding: 8px;
+    background: linear-gradient(to right, #6c757d, #5a6268);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: calc(var(--font-size-base) * 0.875);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin: 10px auto;
+    display: block;
+  }
+  
+  .back-button:hover {
+    transform: translateY(-2px);
+    background: #5a6268;
+  }
+  
+  @media (min-width: 768px) {
+    .admin-resource-management-container {
+      padding: 25px;
+    }
+  
+    .admin-resource-management-container h1 {
+      font-size: calc(var(--font-size-base) * 1.75);
+    }
+  
+    .action-button {
+      font-size: calc(var(--font-size-base) * 1);
+      width: 220px;
+    }
+  
+    .back-button {
+      font-size: calc(var(--font-size-base) * 1);
+      width: 140px;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    .admin-resource-management-container {
+      padding: 15px;
+    }
+  
+    .action-button {
+      width: 180px;
+    }
+  }

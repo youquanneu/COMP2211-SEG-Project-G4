@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaCog, FaBell } from 'react-icons/fa';
 import logo from '../assets/logo.png';
-import './AdminHome.css';
+import campusPhoto from '../assets/campus.jpg';
+import './UserHome.css';
 
 function AdminHome() {
   const navigate = useNavigate();
@@ -15,10 +16,14 @@ function AdminHome() {
       navigate('/userbooking');
     } else if (selectedPage === 'calendar') {
       navigate('/calendar');
-    } else if (selectedPage === 'resourcemanagement') {
-      navigate('/resourcemanagement');
     } else if (selectedPage === 'usermanagement') {
       navigate('/usermanagement');
+    } else if (selectedPage === 'dashboard') {
+      navigate('/adminhome');
+    } else if (selectedPage === 'emergency') {
+      navigate('/adminemergency');
+    } else if (selectedPage === 'resourcemanagement') {
+      navigate('/resourcemanagement');
     }
   };
 
@@ -42,9 +47,9 @@ function AdminHome() {
   };
 
   return (
-    <div className="admin-home-container">
-      <header className="admin-home-header">
-        <img src={logo} alt="Logo" className="admin-home-logo" />
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <img src={logo} alt="Logo" className="dashboard-logo" />
         <div className="nav-wrapper">
           <select className="nav-dropdown" onChange={handleNavigation}>
             <option value="dashboard">Dashboard</option>
@@ -53,8 +58,8 @@ function AdminHome() {
             <option value="emergency">Emergency</option>
             <option value="userbooking">Booking</option>
             <option value="calendar">Calendar</option>
-            <option value="resourcemanagement">Resource Management</option>
             <option value="usermanagement">User Management</option>
+            <option value="resourcemanagement">Resource Management</option>
           </select>
         </div>
         <div className="icon-wrapper">
@@ -75,9 +80,18 @@ function AdminHome() {
           </div>
         </div>
       </header>
-      <main className="admin-home-content">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome to the Admin Dashboard. Use the navigation above to manage resources, users, and more.</p>
+      <main className="dashboard-content">
+        <h1>Welcome to University of Southampton Malaysia (UoSM)</h1>
+        <p>
+          The University of Southampton Malaysia (UoSM) is a branch campus of the University of Southampton, UK, a world-leading, research-intensive university and founding member of the prestigious Russell Group. Established in October 2012 at the invitation of the Malaysian Ministry of Higher Education, UoSM initially opened within the EduCity development in Iskandar, Johor. In October 2021, it relocated to a new, state-of-the-art campus in Eco Galleria, Iskandar Puteri, Johor, designed to accommodate up to 2,000 students.
+        </p>
+        <img src={campusPhoto} alt="UoSM Campus" className="dashboard-photo" />
+        <p>
+          UoSM offers a range of foundation, undergraduate, and postgraduate programs, with a strong emphasis on engineering, business, and computer science. Its split-campus programs allow students to study the first two years in Malaysia and the final two in the UK, providing a globally recognized education at a reduced cost—up to 75% savings compared to studying fully in the UK. The university is ranked 80th in the QS World University Rankings 2025, making it the top UK university in Malaysia.
+        </p>
+        <p>
+          The Eco Galleria campus spans 150,000 square feet and features cutting-edge facilities, including a Bloomberg Trading Suite, Aerospace Lab with a wind tunnel, and multiple engineering and computer science labs. With a high employability rate—100% of graduates secure work or further study within 15 months (DiscoverUni)—UoSM prepares students for successful careers worldwide. Use the navigation above to explore more options, including booking resources!
+        </p>
       </main>
     </div>
   );

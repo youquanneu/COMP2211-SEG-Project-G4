@@ -27,7 +27,12 @@ function UserBooking() {
   };
 
   const handleBack = () => {
-    navigate('/userhome'); // Matches route
+    const userRole = localStorage.getItem('userRole');
+    if (userRole === 'admin') {
+      navigate('/adminhome'); // Navigate to AdminHome if user is admin
+    } else {
+      navigate('/userhome'); // Navigate to UserHome if user is not admin
+    }
   };
 
   return (

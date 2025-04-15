@@ -1,3 +1,4 @@
+// src/pages/UserCalendar.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
@@ -10,7 +11,12 @@ function UserCalendar() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate('/userhome'); // Back to UserHome
+    const userRole = localStorage.getItem('userRole');
+    if (userRole === 'admin') {
+      navigate('/adminhome'); // Navigate to AdminHome if user is admin
+    } else {
+      navigate('/userhome'); // Navigate to UserHome if user is not admin
+    }
   };
 
   return (
