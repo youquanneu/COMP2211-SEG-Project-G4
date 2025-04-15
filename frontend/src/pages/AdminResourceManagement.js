@@ -6,32 +6,30 @@ import './AdminResourceManagement.css';
 function AdminResourceManagement() {
   const navigate = useNavigate();
 
-  const handleVenueBooking = () => {
-    // Placeholder for now; can add navigation or functionality later
-    alert('Venue Booking functionality coming soon!');
+  const handleVenueManagement = () => {
+    navigate('/adminvenuemanagement');
   };
 
-  const handleEquipmentBooking = () => {
-    // Placeholder for now; can add navigation or functionality later
-    alert('Equipment Booking functionality coming soon!');
+  const handleEquipmentManagement = () => {
+    navigate('/adminequipmentmanagement');
   };
 
   const handleEquipmentApproval = () => {
-    navigate('/equipmentapproval'); // Navigate to the Equipment Approval page
+    navigate('/equipmentapproval');
   };
 
   const handleBack = () => {
-    navigate('/adminhome'); // Navigate back to AdminHome
+    navigate('/admindashboard'); // Updated to navigate to AdminDashboard
   };
 
   return (
     <div className="admin-resource-management-container">
       <h1>Resource Management</h1>
-      <button className="action-button" onClick={handleVenueBooking}>
-        Venue Booking
+      <button className="action-button" onClick={handleVenueManagement}>
+        Venue Management
       </button>
-      <button className="action-button" onClick={handleEquipmentBooking}>
-        Equipment Booking
+      <button className="action-button" onClick={handleEquipmentManagement}>
+        Equipment Management
       </button>
       <button className="action-button" onClick={handleEquipmentApproval}>
         Approval of Equipment

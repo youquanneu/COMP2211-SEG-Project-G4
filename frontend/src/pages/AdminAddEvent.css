@@ -1,0 +1,172 @@
+/* src/pages/AdminAddEvent.css */
+.admin-add-event-container {
+    width: 90%;
+    max-width: 600px; /* Match other pages like EquipmentApproval */
+    background: #E6F0FA; /* Light blue background for a distinct look */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    margin: 20px auto;
+    text-align: center;
+  }
+  
+  .admin-add-event-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .admin-add-event-logo {
+    width: 60px;
+    height: auto;
+  }
+  
+  .admin-add-event-content h1 {
+    color: var(--text-color);
+    font-size: calc(var(--font-size-base) * 1.5);
+    margin-bottom: 20px;
+  }
+  
+  .success-message {
+    background: #28A745; /* Green background for success */
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: calc(var(--font-size-base) * 0.875);
+  }
+  
+  .add-event-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .form-group label {
+    color: var(--text-color);
+    font-size: calc(var(--font-size-base) * 1);
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: calc(var(--font-size-base) * 1);
+    background: var(--background-color);
+    color: var(--text-color);
+    box-sizing: border-box;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--button-bg-start);
+  }
+  
+  .form-group textarea {
+    resize: vertical; /* Allow vertical resizing only */
+  }
+  
+  .submit-button {
+    width: 150px;
+    padding: 8px;
+    background: linear-gradient(to right, #0077B6, #005888); /* Blue gradient */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: calc(var(--font-size-base) * 0.875);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-2px);
+    background: #005888;
+  }
+  
+  .back-button {
+    width: 120px;
+    padding: 8px;
+    background: linear-gradient(to right, #6c757d, #5a6268); /* Grey gradient */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: calc(var(--font-size-base) * 0.875);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    margin: 10px auto;
+    display: block;
+  }
+  
+  .back-button:hover {
+    transform: translateY(-2px);
+    background: #5a6268;
+  }
+  
+  @media (min-width: 768px) {
+    .admin-add-event-container {
+      padding: 25px;
+    }
+  
+    .admin-add-event-logo {
+      width: 80px;
+    }
+  
+    .admin-add-event-content h1 {
+      font-size: calc(var(--font-size-base) * 1.75);
+    }
+  
+    .form-group label {
+      font-size: calc(var(--font-size-base) * 1.125);
+    }
+  
+    .form-group input,
+    .form-group textarea {
+      font-size: calc(var(--font-size-base) * 1.125);
+    }
+  
+    .submit-button,
+    .back-button {
+      font-size: calc(var(--font-size-base) * 1);
+      width: 160px;
+    }
+  }
+  
+  @media (max-width: 360px) {
+    .admin-add-event-container {
+      padding: 15px;
+    }
+  
+    .admin-add-event-logo {
+      width: 50px;
+    }
+  
+    .form-group label {
+      font-size: calc(var(--font-size-base) * 0.875);
+    }
+  
+    .form-group input,
+    .form-group textarea {
+      font-size: calc(var(--font-size-base) * 0.875);
+    }
+  
+    .submit-button,
+    .back-button {
+      font-size: calc(var(--font-size-base) * 0.75);
+      width: 130px;
+    }
+  }

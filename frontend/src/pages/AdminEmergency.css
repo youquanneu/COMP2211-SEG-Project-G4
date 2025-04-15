@@ -1,190 +1,237 @@
 /* src/pages/AdminEmergency.css */
 .admin-emergency-container {
-    width: 90%;
-    max-width: 400px; /* Match the width of other pages like UserEmergency */
-    background: #FFE6E6; /* Light red background */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px var(--shadow-color);
-    margin: 20px auto;
-    text-align: center;
-    position: relative; /* Allow absolute positioning of the panic button */
+  width: 90%;
+  max-width: 400px; /* Match the width of other pages like UserEmergency - unchanged */
+  background: #FFE6E6; /* Light red background - unchanged */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  margin: 20px auto;
+  text-align: center;
+  position: relative; /* Allow absolute positioning of the panic button */
+}
+
+.admin-emergency-header {
+  display: flex;
+  justify-content: center; /* Center the logo */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-emergency-logo {
+  width: 60px;
+  height: auto;
+}
+
+.admin-emergency-content {
+  position: relative; /* Ensure panic button positioning within content */
+}
+
+.admin-emergency-content h1 {
+  color: var(--text-color);
+  font-size: calc(var(--font-size-base) * 1.5);
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the date inputs */
+  gap: 15px; /* Add spacing between "From" and "To" groups */
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.date-input-group {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Space between label and input */
+}
+
+.date-input-group label {
+  color: var(--text-color);
+  font-size: calc(var(--font-size-base) * 1);
+}
+
+.date-input-group input {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: calc(var(--font-size-base) * 1);
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+.date-input-group input:focus {
+  outline: none;
+  border-color: var(--button-bg-start);
+}
+
+.emergency-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  overflow-x: auto; /* Allow horizontal scrolling on small screens */
+  display: block; /* Ensure table scrolls on small screens */
+}
+
+.emergency-table th,
+.emergency-table td {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  font-size: calc(var(--font-size-base) * 0.875);
+  color: var(--text-color);
+}
+
+.emergency-table th {
+  background: #FF9999; /* Slightly darker red for table header */
+  color: white;
+}
+
+.emergency-table td {
+  background: var(--background-color);
+}
+
+.export-button {
+  width: 150px;
+  padding: 8px;
+  background: linear-gradient(to right, #0077B6, #005888);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: calc(var(--font-size-base) * 0.875);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 10px auto;
+  display: block;
+}
+
+.export-button:hover {
+  transform: translateY(-2px);
+}
+
+.back-button {
+  width: 120px;
+  padding: 8px;
+  background: linear-gradient(to right, #6c757d, #5a6268);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: calc(var(--font-size-base) * 0.875);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 10px auto;
+  display: block;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  background: #5a6268;
+}
+
+.panic-button {
+  position: absolute;
+  top: -30px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+  background: #FF0000; /* Pure red */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.panic-icon {
+  font-size: 25px;
+  color: white;
+}
+
+.panic-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 6px;
+  z-index: 1000;
+  text-align: center;
+  font-size: calc(var(--font-size-base) * 0.875);
+}
+
+@media (min-width: 768px) {
+  .admin-emergency-container {
+    padding: 25px;
   }
-  
-  .admin-emergency-container h1 {
-    color: var(--text-color);
-    font-size: calc(var(--font-size-base) * 1.5);
-    margin-bottom: 20px;
+
+  .admin-emergency-logo {
+    width: 80px;
   }
-  
-  .filter-group {
-    margin-bottom: 20px;
+
+  .admin-emergency-content h1 {
+    font-size: calc(var(--font-size-base) * 1.75);
   }
-  
-  .filter-group label {
-    color: var(--text-color);
-    font-size: calc(var(--font-size-base) * 1);
-    margin-right: 10px;
+
+  .date-input-group label {
+    font-size: calc(var(--font-size-base) * 1.125);
   }
-  
-  .filter-group input {
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    font-size: calc(var(--font-size-base) * 1);
-    background: var(--background-color);
-    color: var(--text-color);
+
+  .date-input-group input {
+    font-size: calc(var(--font-size-base) * 1.125);
   }
-  
-  .emergency-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  
+
   .emergency-table th,
   .emergency-table td {
-    padding: 10px;
-    border: 1px solid var(--border-color);
-    font-size: calc(var(--font-size-base) * 0.875);
-    color: var(--text-color);
+    font-size: calc(var(--font-size-base) * 1);
   }
-  
-  .emergency-table th {
-    background: #FF9999; /* Slightly darker red for table header */
-    color: white;
-  }
-  
-  .emergency-table td {
-    background: var(--background-color);
-  }
-  
-  .export-button {
-    width: 150px;
-    padding: 8px;
-    background: linear-gradient(to right, #0077B6, #005888);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: calc(var(--font-size-base) * 0.875);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    margin: 10px auto;
-    display: block;
-  }
-  
-  .export-button:hover {
-    transform: translateY(-2px);
-  }
-  
+
+  .export-button,
   .back-button {
-    width: 120px;
-    padding: 8px;
-    background: linear-gradient(to right, #6c757d, #5a6268);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: calc(var(--font-size-base) * 0.875);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    margin: 10px auto;
-    display: block;
+    font-size: calc(var(--font-size-base) * 1);
+    width: 160px;
   }
-  
-  .back-button:hover {
-    transform: translateY(-2px);
-    background: #5a6268;
-  }
-  
+
   .panic-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background: #FF0000; /* Pure red */
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 60px;
+    height: 60px;
   }
-  
+
   .panic-icon {
-    font-size: 25px;
-    color: white;
+    font-size: 30px;
   }
-  
-  .panic-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 15px 25px;
-    border-radius: 6px;
-    z-index: 1000;
-    text-align: center;
-    font-size: calc(var(--font-size-base) * 0.875);
+}
+
+@media (max-width: 360px) {
+  .admin-emergency-container {
+    padding: 15px;
   }
-  
-  @media (min-width: 768px) {
-    .admin-emergency-container {
-      padding: 25px;
-    }
-  
-    .admin-emergency-container h1 {
-      font-size: calc(var(--font-size-base) * 1.75);
-    }
-  
-    .filter-group label {
-      font-size: calc(var(--font-size-base) * 1.125);
-    }
-  
-    .filter-group input {
-      font-size: calc(var(--font-size-base) * 1.125);
-    }
-  
-    .emergency-table th,
-    .emergency-table td {
-      font-size: calc(var(--font-size-base) * 1);
-    }
-  
-    .export-button,
-    .back-button {
-      font-size: calc(var(--font-size-base) * 1);
-      width: 160px;
-    }
-  
-    .panic-button {
-      width: 60px;
-      height: 60px;
-    }
-  
-    .panic-icon {
-      font-size: 30px;
-    }
+
+  .admin-emergency-logo {
+    width: 50px;
   }
-  
-  @media (max-width: 360px) {
-    .admin-emergency-container {
-      padding: 15px;
-    }
-  
-    .emergency-table th,
-    .emergency-table td {
-      padding: 8px;
-      font-size: calc(var(--font-size-base) * 0.75);
-    }
-  
-    .panic-button {
-      width: 40px;
-      height: 40px;
-    }
-  
-    .panic-icon {
-      font-size: 20px;
-    }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Adjust spacing when stacked */
   }
+
+  .date-input-group {
+    width: 100%; /* Ensure full width on small screens */
+    justify-content: center;
+  }
+
+  .date-input-group input {
+    width: 100%; /* Full width for inputs on small screens */
+  }
+
+  .emergency-table th,
+  .emergency-table td {
+    padding: 8px;
+    font-size: calc(var(--font-size-base) * 0.75);
+  }
+}

@@ -1,67 +1,164 @@
 /* src/pages/EquipmentApproval.css */
 .equipment-approval-container {
-    width: 90%;
-    max-width: 400px;
-    background: var(--background-color);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px var(--shadow-color);
-    margin: 20px auto;
-    text-align: center;
+  width: 90%;
+  max-width: 600px; /* Increased from 400px to fit table content fully */
+  background: #F5F5F5; /* Light grey background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  margin: 20px auto;
+  text-align: center;
+}
+
+.equipment-approval-header {
+  display: flex;
+  justify-content: center; /* Center the logo */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.equipment-approval-logo {
+  width: 60px;
+  height: auto;
+}
+
+.equipment-approval-content h1 {
+  color: var(--text-color);
+  font-size: calc(var(--font-size-base) * 1.5);
+  margin-bottom: 20px;
+}
+
+.request-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.request-table table {
+  width: 100%;
+}
+
+.request-table th,
+.request-table td {
+  padding: 8px; /* Slightly increased padding for readability */
+  border: 1px solid var(--border-color);
+  font-size: calc(var(--font-size-base) * 0.875); /* Restored original font size */
+  color: var(--text-color);
+  text-align: center; /* Center-align content for better fit */
+}
+
+.request-table th {
+  background: #D3D3D3; /* Slightly darker grey for table header */
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.request-table td {
+  background: var(--background-color);
+}
+
+.approve-button {
+  padding: 6px 12px; /* Restored original padding */
+  background: linear-gradient(to right, #28A745, #218838); /* Green gradient */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: calc(var(--font-size-base) * 0.875); /* Restored original font size */
+  cursor: pointer;
+  margin-right: 5px; /* Restored original margin */
+  transition: transform 0.2s ease;
+}
+
+.approve-button:hover {
+  transform: translateY(-2px);
+  background: #218838;
+}
+
+.decline-button {
+  padding: 6px 12px; /* Restored original padding */
+  background: linear-gradient(to right, #DC3545, #C82333); /* Red gradient */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: calc(var(--font-size-base) * 0.875); /* Restored original font size */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.decline-button:hover {
+  transform: translateY(-2px);
+  background: #C82333;
+}
+
+.back-button {
+  width: 120px;
+  padding: 8px;
+  background: linear-gradient(to right, #6c757d, #5a6268);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: calc(var(--font-size-base) * 0.875);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 10px auto;
+  display: block;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  background: #5a6268;
+}
+
+@media (min-width: 768px) {
+  .equipment-approval-container {
+    padding: 25px;
   }
-  
-  .equipment-approval-container h1 {
-    color: var(--text-color);
-    font-size: calc(var(--font-size-base) * 1.5);
-    margin-bottom: 20px;
+
+  .equipment-approval-logo {
+    width: 80px;
   }
-  
-  .equipment-approval-container p {
-    color: var(--text-color);
+
+  .equipment-approval-content h1 {
+    font-size: calc(var(--font-size-base) * 1.75);
+  }
+
+  .request-table th,
+  .request-table td {
+    padding: 10px;
     font-size: calc(var(--font-size-base) * 1);
-    margin-bottom: 20px;
   }
-  
+
+  .approve-button,
+  .decline-button {
+    padding: 8px 16px;
+    font-size: calc(var(--font-size-base) * 1);
+  }
+
   .back-button {
-    width: 120px;
-    padding: 8px;
-    background: linear-gradient(to right, #6c757d, #5a6268);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: calc(var(--font-size-base) * 0.875);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    margin: 10px auto;
-    display: block;
+    font-size: calc(var(--font-size-base) * 1);
+    width: 140px;
   }
-  
-  .back-button:hover {
-    transform: translateY(-2px);
-    background: #5a6268;
+}
+
+@media (max-width: 360px) {
+  .equipment-approval-container {
+    padding: 15px;
   }
-  
-  @media (min-width: 768px) {
-    .equipment-approval-container {
-      padding: 25px;
-    }
-  
-    .equipment-approval-container h1 {
-      font-size: calc(var(--font-size-base) * 1.75);
-    }
-  
-    .equipment-approval-container p {
-      font-size: calc(var(--font-size-base) * 1.125);
-    }
-  
-    .back-button {
-      font-size: calc(var(--font-size-base) * 1);
-      width: 140px;
-    }
+
+  .equipment-approval-logo {
+    width: 50px;
   }
-  
-  @media (max-width: 360px) {
-    .equipment-approval-container {
-      padding: 15px;
-    }
+
+  .request-table th,
+  .request-table td {
+    padding: 6px;
+    font-size: calc(var(--font-size-base) * 0.75);
   }
+
+  .approve-button,
+  .decline-button {
+    padding: 4px 8px;
+    font-size: calc(var(--font-size-base) * 0.75);
+    margin-right: 3px;
+  }
+}

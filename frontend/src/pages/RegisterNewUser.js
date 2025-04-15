@@ -78,15 +78,6 @@ function RegisterNewUser({ onClose }) {
                             placeholder=""
                         />
                     </div>
-                    <div className="form-group">
-                        <label>Faculty:</label>
-                        <input
-                            type="text"
-                            value={faculty}
-                            onChange={(e) => setFaculty(e.target.value)}
-                            placeholder=""
-                        />
-                    </div>
                     <button type="submit" className="register-button">
                         Register
                     </button>
