@@ -10,22 +10,23 @@ import java.time.LocalDateTime;
 @Entity
 public class EmergencyCase {
     public EmergencyCase(){}
-    public EmergencyCase(Venue venue, String content, String reporter){
+    public EmergencyCase(Venue venue, String emergencyCase, String description, String reporterEmail){
+        setReporterEmail(reporterEmail);
         setLocation(venue);
-        setContent(content);
-        setReporter(reporter);
+        setDescription(description);
+        setEmergencyCase(emergencyCase);
         setReportedTime(LocalDateTime.now());
         setStatus(Status.Pending);
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer emergencyCaseId;
+    private String reporterEmail;
     @ManyToOne
     private Venue location;
     @NotNull
-    private String content;
-    @NotNull
-    private String reporter;
+    private String emergencyCase;
+    private String description;
     @NotNull
     private LocalDateTime reportedTime;
     @NotNull
@@ -36,14 +37,17 @@ public class EmergencyCase {
     public Integer getEmergencyCaseId() {
         return emergencyCaseId;
     }
+    public String getReporterEmail() {
+        return reporterEmail;
+    }
     public Venue getLocation() {
         return location;
     }
-    public String getContent() {
-        return content;
+    public String getEmergencyCase() {
+        return emergencyCase;
     }
-    public String getReporter() {
-        return reporter;
+    public String getDescription() {
+        return description;
     }
     public LocalDateTime getReportedTime() {
         return reportedTime;
@@ -51,14 +55,17 @@ public class EmergencyCase {
     public Status getStatus() {
         return status;
     }
-    private void setContent(String content) {
-        this.content = content;
+    private void setReporterEmail(String reporterEmail) {
+        this.reporterEmail = reporterEmail;
     }
     private void setLocation(Venue location) {
         this.location = location;
     }
-    private void setReporter(String reporter) {
-        this.reporter = reporter;
+    private void setEmergencyCase(String emergencyCase) {
+        this.emergencyCase = emergencyCase;
+    }
+    private void setDescription(String description) {
+        this.description = description;
     }
     private void setReportedTime(LocalDateTime reportedTime) {
         this.reportedTime = reportedTime;

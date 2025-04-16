@@ -3,6 +3,7 @@ package com.campus.Controller;
 import com.campus.Classification.Purpose;
 import com.campus.Classification.Restriction;
 import com.campus.Classification.UserRole;
+import com.campus.Entity.Event.EmergencyCase;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Reservation.TimeSlot;
@@ -12,6 +13,7 @@ import com.campus.Entity.User.Lecturer;
 import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Repository.Reservation.TimeSlotRepository;
+import com.campus.Service.Event.EmergencyCaseService;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Reservation.TimeSlotService;
 import com.campus.Service.Resource.ResourceService;
@@ -44,6 +46,7 @@ public class SetUpController  implements CommandLineRunner {
 //        testNewReservation();
 //        testNewEvent();
 //        generateAllTimeSlot();
+//        addNewEmergencyCase();
     }
 
     public void testRegisterUser(){
@@ -178,6 +181,21 @@ public class SetUpController  implements CommandLineRunner {
         }
         return timeSlots;
     }
+    private void addNewEmergencyCase(){
+        for (EmergencyCase emergencyCase : emergencyCaseList()){
+            emergencyCaseService.reportNewCase(emergencyCase);
+        }
+    }
+    private List<EmergencyCase> emergencyCaseList(){
+        List<EmergencyCase> emergencyCaseList = new ArrayList<>();
+        Venue venue1 = (Venue) venueService.getResourceByID(4);
+        Venue venue2 = (Venue) venueService.getResourceByID(5);
+        Venue venue3 = (Venue) venueService.getResourceByID(6);
+        emergencyCaseList.add(new EmergencyCase(venue1,"user1@gmail.com","New Fire case",""));
+        emergencyCaseList.add(new EmergencyCase(venue2,"user2@gmail.com","Health emergency case",""));
+        emergencyCaseList.add(new EmergencyCase(venue3,"visitor","Unknown emergency case",""));
+        return emergencyCaseList;
+    }
     @Autowired
     private AdministrativeStaffService administrativeStaffService;
     @Autowired
@@ -190,4 +208,6 @@ public class SetUpController  implements CommandLineRunner {
     private VenueService venueService;
     @Autowired
     private TimeSlotService timeSlotService;
+    @Autowired
+    private EmergencyCaseService emergencyCaseService;
 }
