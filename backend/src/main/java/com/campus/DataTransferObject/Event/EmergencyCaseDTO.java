@@ -1,23 +1,40 @@
 package com.campus.DataTransferObject.Event;
 
-import com.campus.DataTransferObject.Resource.VenueDTO;
+import com.campus.Entity.Event.EmergencyCase;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmergencyCaseDTO {
     public EmergencyCaseDTO(){}
     public EmergencyCaseDTO(String reporterEmail,
-                            VenueDTO venueDTO,
+                            String location,
                             String emergencyCase,
                             String description){
         setReporterEmail(reporterEmail);
-        setVenueDTO(venueDTO);
+        setLocation(location);
         setEmergencyCase(emergencyCase);
         setDescription(description);
+    }
+    public static EmergencyCaseDTO mapper(EmergencyCase emergencyCase){
+        return new EmergencyCaseDTO(
+                emergencyCase.getReporterEmail(),
+                emergencyCase.getLocation().getResourceName(),
+                emergencyCase.getEmergencyCase(),
+                emergencyCase.getDescription());
+    }
+    public static List<EmergencyCaseDTO> listMapper(List<EmergencyCase> emergencyCaseList){
+        List<EmergencyCaseDTO> emergencyCaseDTOS = new ArrayList<>();
+        for (EmergencyCase emergencyCase : emergencyCaseList){
+            emergencyCaseDTOS.add(mapper(emergencyCase));
+        }
+        return emergencyCaseDTOS;
     }
     @JsonProperty
     private String reporterEmail;
     @JsonProperty
-    private VenueDTO venueDTO;
+    private String location;
     @JsonProperty
     private String emergencyCase;
     @JsonProperty
@@ -25,8 +42,8 @@ public class EmergencyCaseDTO {
     public String getReporterEmail() {
         return reporterEmail;
     }
-    public VenueDTO getVenueDTO() {
-        return venueDTO;
+    public String getLocation() {
+        return location;
     }
     public String getDescription() {
         return description;
@@ -37,8 +54,8 @@ public class EmergencyCaseDTO {
     private void setReporterEmail(String reporterEmail) {
         this.reporterEmail = reporterEmail;
     }
-    private void setVenueDTO(VenueDTO venueDTO) {
-        this.venueDTO = venueDTO;
+    private void setLocation(String location) {
+        this.location = location;
     }
     private void setDescription(String description) {
         this.description = description;

@@ -1,11 +1,14 @@
 package com.campus.Service.Event;
 
+import com.campus.DataTransferObject.Event.EmergencyCaseDTO;
 import com.campus.Entity.Event.EmergencyCase;
 import com.campus.Repository.Event.EmergencyCaseRepository;
 import com.campus.Service.Mail.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,6 +17,9 @@ public class EmergencyCaseService {
     private EmailSenderService emailSenderService;
     @Autowired
     private EmergencyCaseRepository emergencyCaseRepository;
+    public List<EmergencyCase> getAllEmergencyCase(){
+        return emergencyCaseRepository.findAll();
+    }
     public EmergencyCase getEmergencyCaseById(Integer id){
         Optional<EmergencyCase> emergencyCase = emergencyCaseRepository.findById(id);
         if (emergencyCase.isEmpty()){
