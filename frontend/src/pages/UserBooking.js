@@ -10,7 +10,7 @@ function UserBooking() {
   const [resource, setResource] = useState(null);
   const [purpose, setPurpose] = useState('');
   const [date, setDate] = useState(null);
-  const [time, setTime] = useState('');
+  const [time, setTime] = useState(null);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [bookingDetails, setBookingDetails] = useState(null);
@@ -76,8 +76,7 @@ function UserBooking() {
       });
       if (Array.isArray(response.data)) {
         console.log(response.data);
-        const formattedTimes = response.data.map(slot => `${slot.startingTime}-${slot.endingTime}`);
-        setAvailableTimes(formattedTimes);
+        setAvailableTimes(response.data);
         setShowDropdown(true);
         setError('');
       } else {
@@ -94,22 +93,26 @@ function UserBooking() {
     console.log("Selected time: ", slot);
     setTime(slot);
     setShowDropdown(false);
-    sendLog('select_time', slot);
+    sendLog('select_time', `${slot.startingTime}-${slot.endingTime}`);
   };
 
   const handleBook = async () => {
     await sendLog('book', 'Submitted booking');
     if (resource && purpose && date && time) {
-      const formattedDate = date.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      });
+//      const formattedDate = date.toLocaleDateString('en-US', {
+//        month: 'long',
+//        day: 'numeric',
+//        year: 'numeric',
+//      });
+      const formattedDate = date.toISOString().split('T')[0];
       const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
 
       const bookingData = {
-        userEmail, resource, purpose, date,
-        time
+        userEmail,
+        resourceDTO : resource,
+        purpose,
+        reservationDate : formattedDate,
+        timeSlotDTO : time
       };
       console.log(bookingData);
       try {
@@ -193,7 +196,7 @@ function UserBooking() {
         <div className="time-input-wrapper" ref={dropdownRef}>
           <input
             type="text"
-            value={time || 'Select Time'}
+            value={time ? `${time.startingTime} - ${time.endingTime}` : 'Select Time'}
             readOnly
             className="time-input"
             onClick={handleSearchTimes}
@@ -209,7 +212,7 @@ function UserBooking() {
                   className="time-option"
                   onClick={() => handleSelectTime(slot)}
                 >
-                  {slot}
+                  {`${slot.startingTime} - ${slot.endingTime}`}
                 </li>
               ))}
             </ul>
