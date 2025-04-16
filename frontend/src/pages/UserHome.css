@@ -1,4 +1,3 @@
-/* src/pages/UserHome.css */
 .dashboard-container {
   width: 90%;
   max-width: 400px;
@@ -50,7 +49,6 @@
   gap: 10px;
 }
 
-.notification-icon,
 .settings-icon,
 .user-icon {
   font-size: calc(var(--font-size-base) * 2); 
@@ -58,7 +56,6 @@
   cursor: pointer;
 }
 
-.notification-icon:hover,
 .settings-icon:hover,
 .user-icon:hover {
   color: var(--button-bg-end);
@@ -131,7 +128,6 @@
     font-size: calc(var(--font-size-base) * 1);
     width: 160px;
   }
-  .notification-icon,
   .settings-icon,
   .user-icon {
     font-size: calc(var(--font-size-base) * 1.25); 

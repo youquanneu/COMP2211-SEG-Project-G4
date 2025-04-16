@@ -1,7 +1,6 @@
-// src/pages/UserHome.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaCog, FaBell } from 'react-icons/fa';
+import { FaUser, FaCog } from 'react-icons/fa';
 import logo from '../assets/logo.png';
 import campusPhoto from '../assets/campus.jpg';
 import './UserHome.css';
@@ -28,6 +27,7 @@ function UserHome() {
   const handleLogout = () => {
     setIsDropdownOpen(false);
     localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
     navigate('/');
   };
 
@@ -59,7 +59,6 @@ function UserHome() {
           </select>
         </div>
         <div className="icon-wrapper">
-          <FaBell className="notification-icon" />
           <FaCog className="settings-icon" onClick={handleSettings} />
           <div className="user-menu">
             <FaUser className="user-icon" onClick={toggleDropdown} />
