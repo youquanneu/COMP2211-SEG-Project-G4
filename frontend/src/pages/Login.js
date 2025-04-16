@@ -8,7 +8,7 @@ import ChangePasswordForm from '../modules/auth/ChangePasswordForm';
 import ErrorModal from '../components/ErrorModal';
 import SuccessModal from '../components/SuccessModal';
 import logo from '../assets/logo.png';
-import {getAPI_URL} from "../services/api";
+import { getAPI_URL } from "../services/api";
 
 function Login() {
   const [currentForm, setCurrentForm] = useState('login');
@@ -18,8 +18,23 @@ function Login() {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState('');
-  const [resetToken, setResetToken] = useState(''); 
+  const [resetToken, setResetToken] = useState('');
   const navigate = useNavigate();
+
+  // Send log to backend
+  const sendLog = async (action, value, requireToken = true) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (requireToken && !token) return;
+      await axios.post(
+        'http://localhost:8080/api/logs',
+        { action, value },
+        token ? { headers: { Authorization: `Bearer ${token}` } } : {}
+      );
+    } catch (err) {
+      console.error('Log error:', err.message);
+    }
+  };
 
   useEffect(() => {
     const root = document.documentElement;
@@ -32,10 +47,10 @@ function Login() {
     root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
   }, []);
 
-  // Base API URL (adjust to your backend)
   const API_URL = 'http://localhost:8080/api';
 
   const handleLogin = async (email, password) => {
+    await sendLog('login', email, false);
     try {
       if (!email || !email.includes('@') || !password || password.length < 6) {
         setErrorMessage('Please enter a valid email and password (minimum 6 characters).');
@@ -46,14 +61,13 @@ function Login() {
       const response = await axios.post(getAPI_URL("auth/login"), { email, password });
       const { token, userDTO } = response.data;
 
-      // Store token and role
       localStorage.setItem('token', token);
-      console.log("set token : " + token);
+      console.log("set token: " + token);
       localStorage.setItem('userRole', userDTO.UserRole);
-      console.log("set userRole : " + userDTO.userRole);
+      console.log("set userRole: " + userDTO.UserRole);
 
       setUserEmail(email);
-      setOtp(response.data.otp || null); // If backend sends OTP
+      setOtp(response.data.otp || null);
       setIsForgotFlow(false);
 
       const root = document.documentElement;
@@ -69,16 +83,17 @@ function Login() {
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
-        navigate(userDTO.userRole === 'AdministrativeStaff' ? '/adminhome' : '/userhome');
+        navigate(userDTO.UserRole === 'AdministrativeStaff' ? '/admindashboard' : '/userhome');
       }, 2000);
     } catch (error) {
-    console.log(error)
+      console.log(error);
       setErrorMessage(error.response?.data || 'Login failed. Please try again.');
       setShowError(true);
     }
   };
 
   const handleForgotPassword = async (email) => {
+    await sendLog('forgot_password', email, false);
     try {
       if (!email || !email.includes('@')) {
         setErrorMessage('Please enter a valid email.');
@@ -88,7 +103,7 @@ function Login() {
 
       const response = await axios.post(`${API_URL}/auth/forgot-password`, { email });
       setUserEmail(email);
-      setOtp(response.data.otp || null); // Adjust based on backend
+      setOtp(response.data.otp || null);
       setIsForgotFlow(true);
       setCurrentForm('otp');
     } catch (error) {
@@ -98,6 +113,7 @@ function Login() {
   };
 
   const handleOTPVerify = async (enteredOTP) => {
+    await sendLog('verify_otp', enteredOTP, false);
     try {
       if (!enteredOTP || enteredOTP.length !== 6) {
         setErrorMessage('Please enter a valid 6-digit OTP.');
@@ -112,10 +128,9 @@ function Login() {
 
       setOtp(null);
       if (isForgotFlow) {
-        setResetToken(response.data.resetToken || ''); // Store reset token
+        setResetToken(response.data.resetToken || '');
         setCurrentForm('changePassword');
       } else {
-        // For login flow, navigate (if backend requires OTP for login)
         const { token, user } = response.data;
         localStorage.setItem('token', token);
         localStorage.setItem('userRole', user.role);
@@ -133,7 +148,7 @@ function Login() {
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
-          navigate(user.role === 'admin' ? '/adminhome' : '/userhome');
+          navigate(user.role === 'admin' ? '/admindashboard' : '/userhome');
         }, 2000);
       }
     } catch (error) {
@@ -143,6 +158,7 @@ function Login() {
   };
 
   const handlePasswordUpdate = async (newPassword, confirmPassword) => {
+    await sendLog('change_password', userEmail, false);
     try {
       if (!newPassword || newPassword.length < 6 || newPassword !== confirmPassword) {
         setErrorMessage('Passwords must match and be at least 6 characters.');
