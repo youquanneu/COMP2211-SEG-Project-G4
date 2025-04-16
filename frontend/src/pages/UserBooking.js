@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
 import './UserBooking.css';
+import { getAPI_URL } from "../services/api";
 
 function UserBooking() {
   const [resource, setResource] = useState('');
@@ -21,7 +22,7 @@ function UserBooking() {
   // Send log to backend
   const sendLog = async (action, value) => {
     try {
-      await axios.post('http://localhost:8080/api/logs', { action, value });
+      await axios.post(getAPI_URL('api/logs'), { action, value });
     } catch (err) {
       console.error('Log error:', err.message);
     }
@@ -31,7 +32,7 @@ function UserBooking() {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/resources');
+        const response = await axios.get(getAPI_URL('user/resource/getAllResource'));
         console.log('API Response:', response.data);
         if (Array.isArray(response.data)) {
           setResources(response.data);
@@ -59,7 +60,6 @@ function UserBooking() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
   // Fetch available time slots
   const handleSearchTimes = async () => {
     await sendLog('search_times', 'Searched times');
@@ -69,10 +69,12 @@ function UserBooking() {
     }
     try {
       const formattedDate = date.toISOString().split('T')[0];
-      const response = await axios.get('http://localhost:8080/api/bookings/available-times', {
+      console.log("Search the resource : " + resource + "date: " + formattedDate)
+      const response = await axios.get(getAPI_URL('user/reservation/getAvailableTimeSlot'), {
         params: { resource, date: formattedDate },
       });
       if (Array.isArray(response.data)) {
+        console.log(response.data)
         setAvailableTimes(response.data);
         setShowDropdown(true);
         setError('');
@@ -85,8 +87,8 @@ function UserBooking() {
       console.error('Fetch error:', err.message, err.response?.data);
     }
   };
-
   const handleSelectTime = (slot) => {
+  console.log("Error reach Here")
     setTime(slot);
     setShowDropdown(false);
     sendLog('select_time', slot);
