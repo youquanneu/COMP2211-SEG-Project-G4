@@ -13,6 +13,7 @@ import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Repository.Reservation.TimeSlotRepository;
 import com.campus.Service.Reservation.ReservationService;
+import com.campus.Service.Reservation.TimeSlotService;
 import com.campus.Service.Resource.ResourceService;
 import com.campus.Service.Resource.VenueService;
 import com.campus.Service.User.AdministrativeStaffService;
@@ -42,6 +43,7 @@ public class SetUpController  implements CommandLineRunner {
 //        testAddNewResource();
 //        testNewReservation();
 //        testNewEvent();
+//        generateAllTimeSlot();
     }
 
     public void testRegisterUser(){
@@ -161,6 +163,21 @@ public class SetUpController  implements CommandLineRunner {
         eventList.add(event2);
         return eventList;
     }
+    private void generateAllTimeSlot(){
+        for (TimeSlot timeSlot : initialTimeSlot()){
+            timeSlotService.saveTimeSlot(timeSlot);
+        }
+    }
+    private List<TimeSlot> initialTimeSlot(){
+        List<TimeSlot> timeSlots = new ArrayList<>();
+        for (int hour = 0; hour < 24; hour++) {
+            LocalTime start = LocalTime.of(hour, 0);
+            LocalTime end = LocalTime.of((hour + 1) % 24, 0);
+            TimeSlot timeSlot = new TimeSlot(start, end);
+            timeSlots.add(timeSlot);
+        }
+        return timeSlots;
+    }
     @Autowired
     private AdministrativeStaffService administrativeStaffService;
     @Autowired
@@ -171,4 +188,6 @@ public class SetUpController  implements CommandLineRunner {
     private ResourceService resourceService;
     @Autowired
     private VenueService venueService;
+    @Autowired
+    private TimeSlotService timeSlotService;
 }

@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
@@ -29,15 +30,20 @@ public class ReservationController {
     private UserService userService;
     @Autowired
     private ResourceService resourceService;
-    @GetMapping("/getAvailableTimeSlot")
+    @PostMapping("/getAvailableTimeSlot")
     public ResponseEntity<?> availableTime(@RequestBody AvailableTimeRequest availableTimeRequest){
-        logger.info("processing : " );
+        logger.info("Available time request processing : "+ availableTimeRequest );
         try {
             Resource resource = resourceService.getResourceByID(
                     availableTimeRequest.getResourceDTO().getResourceId());
+            logger.info("Getting resource by id : " + resource.getResourceName());
+            logger.info("Date is " + availableTimeRequest.getLocalDate());
+            logger.info("Today is " + LocalDate.now());
             List<TimeSlotDTO> availableTime =
-                    TimeSlotDTO.mapper(reservationService.availableTime(
-                            resource, availableTimeRequest.getLocalDate()));
+                    TimeSlotDTO.mapper(
+                            reservationService.availableTime(resource, availableTimeRequest.getLocalDate()))
+                    ;
+            logger.info(availableTime.toString());
             return ResponseEntity.ok(availableTime);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());
@@ -46,17 +52,20 @@ public class ReservationController {
     }
     @PostMapping("/makeReservation")
     public ResponseEntity<?> booking(@RequestBody ReservationRequest reservationRequest) {
-        logger.info("processing : " );
+        logger.info("Reservation request processing : " + reservationRequest.toString() );
         try {
             User booker = userService.getUserByEmail(reservationRequest.getUserEmail());
             Resource resource = resourceService.getResourceByID(reservationRequest.getResourceDTO().getResourceId());
+            logger.info("Resource get : " + resource);
             LocalDateTime reservationStarting =
                     reservationRequest.getTimeSlotDTO().getStartingTime()
                             .atDate(reservationRequest.getReservationDate());
             LocalDateTime reservationEnding =
                     reservationRequest.getTimeSlotDTO().getEndingTime()
                             .atDate(reservationRequest.getReservationDate());
+            logger.info("Reservation time: " + reservationStarting + " , " + reservationEnding);
             Reservation reservation = reservationService.createNewReservation(booker,resource,reservationRequest.getPurpose(),reservationStarting,reservationEnding);
+            logger.info("Reservation successful : " + reservation.toString());
             return ResponseEntity.ok(ReservationDTO.mapper(reservation));
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());

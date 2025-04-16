@@ -5,13 +5,14 @@ import com.campus.DataTransferObject.Resource.ResourceDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ReservationRequest {
     public ReservationRequest(){}
     public ReservationRequest(String userEmail,
                               ResourceDTO resourceDTO,
                               Purpose purpose,
-                              LocalDate reservationDate,
+                              String reservationDate,
                               TimeSlotDTO timeSlotDTO){
         setUserEmail(userEmail);
         setResourceDTO(resourceDTO);
@@ -26,7 +27,7 @@ public class ReservationRequest {
     @JsonProperty("purpose")
     private Purpose purpose;
     @JsonProperty
-    private LocalDate reservationDate;
+    private String reservationDate;
     @JsonProperty
     private TimeSlotDTO timeSlotDTO;
     public String getUserEmail() {
@@ -39,7 +40,7 @@ public class ReservationRequest {
         return purpose;
     }
     public LocalDate getReservationDate() {
-        return reservationDate;
+        return LocalDate.parse(reservationDate);
     }
     public TimeSlotDTO getTimeSlotDTO() {
         return timeSlotDTO;
@@ -53,7 +54,7 @@ public class ReservationRequest {
     public void setPurpose(Purpose purpose) {
         this.purpose = purpose;
     }
-    public void setReservationDate(LocalDate reservationDate) {
+    public void setReservationDate(String reservationDate) {
         this.reservationDate = reservationDate;
     }
     public void setTimeSlotDTO(TimeSlotDTO timeSlotDTO) {

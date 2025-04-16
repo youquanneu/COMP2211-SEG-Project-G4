@@ -50,16 +50,11 @@ public class ReservationService {
                                             Purpose purpose,
                                             LocalDateTime reservationStarting,
                                             LocalDateTime reservationEnding){
-        try {
-
-            newReservationValidation(resource, reservationStarting, reservationEnding);
-            Reservation reservation = new Reservation(user, resource, purpose, reservationStarting, reservationEnding);
-            saveReservation(reservation);
-            notificationService.reservationNotification(reservation);
-            return reservation;
-        }catch (Exception e){
-            return null;
-        }
+        newReservationValidation(resource, reservationStarting, reservationEnding);
+        Reservation reservation = new Reservation(user, resource, purpose, reservationStarting, reservationEnding);
+        saveReservation(reservation);
+        notificationService.reservationNotification(reservation);
+        return reservation;
     }   // Function : Create a new reservation after check the time validation
     void checkEditValidation(User booker, Reservation reservation){
         boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
@@ -149,7 +144,7 @@ public class ReservationService {
         }
     }   // Check if reservation after change conflict with other reservation
     public List<TimeSlot> availableTime(Resource resource, LocalDate localDate){
-        return timeSlotService.getAvailableTimeSlots(reservationsByDate(resource,localDate));
+        return timeSlotService.getAvailableTimeSlots(resource,reservationsByDate(resource,localDate));
     }
     private List<Reservation> reservationsByDate(Resource resource, LocalDate localDate){
         LocalDateTime dateStart = localDate.atTime(0,0);

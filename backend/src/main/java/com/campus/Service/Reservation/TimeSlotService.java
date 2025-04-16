@@ -2,6 +2,7 @@ package com.campus.Service.Reservation;
 
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Reservation.TimeSlot;
+import com.campus.Entity.Resource.Resource;
 import com.campus.Repository.Reservation.TimeSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,35 +15,18 @@ import java.util.List;
 public class TimeSlotService {
     @Autowired
     private TimeSlotRepository timeSlotRepository;
+    public TimeSlot saveTimeSlot(TimeSlot timeSlot){
+        return timeSlotRepository.save(timeSlot);
+    }
     private List<TimeSlot> getTimeSlot(){
         return timeSlotRepository.findAll();
     }
-    private void generateAllTimeSlot(){
-        timeSlotRepository.saveAll(initialTimeSlot());
-    }
-    private List<TimeSlot> initialTimeSlot(){
-        List<TimeSlot> timeSlots = new ArrayList<>();
-        for (int hour = 0; hour < 24; hour++) {
-            LocalTime start = LocalTime.of(hour, 0);
-            LocalTime end = LocalTime.of((hour + 1) % 24, 0);
-            TimeSlot timeSlot = new TimeSlot(start, end);
-            timeSlots.add(timeSlot);
-        }
-        return timeSlots;
-    }
-    public List<TimeSlot> getAvailableTimeSlots(List<Reservation> reservations) {
-        List<TimeSlot> allSlots = initialTimeSlot();
+    public List<TimeSlot> getAvailableTimeSlots(Resource resource, List<Reservation> reservations) {
+        List<TimeSlot> openSlots = openTime(resource);
         List<TimeSlot> availableSlots = new ArrayList<>();
-        for (TimeSlot slot : allSlots) {
+        for (TimeSlot slot : openSlots) {
             boolean overlaps = false;
             for (Reservation reservation : reservations) {
-                LocalTime resourceOpenTime = reservation.getResource().getOpenTime();
-                LocalTime resourceCloseTime  = reservation.getResource().getCloseTime();
-                if (slot.getStartingTime().isBefore(resourceOpenTime.plusSeconds(1)) ||
-                        slot.getEndingTime().isAfter(resourceCloseTime.minusSeconds(1))){
-                    overlaps = true;
-                    break;
-                }
                 LocalTime reservationStarting = reservation.getReservationStarting().toLocalTime();
                 LocalTime reservationEnding = reservation.getReservationEnding().toLocalTime();
                 if (!(slot.getEndingTime().isBefore(reservationStarting.plusSeconds(1))
@@ -56,5 +40,21 @@ public class TimeSlotService {
             }
         }
         return availableSlots;
+    }
+    private List<TimeSlot> openTime(Resource resource){
+        List<TimeSlot> allSlots = getTimeSlot();
+        if (resource.getOpenTime() == null){
+            return allSlots;
+        }else {
+            List<TimeSlot> openSlots = new ArrayList<>();
+            for (TimeSlot slot : allSlots) {
+                boolean timeSlotBeforeOpen = slot.getEndingTime().isBefore(resource.getOpenTime().plusSeconds(1));
+                boolean timeSlotAfterClose = slot.getStartingTime().isAfter(resource.getCloseTime().minusSeconds(1));
+                if (!(timeSlotBeforeOpen || timeSlotAfterClose)) {
+                    openSlots.add(slot);
+                }
+            }
+            return openSlots;
+        }
     }
 }
