@@ -1,0 +1,153 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.navbar-brand a {
+  color: #0077B6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar-brand a:hover {
+  color: #005588;
+}
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin: 0 1rem;
+  position: relative;
+}
+
+.navbar-links li a {
+  display: flex;
+  align-items: center;
+  color: #555;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.navbar-links li a:hover {
+  color: #0077B6;
+}
+
+.navbar-links li.active a {
+  color: #0077B6;
+}
+
+.navbar-links li.active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #0077B6;
+  border-radius: 3px 3px 0 0;
+}
+
+.link-text {
+  margin-left: 5px;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-actions > * {
+  margin-left: 1rem;
+}
+
+.login-button {
+  background-color: #0077B6;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #005588;
+}
+
+.theme-toggle {
+  color: #555 !important;
+}
+
+.profile-button {
+  padding: 4px !important;
+}
+
+/* Dark mode styles */
+:root[data-theme="dark"] .navbar {
+  background-color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] .navbar-brand a {
+  color: #fff;
+}
+
+:root[data-theme="dark"] .navbar-links li a {
+  color: #ccc;
+}
+
+:root[data-theme="dark"] .navbar-links li a:hover,
+:root[data-theme="dark"] .navbar-links li.active a {
+  color: #4dabf5;
+}
+
+:root[data-theme="dark"] .navbar-links li.active::after {
+  background-color: #4dabf5;
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  color: #ccc !important;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+  }
+  
+  .link-text {
+    display: none;
+  }
+  
+  .navbar-links {
+    justify-content: center;
+  }
+  
+  .navbar-links li {
+    margin: 0 0.5rem;
+  }
+  
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+} 

@@ -1,0 +1,293 @@
+/* Base container */
+.navigation-container {
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  padding: 20px !important;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (max-width: 600px) {
+  .navigation-container {
+    padding: 12px;
+  }
+}
+
+/* Map styling */
+.map-container {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin: 0 auto;
+  touch-action: manipulation; /* Improve touch behavior on mobile */
+  transition: box-shadow 0.3s ease;
+}
+
+.map-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 600px) {
+  .map-container {
+    margin-top: 12px;
+    max-height: 60vh; /* Limit height on mobile */
+    border-radius: 6px;
+  }
+}
+
+.floor-plan {
+  width: 100%;
+  height: auto;
+  display: block;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+.navigation-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Navigation controls */
+.controls-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .controls-container {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+}
+
+.select-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+@media (max-width: 600px) {
+  .select-group {
+    min-width: 100%;
+  }
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  .button-container {
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+/* Path results and directions */
+.path-details {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 600px) {
+  .path-details {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 6px;
+  }
+}
+
+.directions {
+  padding: 16px;
+  overflow-y: auto;
+  line-height: 1.6;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: white;
+  max-height: 300px;
+  font-size: 14px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 600px) {
+  .directions {
+    margin-top: 8px;
+    padding: 10px;
+    max-height: 200px;
+    font-size: 13px;
+    border-radius: 4px;
+  }
+}
+
+/* Node markers */
+.node-marker {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: -6px;
+  margin-top: -6px;
+  z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.node-marker:hover {
+  transform: scale(1.2);
+}
+
+@media (max-width: 600px) {
+  .node-marker {
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    margin-top: -5px;
+  }
+}
+
+.start-marker {
+  background-color: #4caf50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+.end-marker {
+  background-color: #f44336;
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.3);
+}
+
+.junction-marker {
+  background-color: #2196f3;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  margin-top: -4px;
+  opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .junction-marker {
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    margin-top: -3px;
+  }
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+@media (max-width: 600px) {
+  .loading {
+    margin: 12px 0;
+  }
+}
+
+.loading-spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1976d2;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@media (max-width: 600px) {
+  .loading-spinner {
+    border-width: 2px;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Interactive elements */
+button, 
+.MuiButton-root,
+.MuiIconButton-root {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:active, 
+.MuiButton-root:active,
+.MuiIconButton-root:active {
+  transform: scale(0.97);
+}
+
+/* Mobile-specific enhancements */
+@media (max-width: 600px) {
+  /* Increase tap targets for better mobile experience */
+  button, 
+  .MuiIconButton-root {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  /* Make form controls more touch-friendly */
+  .MuiFormControl-root {
+    margin-bottom: 8px;
+  }
+  
+  /* Optimize touch scrolling */
+  .directions {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .controls-container {
+    flex-direction: column;
+  }
+  
+  .select-group {
+    min-width: 100%;
+  }
+}
+
+/* Scrollbar styling */
+.directions::-webkit-scrollbar {
+  width: 8px;
+}
+
+.directions::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.directions::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius: 4px;
+}
+
+.directions::-webkit-scrollbar-thumb:hover {
+  background: #9e9e9e;
+} 
