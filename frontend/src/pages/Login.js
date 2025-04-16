@@ -65,6 +65,8 @@ function Login() {
       console.log("set token: " + token);
       localStorage.setItem('userRole', userDTO.UserRole);
       console.log("set userRole: " + userDTO.UserRole);
+      localStorage.setItem('userEmail', email);
+      console.log("set userEmail: " + email);
 
       setUserEmail(email);
       setOtp(response.data.otp || null);

@@ -1,6 +1,6 @@
-// src/pages/UserEmergency.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './UserEmergency.css';
 
 function UserEmergency() {
@@ -8,29 +8,50 @@ function UserEmergency() {
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = () => {
+  // Send log to backend
+  const sendLog = async (action, value) => {
+    try {
+      await axios.post('http://localhost:8080/api/logs', { action, value });
+    } catch (err) {
+      console.error('Log error:', err.message);
+    }
+  };
+
+  const handleSubmit = async () => {
     if (!location || !description) {
-      alert('Please fill in both the location and description before submitting.');
+      setError('Please fill in both location and description.');
       return;
     }
-    setShowPopup(true);
-    setLocation('');
-    setDescription('');
-    setTimeout(() => {
-      setShowPopup(false);
-    }, 2000);
+
+    try {
+      const reportData = { location, description };
+      await axios.post('http://localhost:8080/api/emergencies', reportData);
+      await sendLog('submit_emergency', `Location: ${location}, Description: ${description}`);
+      setShowPopup(true);
+      setError('');
+      setLocation('');
+      setDescription('');
+      setTimeout(() => {
+        setShowPopup(false);
+      }, 2000);
+    } catch (err) {
+      setError('Failed to submit emergency. Please try again.');
+      console.error('Submit error:', err.message, err.response?.data);
+    }
   };
 
   const handleBack = () => {
+    sendLog('back', 'Clicked back');
     const isLoggedIn = !!localStorage.getItem('userRole');
-    console.log('isLoggedIn:', isLoggedIn); // Debug: Check login status
+    console.log('isLoggedIn:', isLoggedIn);
     if (isLoggedIn) {
-      console.log('Navigating to /userhome'); // Debug: Confirm navigation path
-      navigate('/userhome'); // Navigate to /userhome if logged in
+      console.log('Navigating to /userhome');
+      navigate('/userhome');
     } else {
-      console.log('Navigating to /'); // Debug: Confirm navigation path
-      navigate('/'); // Navigate to root (Home page) if not logged in
+      console.log('Navigating to /');
+      navigate('/');
     }
   };
 
@@ -38,6 +59,7 @@ function UserEmergency() {
     <div className="emergency-container">
       <main className="emergency-content">
         <h1>Report an Emergency</h1>
+        {error && <p className="error-message">{error}</p>}
         <div className="form-group">
           <label>Location:</label>
           <input

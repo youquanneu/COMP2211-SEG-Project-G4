@@ -12,6 +12,7 @@ function UserCalendar() {
   initialDate.setHours(0, 0, 0, 0);
   const [date, setDate] = useState(initialDate);
   const [events, setEvents] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -24,36 +25,70 @@ function UserCalendar() {
     }
   };
 
-  // Fetch all events on mount
+  // Fetch events and bookings on mount
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/events');
-        if (Array.isArray(response.data)) {
-          setEvents(response.data);
+        // Fetch events
+        const eventsResponse = await axios.get('http://localhost:8080/api/events');
+        if (Array.isArray(eventsResponse.data)) {
+          setEvents(eventsResponse.data);
         } else {
           setError('Invalid event data format.');
-          console.error('Expected an array, got:', response.data);
+          console.error('Expected an array, got:', eventsResponse.data);
+        }
+
+        // Fetch bookings
+        const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
+        const bookingsResponse = await axios.get('http://localhost:8080/api/bookings', {
+          params: { email: userEmail },
+        });
+        if (Array.isArray(bookingsResponse.data)) {
+          setBookings(bookingsResponse.data);
+        } else {
+          setError('Invalid booking data format.');
+          console.error('Expected an array, got:', bookingsResponse.data);
         }
       } catch (err) {
-        setError('Failed to load events. Please try again later.');
+        setError('Failed to load data. Please try again later.');
         console.error('Fetch error:', err.message, err.response?.data);
       }
     };
-    fetchEvents();
+    fetchData();
   }, []);
 
-  // Filter events for selected date
-  const selectedDateEvents = events.filter(
-    (event) => event.date === date.toISOString().split('T')[0]
-  );
+  // Combine events and bookings for selected date
+  const selectedDateItems = [
+    ...events
+      .filter((event) => event.date === date.toISOString().split('T')[0])
+      .map((event) => ({ ...event, type: 'event' })),
+    ...bookings
+      .filter((booking) => {
+        // Convert booking date (e.g., "April 15, 2025") to ISO format
+        const bookingDate = new Date(booking.date).toISOString().split('T')[0];
+        return bookingDate === date.toISOString().split('T')[0];
+      })
+      .map((booking) => ({
+        id: booking.id,
+        date: new Date(booking.date).toISOString().split('T')[0],
+        topic: `Booking: ${booking.resource}`,
+        area: booking.purpose,
+        organizers: booking.userEmail || 'User',
+        description: booking.time,
+        type: 'booking',
+      })),
+  ];
 
-  // Mark dates with event
+  // Mark dates with events or bookings
   const tileContent = ({ date, view }) => {
     if (view === 'month') {
       const dateStr = date.toISOString().split('T')[0];
       const hasEvent = events.some((event) => event.date === dateStr);
-      return hasEvent ? <span className="event-dot"></span> : null;
+      const hasBooking = bookings.some((booking) => {
+        const bookingDate = new Date(booking.date).toISOString().split('T')[0];
+        return bookingDate === dateStr;
+      });
+      return hasEvent || hasBooking ? <span className="event-dot"></span> : null;
     }
     return null;
   };
@@ -79,22 +114,32 @@ function UserCalendar() {
           tileContent={tileContent}
         />
       </div>
-      {selectedDateEvents.length > 0 && (
+      {selectedDateItems.length > 0 && (
         <div className="event-details">
-          <h2>Events on {date.toLocaleDateString()}</h2>
-          {selectedDateEvents.map((event) => (
-            <div key={event.id} className="event-item">
+          <h2>Events and Bookings on {date.toLocaleDateString()}</h2>
+          {selectedDateItems.map((item) => (
+            <div
+              key={`${item.type}-${item.id}`}
+              className="event-item"
+              onClick={() => {
+                if (item.type === 'booking') {
+                  sendLog('select_booking', `Booking: ${item.topic}, ${item.description}`);
+                } else {
+                  sendLog('select_event', `Event: ${item.topic}`);
+                }
+              }}
+            >
               <p>
-                <strong>Topic:</strong> {event.topic}
+                <strong>{item.type === 'booking' ? 'Booking' : 'Event'}:</strong> {item.topic}
               </p>
               <p>
-                <strong>Area:</strong> {event.area}
+                <strong>Purpose/Area:</strong> {item.area}
               </p>
               <p>
-                <strong>Organizers:</strong> {event.organizers}
+                <strong>User/Organizers:</strong> {item.organizers}
               </p>
               <p>
-                <strong>Description:</strong> {event.description}
+                <strong>Time/Description:</strong> {item.description}
               </p>
             </div>
           ))}

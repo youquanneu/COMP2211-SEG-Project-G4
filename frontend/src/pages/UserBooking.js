@@ -100,7 +100,8 @@ function UserBooking() {
         day: 'numeric',
         year: 'numeric',
       });
-      const bookingData = { resource, purpose, date: formattedDate, time };
+      const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
+      const bookingData = { resource, purpose, date: formattedDate, time, userEmail };
       try {
         const response = await axios.post('http://localhost:8080/api/bookings', bookingData);
         setBookingDetails(response.data);
@@ -160,6 +161,7 @@ function UserBooking() {
         >
           <option value="">Select Purpose</option>
           <option value="Meeting">Meeting</option>
+-dot-comma
           <option value="Presentation">Presentation</option>
           <option value="Workshop">Workshop</option>
           <option value="Study">Study</option>
