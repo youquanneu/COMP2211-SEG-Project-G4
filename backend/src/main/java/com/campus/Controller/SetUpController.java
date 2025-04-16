@@ -5,11 +5,13 @@ import com.campus.Classification.Restriction;
 import com.campus.Classification.UserRole;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
+import com.campus.Entity.Reservation.TimeSlot;
 import com.campus.Entity.Resource.*;
 import com.campus.Entity.User.AdministrativeStaff;
 import com.campus.Entity.User.Lecturer;
 import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
+import com.campus.Repository.Reservation.TimeSlotRepository;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.ResourceService;
 import com.campus.Service.Resource.VenueService;
@@ -20,6 +22,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public class SetUpController  implements CommandLineRunner {
 //        testNewReservation();
 //        testNewEvent();
     }
+
     public void testRegisterUser(){
         List<User> userForRegister = userListForRegisterTest();
         for (User user : userForRegister){

@@ -1,5 +1,6 @@
 package com.campus.DataTransferObject.Resource;
 
+import com.campus.Entity.Resource.Resource;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalTime;
@@ -12,6 +13,13 @@ public class ResourceDTO {
         setResourceName(resourceName);
         setOpenTime(openTime);
         setCloseTime(closeTime);
+    }
+    public static ResourceDTO mapper(Resource resource){
+        return new ResourceDTO(
+                resource.getResourceId(),
+                resource.getResourceName(),
+                resource.getOpenTime(),
+                resource.getCloseTime());
     }
     @JsonProperty
     private Integer resourceId;

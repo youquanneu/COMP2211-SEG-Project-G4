@@ -4,14 +4,17 @@ import com.campus.Classification.Purpose;
 import com.campus.Classification.Status;
 import com.campus.Classification.UserRole;
 import com.campus.Entity.Reservation.Reservation;
+import com.campus.Entity.Reservation.TimeSlot;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
 import com.campus.Repository.Reservation.ReservationRepository;
 import com.campus.Service.Mail.NotificationService;
+import com.campus.Service.Resource.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -25,6 +28,10 @@ public class ReservationService {
     @Lazy
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private TimeSlotService timeSlotService;
+    @Autowired
+    private ResourceService resourceService;
     public Reservation getReservationById(Integer reservationId){
         Optional<Reservation> reservation = reservationRepository.findById(reservationId);
         if (reservation.isEmpty()){
@@ -141,6 +148,14 @@ public class ReservationService {
             throw new RuntimeException("Reservation with time conflict found");
         }
     }   // Check if reservation after change conflict with other reservation
+    public List<TimeSlot> availableTime(Resource resource, LocalDate localDate){
+        return timeSlotService.getAvailableTimeSlots(reservationsByDate(resource,localDate));
+    }
+    private List<Reservation> reservationsByDate(Resource resource, LocalDate localDate){
+        LocalDateTime dateStart = localDate.atTime(0,0);
+        LocalDateTime dateEnd   = localDate.plusDays(1).atStartOfDay().minusSeconds(1);
+        return reservationRepository.filterReservationByDate(resource,dateStart,dateEnd);
+    }
 }
 
 

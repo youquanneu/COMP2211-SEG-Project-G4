@@ -2,6 +2,7 @@ package com.campus.DataTransferObject.Reservation;
 
 import com.campus.DataTransferObject.Resource.ResourceDTO;
 import com.campus.DataTransferObject.User.UserDTO;
+import com.campus.Entity.Reservation.Reservation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,14 @@ public class ReservationDTO {
         setResourceDTO(resourceDTO);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
+    }
+    public static ReservationDTO mapper(Reservation reservation){
+        return new ReservationDTO(
+                reservation.getReservationId(),
+                ResourceDTO.mapper(reservation.getResource()),
+                reservation.getReservationStarting(),
+                reservation.getReservationEnding()
+                );
     }
     @JsonProperty
     private Integer reservationId;
