@@ -60,6 +60,7 @@ function UserBooking() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
   // Fetch available time slots
   const handleSearchTimes = async () => {
     await sendLog('search_times', 'Searched times');
@@ -69,13 +70,15 @@ function UserBooking() {
     }
     try {
       const formattedDate = date.toISOString().split('T')[0];
-      console.log("Search the resource : " + resource + "date: " + formattedDate)
+      console.log("Search the resource: " + resource + " date: " + formattedDate);
       const response = await axios.get(getAPI_URL('user/reservation/getAvailableTimeSlot'), {
         params: { resource, date: formattedDate },
       });
       if (Array.isArray(response.data)) {
-        console.log(response.data)
-        setAvailableTimes(response.data);
+        console.log(response.data);
+        // Format objects to strings
+        const formattedTimes = response.data.map(slot => `${slot.startingTime}-${slot.endingTime}`);
+        setAvailableTimes(formattedTimes);
         setShowDropdown(true);
         setError('');
       } else {
@@ -87,8 +90,9 @@ function UserBooking() {
       console.error('Fetch error:', err.message, err.response?.data);
     }
   };
+
   const handleSelectTime = (slot) => {
-  console.log("Error reach Here")
+    console.log("Selected time: ", slot);
     setTime(slot);
     setShowDropdown(false);
     sendLog('select_time', slot);
@@ -163,7 +167,6 @@ function UserBooking() {
         >
           <option value="">Select Purpose</option>
           <option value="Meeting">Meeting</option>
--dot-comma
           <option value="Presentation">Presentation</option>
           <option value="Workshop">Workshop</option>
           <option value="Study">Study</option>
@@ -201,9 +204,9 @@ function UserBooking() {
           </span>
           {showDropdown && availableTimes.length > 0 && (
             <ul className="time-dropdown">
-              {availableTimes.map((slot) => (
+              {availableTimes.map((slot, index) => (
                 <li
-                  key={slot}
+                  key={index}
                   className="time-option"
                   onClick={() => handleSelectTime(slot)}
                 >
