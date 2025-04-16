@@ -1,8 +1,6 @@
-package com.campus.Controller;
+package com.campus.Controller.Resource;
 
 import com.campus.DataTransferObject.Resource.ResourceDTO;
-import com.campus.DataTransferObject.User.LoginRequest;
-import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Service.Resource.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.campus.Controller;
+package com.campus.Controller.User;
 
 import com.campus.DataTransferObject.User.AuthResponse;
 import com.campus.DataTransferObject.User.LoginRequest;

@@ -5,7 +5,6 @@ import com.campus.DataTransferObject.User.UserDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class ReservationDTO {
     public ReservationDTO(){}

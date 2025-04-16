@@ -1,4 +1,4 @@
-package com.campus.Controller;
+package com.campus.Controller.User;
 
 import com.campus.DataTransferObject.Mail.EmailDTO;
 import com.campus.DataTransferObject.Mail.OneTimePasswordDTO;
@@ -8,7 +8,6 @@ import com.campus.Service.Mail.EmailSenderService;
 import com.campus.Service.Mail.OneTimePasswordService;
 import com.campus.Service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +16,8 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/user")
-public class UserController implements CommandLineRunner{
+public class UserController{
     private static final Logger logger = Logger.getLogger(UserController.class.getName());
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println("——————————————————————————————————————————————————————————");
-        logger.info("Application start here");
-    }
     @Autowired
     private UserService userService;
     @Autowired

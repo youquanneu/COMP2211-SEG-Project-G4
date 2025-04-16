@@ -34,12 +34,8 @@ public class UserService implements UserDetailsService {
                 .password(user.getPassword())
                 .build();
     }
-    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
-        User user = findUserByEmail(email);
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .build();
+    public User revMapper(UserDTO userDTO){
+        return getUserById(userDTO.getUserId());
     }
     public User login(String email, String password){
         logger.info("Email : " + email);
@@ -47,9 +43,6 @@ public class UserService implements UserDetailsService {
     }
     public User getUserByEmail(String email){
         return findUserByEmail(email);
-    }
-    public User revMapper(UserDTO userDTO){
-        return getUserById(userDTO.getUserId());
     }
     public User getUserById(Integer id){
         Optional<User> user = userRepository.findById(id);
