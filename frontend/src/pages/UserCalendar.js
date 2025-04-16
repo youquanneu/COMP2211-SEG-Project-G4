@@ -15,20 +15,20 @@ function UserCalendar() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Fetch user-specific events on mount
+  // Send log to backend
+  const sendLog = async (action, value) => {
+    try {
+      await axios.post('http://localhost:8080/api/logs', { action, value });
+    } catch (err) {
+      console.error('Log error:', err.message);
+    }
+  };
+
+  // Fetch all events on mount
   useEffect(() => {
-    const fetchUserEvents = async () => {
+    const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError('Please log in to view your calendar.');
-          return;
-        }
-
-        const response = await axios.get('http://localhost:8080/api/users/me/events', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const response = await axios.get('http://localhost:8080/api/events');
         if (Array.isArray(response.data)) {
           setEvents(response.data);
         } else {
@@ -40,7 +40,7 @@ function UserCalendar() {
         console.error('Fetch error:', err.message, err.response?.data);
       }
     };
-    fetchUserEvents();
+    fetchEvents();
   }, []);
 
   // Filter events for selected date
@@ -59,6 +59,7 @@ function UserCalendar() {
   };
 
   const handleBack = () => {
+    sendLog('back', 'Clicked back');
     navigate('/userhome');
   };
 
@@ -69,7 +70,10 @@ function UserCalendar() {
       {error && <p className="error-message">{error}</p>}
       <div className="calendar-group">
         <Calendar
-          onChange={setDate}
+          onChange={(selectedDate) => {
+            setDate(selectedDate);
+            sendLog('select_date', selectedDate.toISOString().split('T')[0]);
+          }}
           value={date}
           className="custom-calendar"
           tileContent={tileContent}

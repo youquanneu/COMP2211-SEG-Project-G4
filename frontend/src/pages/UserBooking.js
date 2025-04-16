@@ -21,13 +21,7 @@ function UserBooking() {
   // Send log to backend
   const sendLog = async (action, value) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return; // Skip if no token
-      await axios.post(
-        'http://localhost:8080/api/logs',
-        { action, value },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await axios.post('http://localhost:8080/api/logs', { action, value });
     } catch (err) {
       console.error('Log error:', err.message);
     }
@@ -68,16 +62,14 @@ function UserBooking() {
 
   // Fetch available time slots
   const handleSearchTimes = async () => {
-    await sendLog('search_times', 'Clicked to fetch time slots');
+    await sendLog('search_times', 'Searched times');
     if (!resource || !purpose || !date) {
       setError('Please select Resource, Purpose, and Date first.');
       return;
     }
     try {
       const formattedDate = date.toISOString().split('T')[0];
-      const token = localStorage.getItem('token');
       const response = await axios.get('http://localhost:8080/api/bookings/available-times', {
-        headers: { Authorization: `Bearer ${token}` },
         params: { resource, date: formattedDate },
       });
       if (Array.isArray(response.data)) {
@@ -101,7 +93,7 @@ function UserBooking() {
   };
 
   const handleBook = async () => {
-    await sendLog('book', 'Clicked Book button');
+    await sendLog('book', 'Submitted booking');
     if (resource && purpose && date && time) {
       const formattedDate = date.toLocaleDateString('en-US', {
         month: 'long',
@@ -123,7 +115,7 @@ function UserBooking() {
   };
 
   const handleBack = () => {
-    sendLog('back', 'Clicked Back button');
+    sendLog('back', 'Clicked back');
     navigate('/userhome');
   };
 
