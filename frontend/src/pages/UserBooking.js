@@ -7,7 +7,7 @@ import './UserBooking.css';
 import { getAPI_URL } from "../services/api";
 
 function UserBooking() {
-  const [resource, setResource] = useState('');
+  const [resource, setResource] = useState(null);
   const [purpose, setPurpose] = useState('');
   const [date, setDate] = useState(null);
   const [time, setTime] = useState('');
@@ -70,13 +70,12 @@ function UserBooking() {
     }
     try {
       const formattedDate = date.toISOString().split('T')[0];
-      console.log("Search the resource: " + resource + " date: " + formattedDate);
-      const response = await axios.get(getAPI_URL('user/reservation/getAvailableTimeSlot'), {
-        params: { resource, date: formattedDate },
+      console.log("Searching for resource : " + resource + " on date: " + formattedDate);
+      const response = await axios.post(getAPI_URL('user/reservation/getAvailableTimeSlot'), {
+        resourceDTO: resource, formattedDate
       });
       if (Array.isArray(response.data)) {
         console.log(response.data);
-        // Format objects to strings
         const formattedTimes = response.data.map(slot => `${slot.startingTime}-${slot.endingTime}`);
         setAvailableTimes(formattedTimes);
         setShowDropdown(true);
@@ -107,9 +106,14 @@ function UserBooking() {
         year: 'numeric',
       });
       const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
-      const bookingData = { resource, purpose, date: formattedDate, time, userEmail };
+
+      const bookingData = {
+        userEmail, resource, purpose, date,
+        time
+      };
+      console.log(bookingData);
       try {
-        const response = await axios.post('http://localhost:8080/api/bookings', bookingData);
+        const response = await axios.post(getAPI_URL('user/reservation/makeReservation'), bookingData);
         setBookingDetails(response.data);
         setError('');
       } catch (err) {
@@ -133,23 +137,18 @@ function UserBooking() {
       <div className="form-group">
         <label>Resources</label>
         <select
-          value={resource}
+          value={resource ? resource.resourceName : ""}
           onChange={(e) => {
-            setResource(e.target.value);
-            sendLog('select_resource', e.target.value || 'None');
+            const selectedResource = resources.find((res) => res.resourceName === e.target.value);
+            setResource(selectedResource || null);  // Store the full resource object
+            sendLog('select_resource', selectedResource ? selectedResource.resourceName : 'None');
           }}
         >
           <option value="">Select Resource</option>
           {resources.map((res) => {
-            console.log('Rendering resource:', res);
-            const resourceName =
-              res.name ||
-              res.resourceName ||
-              res.title ||
-              `Resource ID ${res.id}` ||
-              'Unknown Resource';
+            const resourceName = res.resourceName || `Resource ID ${res.resourceId}` || 'Unknown Resource';
             return (
-              <option key={res.id} value={resourceName}>
+              <option key={res.resourceId} value={resourceName}>
                 {resourceName}
               </option>
             );
@@ -224,7 +223,7 @@ function UserBooking() {
       {bookingDetails && (
         <div className="booking-details">
           <h2>Your Booking</h2>
-          <p>Resource: {bookingDetails.resource}</p>
+          <p>Resource: {bookingDetails.resourceName}</p>
           <p>Purpose: {bookingDetails.purpose}</p>
           <p>Date: {bookingDetails.date}</p>
           <p>Time: {bookingDetails.time}</p>
