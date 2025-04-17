@@ -26,7 +26,7 @@ function UserEmergency() {
     const fetchResources = async () => {
       await sendLog('fetch_resources', 'Fetched resources for emergency');
       try {
-        const response = await axios.get(getAPI_URL('user/resource/getAllResource'));
+        const response = await axios.get(getAPI_URL('user/venue/getAllVenue'));
         console.log('Resources Response:', response.data); // Debug
         let resourceData = response.data;
         if (!Array.isArray(resourceData)) {
