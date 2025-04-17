@@ -1,13 +1,12 @@
-// src/pages/AdminAddEvent.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
+import { addEvent } from '../api'; // Import the addEvent function
 import './AdminAddEvent.css';
 
 function AdminAddEvent() {
   const navigate = useNavigate();
   
-  // State for form fields
   const [formData, setFormData] = useState({
     image: null,
     title: '',
@@ -19,57 +18,62 @@ function AdminAddEvent() {
     description: '',
   });
   
-  // State for success message
   const [showSuccess, setShowSuccess] = useState(false);
-  
-  // State for stored events (mock data)
-  const [events, setEvents] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value, // Handle file input for image
+      [name]: files ? files[0] : value,
     }));
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Simulate adding the event (in a real app, this would be a backend API call)
-    const newEvent = {
-      id: events.length + 1,
-      ...formData,
-      image: formData.image ? URL.createObjectURL(formData.image) : null, // Create a URL for the image preview
-    };
-    
-    setEvents((prev) => [...prev, newEvent]);
-    
-    // Show success message
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 2000);
-    
-    // Clear the form
-    setFormData({
-      image: null,
-      title: '',
-      area: '',
-      date: '',
-      time: '',
-      venue: '',
-      organizer: '',
-      description: '',
-    });
-    
-    // Log the event (placeholder for backend integration)
-    console.log('Event added:', newEvent);
+    setLoading(true);
+    setError(null);
+
+    const formDataToSend = new FormData();
+    formDataToSend.append('image', formData.image);
+    formDataToSend.append('title', formData.title);
+    formDataToSend.append('area', formData.area);
+    formDataToSend.append('date', formData.date);
+    formDataToSend.append('time', formData.time);
+    formDataToSend.append('venue', formData.venue);
+    formDataToSend.append('organizer', formData.organizer);
+    formDataToSend.append('description', formData.description);
+
+    try {
+      const response = await addEvent(formDataToSend);
+      if (response.success) {
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 2000);
+
+        setFormData({
+          image: null,
+          title: '',
+          area: '',
+          date: '',
+          time: '',
+          venue: '',
+          organizer: '',
+          description: '',
+        });
+      } else {
+        setError('Failed to add event. Please try again.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'An error occurred while adding the event.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handle back button
   const handleBack = () => {
-    navigate('/admindashboard');
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/admindashboard', { state: { from: '/admindashboard' } });
   };
 
   return (
@@ -82,6 +86,11 @@ function AdminAddEvent() {
         {showSuccess && (
           <div className="success-message">
             Event added successfully!
+          </div>
+        )}
+        {error && (
+          <div className="error-message">
+            {error}
           </div>
         )}
         <form onSubmit={handleSubmit} className="add-event-form">
@@ -125,7 +134,7 @@ function AdminAddEvent() {
               name="date"
               value={formData.date}
               onChange={handleChange}
-              min="2025-04-15" // Prevent past dates (current date is 2025-04-15)
+              min="2025-04-15"
               required
             />
           </div>
@@ -173,8 +182,8 @@ function AdminAddEvent() {
               required
             />
           </div>
-          <button type="submit" className="submit-button">
-            Add Event
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? 'Adding...' : 'Add Event'}
           </button>
         </form>
         <button className="back-button" onClick={handleBack}>

@@ -15,15 +15,19 @@ function AdminDashboard() {
   const handleNavigation = (event) => {
     const selectedPage = event.target.value;
     if (selectedPage === 'usermanagement') {
-      navigate('/usermanagement');
+      localStorage.setItem('previousPage', '/admindashboard');
+      navigate('/usermanagement', { state: { from: '/admindashboard' } });
     } else if (selectedPage === 'dashboard') {
       navigate('/admindashboard');
     } else if (selectedPage === 'emergency') {
-      navigate('/adminemergency');
+      localStorage.setItem('previousPage', '/admindashboard');
+      navigate('/adminemergency', { state: { from: '/admindashboard' } });
     } else if (selectedPage === 'resourcemanagement') {
-      navigate('/resourcemanagement');
-    } else if (selectedPage === 'events') { // Updated to route to /adminaddevent
-      navigate('/adminaddevent');
+      localStorage.setItem('previousPage', '/admindashboard');
+      navigate('/resourcemanagement', { state: { from: '/admindashboard' } });
+    } else if (selectedPage === 'events') {
+      localStorage.setItem('previousPage', '/admindashboard');
+      navigate('/adminaddevent', { state: { from: '/admindashboard' } });
     }
   };
 
@@ -35,11 +39,13 @@ function AdminDashboard() {
 
   const handleProfile = () => {
     setIsDropdownOpen(false);
-    navigate('/userprofile');
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/userprofile', { state: { from: '/admindashboard' } });
   };
 
   const handleSettings = () => {
-    navigate('/settings');
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/settings', { state: { from: '/admindashboard' } });
   };
 
   const toggleDropdown = () => {
@@ -47,11 +53,13 @@ function AdminDashboard() {
   };
 
   const handleVenueClick = () => {
-    navigate('/adminvenuemanagement');
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/adminvenuemanagement', { state: { from: '/admindashboard' } });
   };
 
   const handleEquipmentClick = () => {
-    navigate('/adminequipmentmanagement');
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/adminequipmentmanagement', { state: { from: '/admindashboard' } });
   };
 
   return (

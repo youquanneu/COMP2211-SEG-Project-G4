@@ -1,32 +1,61 @@
-// src/pages/AdminEquipmentManagement.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
+import { getEquipment, updateEquipmentAvailability } from '../api'; // Import the new functions
 import './AdminEquipmentManagement.css';
 
 function AdminEquipmentManagement() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [equipment, setEquipment] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Mock data for equipment
-  const initialEquipment = [
-    { id: 1, name: 'Projector A', available: true },
-    { id: 2, name: 'Laptop B', available: true },
-    { id: 3, name: 'Microphone C', available: true },
-    { id: 4, name: 'Speaker D', available: true },
-  ];
+  useEffect(() => {
+    const fetchEquipment = async () => {
+      setLoading(true);
+      try {
+        const response = await getEquipment();
+        if (response.success) {
+          setEquipment(response.data);
+        } else {
+          setError('Failed to fetch equipment.');
+        }
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred while fetching equipment.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const [equipment, setEquipment] = useState(initialEquipment);
+    fetchEquipment();
+  }, []);
 
-  const handleToggleAvailability = (id) => {
-    setEquipment((prevEquipment) =>
-      prevEquipment.map((item) =>
-        item.id === id ? { ...item, available: !item.available } : item
-      )
-    );
+  const handleToggleAvailability = async (id) => {
+    const item = equipment.find((e) => e.id === id);
+    const updatedAvailability = !item.available;
+
+    try {
+      const response = await updateEquipmentAvailability(id, updatedAvailability);
+      if (response.success) {
+        setEquipment((prevEquipment) =>
+          prevEquipment.map((item) =>
+            item.id === id ? { ...item, available: updatedAvailability } : item
+          )
+        );
+      } else {
+        setError('Failed to update equipment availability.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'An error occurred while updating equipment availability.');
+    }
   };
 
   const handleBack = () => {
-    navigate('/resourcemanagement');
+    const fromState = location.state?.from;
+    const fromStorage = localStorage.getItem('previousPage');
+    const from = fromState || fromStorage || '/admindashboard';
+    navigate(from);
   };
 
   return (
@@ -36,22 +65,33 @@ function AdminEquipmentManagement() {
       </header>
       <main className="admin-equipment-management-content">
         <h1>Equipment Management</h1>
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
         <div className="equipment-list">
-          {equipment.map((item) => (
-            <div key={item.id} className="equipment-item">
-              <span className="equipment-name">{item.name}</span>
-              <label className="availability-toggle">
-                <input
-                  type="checkbox"
-                  checked={item.available}
-                  onChange={() => handleToggleAvailability(item.id)}
-                />
-                <span className="toggle-label">
-                  {item.available ? 'Available' : 'Unavailable'}
-                </span>
-              </label>
-            </div>
-          ))}
+          {loading ? (
+            <p>Loading equipment...</p>
+          ) : equipment.length > 0 ? (
+            equipment.map((item) => (
+              <div key={item.id} className="equipment-item">
+                <span className="equipment-name">{item.name}</span>
+                <label className="availability-toggle">
+                  <input
+                    type="checkbox"
+                    checked={item.available}
+                    onChange={() => handleToggleAvailability(item.id)}
+                  />
+                  <span className="toggle-label">
+                    {item.available ? 'Available' : 'Unavailable'}
+                  </span>
+                </label>
+              </div>
+            ))
+          ) : (
+            <p>No equipment found.</p>
+          )}
         </div>
         <button className="back-button" onClick={handleBack}>
           Back
