@@ -10,7 +10,7 @@ import java.time.LocalTime;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"building","roomNumber"}))
-public class IndoorVenue extends Venue{
+public class IndoorVenue extends Resource{
     public IndoorVenue(){}
     public IndoorVenue(String resourceName,
                        LocalTime openTime, LocalTime closeTime,
@@ -39,19 +39,5 @@ public class IndoorVenue extends Venue{
     }
     private void setRoomNumber(String roomNumber) {
         this.roomNumber = roomNumber;
-    }
-    public String toString(){
-        return String.format(
-                """
-                        Category        : %s
-                        Name            : %s
-                        Building        : %s
-                        Room Number     : %s
-                        Open Time       : %s
-                        Close Time      : %s
-                        """,
-                getResourceCategory(),
-                getResourceName(),getBuilding(),getRoomNumber(),
-                getOpenTime(),getCloseTime());
     }
 }

@@ -3,6 +3,7 @@ package com.campus.Entity.Resource;
 import com.campus.Classification.Restriction;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Classification.ResourceCategory;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,6 @@ public class Resource {
                     Restriction restriction,
                     ResourceCategory resourceCategory){
         setResourceName(resourceName);
-        checkOpenAndCloseTime(openTime,closeTime);
         setOpenTime(openTime);
         setCloseTime(closeTime);
         setRestriction(restriction);
@@ -35,8 +35,9 @@ public class Resource {
     private LocalTime closeTime;
     @NotNull
     private Restriction restriction;
+    @JsonProperty("ResourceCategory")
     private ResourceCategory resourceCategory;
-    @OneToMany
+    @ManyToMany(mappedBy = "resources")
     private List<Reservation> booking;
     public void changeResourceName(String resourceName){
         setResourceName(resourceName);
@@ -47,7 +48,13 @@ public class Resource {
     public void changeCloseTime(LocalTime closeTime){
         setCloseTime(closeTime);
     }
-    public void changeRestriction(Restriction restriction){
+    public void setToNonRestriction(Restriction restriction){
+        setRestriction(restriction);
+    }
+    public void setToApprovalRequired(Restriction restriction){
+        setRestriction(restriction);
+    }
+    public void setToRestricted(Restriction restriction){
         setRestriction(restriction);
     }
     public Integer getResourceId() {
@@ -83,12 +90,7 @@ public class Resource {
     private void setResourceCategory(ResourceCategory resourceCategory) {
         this.resourceCategory = resourceCategory;
     }
-    private void checkOpenAndCloseTime(LocalTime openTime, LocalTime closeTime){
-        if ((openTime == null || closeTime == null)&&(openTime != closeTime)){
-            throw new RuntimeException("Open Time and Close Time should be either both null or both not null");
-        }
-        else if (openTime!=null && openTime.isAfter(closeTime)){
-            throw new RuntimeException("Close Time should be after Open Time");
-        }
+    public String toString(){
+        return getResourceId()+getResourceName()+getResourceCategory();
     }
 }

@@ -26,17 +26,4 @@ public class OutdoorVenue extends Venue{
     private void setLocation(String location) {
         this.location = location;
     }
-    public String toString(){
-        return String.format(
-                """
-                        Category        : %s
-                        Name            : %s
-                        Location        : %s
-                        Open Time       : %s
-                        Close Time      : %s
-                        """,
-                getResourceCategory(),
-                getResourceName(),getLocation(),
-                getOpenTime(),getCloseTime());
-    }
 }
