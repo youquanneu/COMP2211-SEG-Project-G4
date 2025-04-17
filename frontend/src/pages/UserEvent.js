@@ -11,6 +11,9 @@ function UserEvent() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Toggle for mock data (set to false to use API)
+  const useMockData = false;
+
   // Send log to backend
   const sendLog = async (action, value) => {
     try {
@@ -23,21 +26,48 @@ function UserEvent() {
   // Fetch events on component mount
   useEffect(() => {
     const fetchEvents = async () => {
+      if (useMockData) {
+        const mockEvents = [
+          {
+            id: 1,
+            topic: 'AI Seminar',
+            area: 'Lecture Hall 1',
+            date: '2025-04-15',
+            time: '09:00-10:00',
+            venue: 'Room A',
+            organizer: { userId: 1, username: 'john', email: 'john@example.com', userRole: 'student' },
+            description: 'Learn about AI advancements.',
+            imageUrl: 'http://example.com/image.jpg',
+          },
+        ];
+        setEvents(mockEvents);
+        await sendLog('fetch_events', 'Fetched mock events');
+        return;
+      }
+
       await sendLog('fetch_events', 'Fetched events');
       try {
         const response = await axios.get(getAPI_URL('user/event/getAllEvent'));
         console.log('API Response:', response.data); // Debug
+        console.log('API Response Type:', typeof response.data, Array.isArray(response.data)); // Debug
         let eventData = response.data;
-        if (!Array.isArray(eventData) && eventData.events) {
-          eventData = eventData.events;
-        }
-        if (Array.isArray(eventData)) {
-          setEvents(eventData);
-          if (eventData.length === 0) {
-            setError('No events found in the database.');
+
+        // Handle various response structures
+        if (!Array.isArray(eventData)) {
+          if (eventData.events && Array.isArray(eventData.events)) {
+            eventData = eventData.events;
+          } else if (eventData.data && Array.isArray(eventData.data)) {
+            eventData = eventData.data;
+          } else {
+            setError('Invalid event data format. Expected an array.');
+            console.error('Response structure:', JSON.stringify(response.data, null, 2));
+            return;
           }
-        } else {
-          setError('Invalid event data format. Expected an array.');
+        }
+
+        setEvents(eventData);
+        if (eventData.length === 0) {
+          setError(''); // Clear error for empty array
         }
       } catch (err) {
         setError('Failed to load events. Check if backend is running.');
