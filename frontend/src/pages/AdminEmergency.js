@@ -4,7 +4,6 @@ import { FaExclamation } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../assets/logo.png';
-import { getAPI_URL } from "../services/api";
 import { getEmergencies, sendPanicAlert } from '../services/api';
 import './AdminEmergency.css';
 
@@ -17,6 +16,8 @@ function AdminEmergency() {
   const [emergencies, setEmergencies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     const fetchEmergencies = async () => {
@@ -140,7 +141,7 @@ function AdminEmergency() {
               id="from-date"
               value={fromDate}
               onChange={handleFromDateChange}
-              max={toDate || '2025-04-15'}
+              max={toDate || today}
             />
           </div>
           <div className="date-input-group">
@@ -151,7 +152,7 @@ function AdminEmergency() {
               value={toDate}
               onChange={handleToDateChange}
               min={fromDate}
-              max="2025-04-15"
+              max={today}
             />
           </div>
         </div>
