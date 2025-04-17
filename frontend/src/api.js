@@ -88,37 +88,9 @@ export const addEvent = async (eventData) => {
   }
 };
 
-// Fetch students
-export const getStudents = async () => {
-  try {
-    return {
-      success: true,
-      data: [
-        { id: 'S001', name: 'John Doe', email: 'john.doe@example.com' },
-        { id: 'S002', name: 'Jane Smith', email: 'jane.smith@example.com' },
-      ],
-    };
-  } catch (error) {
-    console.error('Error fetching students:', error);
-    throw error;
-  }
-};
 
-// Fetch lecturers
-export const getLecturers = async () => {
-  try {
-    return {
-      success: true,
-      data: [
-        { id: 'L001', name: 'Dr. Alice Brown', email: 'alice.brown@example.com' },
-        { id: 'L002', name: 'Prof. Bob Wilson', email: 'bob.wilson@example.com' },
-      ],
-    };
-  } catch (error) {
-    console.error('Error fetching lecturers:', error);
-    throw error;
-  }
-};
+
+
 
 // Register new user
 export const registerUser = async (userData) => {

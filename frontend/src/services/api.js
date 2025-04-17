@@ -93,3 +93,47 @@ export const sendPanicAlert = async () => {
     throw error;
   }
 };
+
+// Fetch students
+export const getStudents = async () => {
+  try {
+    const response = await axios.get(getAPI_URL('admin/userManagement/getStudent'));
+    const students = response.data
+    console.log(students)
+    const formattedStudents = students.map((student) => ({
+          userId: student.userId || 'Unknown', // Handle potential missing data
+          username: student.username || 'Unknown',
+          email: student.email || 'Unknown',
+          userRole: student.userRole || 'Unknown',
+        }));
+    return {
+      success: true,
+      data: formattedStudents,
+    };
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    throw error;
+  }
+};
+
+// Fetch lecturers
+export const getLecturers = async () => {
+  try {
+      const response = await axios.get(getAPI_URL('admin/userManagement/getLecturer'));
+      const lecturers = response.data
+      console.log(lecturers)
+      const formattedLecturers = lecturers.map((lecturer) => ({
+            userId: lecturer.userId || 'Unknown',
+            username: lecturer.username || 'Unknown',
+            email: lecturer.email || 'Unknown',
+            userRole: lecturer.userRole || 'Unknown',
+          }));
+    return {
+      success: true,
+      data: formattedLecturers,
+    };
+  } catch (error) {
+    console.error('Error fetching lecturers:', error);
+    throw error;
+  }
+};

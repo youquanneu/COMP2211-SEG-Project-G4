@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import RegisterNewUser from './RegisterNewUser';
-import { getStudents, getLecturers } from '../api'; // Import the new functions
+import { getStudents, getLecturers } from '../services/api'; // Import the new functions
 import './AdminUserManagement.css';
 
 function AdminUserManagement() {
