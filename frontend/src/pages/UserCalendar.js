@@ -5,6 +5,7 @@ import axios from 'axios';
 import 'react-calendar/dist/Calendar.css';
 import logo from '../assets/logo.png';
 import './UserCalendar.css';
+import { getAPI_URL } from "../services/api";
 
 function UserCalendar() {
   // Normalize date to local midnight
@@ -19,7 +20,7 @@ function UserCalendar() {
   // Send log to backend
   const sendLog = async (action, value) => {
     try {
-      await axios.post('http://localhost:8080/api/logs', { action, value });
+      await axios.post(getAPI_URL('api/logs'), { action, value });
     } catch (err) {
       console.error('Log error:', err.message);
     }
@@ -30,19 +31,21 @@ function UserCalendar() {
     const fetchData = async () => {
       try {
         // Fetch events
-        const eventsResponse = await axios.get('http://localhost:8080/api/events');
+        const eventsResponse = await axios.get(getAPI_URL('user/event/getAllEvent'));
+        const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
+        console.log(eventsResponse.data)
         if (Array.isArray(eventsResponse.data)) {
           setEvents(eventsResponse.data);
         } else {
           setError('Invalid event data format.');
           console.error('Expected an array, got:', eventsResponse.data);
         }
-
         // Fetch bookings
-        const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
-        const bookingsResponse = await axios.get('http://localhost:8080/api/bookings', {
-          params: { email: userEmail },
+        console.log('email : ' , userEmail)
+        const bookingsResponse = await axios.post(getAPI_URL('user/reservation/myReservation'), {
+          email: userEmail,
         });
+        console.log(bookingsResponse.data)
         if (Array.isArray(bookingsResponse.data)) {
           setBookings(bookingsResponse.data);
         } else {
@@ -65,18 +68,19 @@ function UserCalendar() {
     ...bookings
       .filter((booking) => {
         // Convert booking date (e.g., "April 15, 2025") to ISO format
-        const bookingDate = new Date(booking.date).toISOString().split('T')[0];
+        const bookingDate = new Date(booking.reservationStarting).toISOString().split('T')[0];
         return bookingDate === date.toISOString().split('T')[0];
       })
       .map((booking) => ({
         id: booking.id,
-        date: new Date(booking.date).toISOString().split('T')[0],
-        topic: `Booking: ${booking.resource}`,
+        date: new Date(booking.reservationStarting).toISOString().split('T')[0],
+        topic: `Booking: ${booking.resourceDTO?.resourceName || 'Unknown'}`,
         area: booking.purpose,
-        organizers: booking.userEmail || 'User',
+        organizers: booking.userDTO?.email || 'User',
         description: booking.time,
         type: 'booking',
-      })),
+      })
+      ),
   ];
 
   // Mark dates with events or bookings
@@ -85,7 +89,7 @@ function UserCalendar() {
       const dateStr = date.toISOString().split('T')[0];
       const hasEvent = events.some((event) => event.date === dateStr);
       const hasBooking = bookings.some((booking) => {
-        const bookingDate = new Date(booking.date).toISOString().split('T')[0];
+        const bookingDate = new Date(booking.reservationStarting).toISOString().split('T')[0];
         return bookingDate === dateStr;
       });
       return hasEvent || hasBooking ? <span className="event-dot"></span> : null;
