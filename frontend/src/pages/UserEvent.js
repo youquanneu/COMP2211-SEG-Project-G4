@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../assets/logo.png';
 import './UserEvent.css';
+import { getAPI_URL } from "../services/api";
 
 function UserEvent() {
   const [events, setEvents] = useState([]);
@@ -14,7 +15,7 @@ function UserEvent() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/events');
+        const response = await axios.get(getAPI_URL('user/event/getAllEvent'));
         console.log('API Response:', response.data); // Debug
         if (Array.isArray(response.data)) {
           setEvents(response.data);
