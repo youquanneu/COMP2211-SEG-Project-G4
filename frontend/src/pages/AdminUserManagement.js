@@ -93,8 +93,8 @@ function AdminUserManagement() {
               ) : userList.length > 0 ? (
                 userList.map((user) => (
                   <div key={user.id} className="user-item">
-                    <p><strong>ID:</strong> {user.id}</p>
-                    <p><strong>Name:</strong> {user.name}</p>
+                    <p><strong>ID:</strong> {user.userId}</p>
+                    <p><strong>Name:</strong> {user.username}</p>
                     <p><strong>Email:</strong> {user.email}</p>
                   </div>
                 ))
