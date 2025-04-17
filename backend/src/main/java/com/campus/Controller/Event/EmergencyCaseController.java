@@ -20,7 +20,7 @@ public class EmergencyCaseController {
     @Autowired
     private EmergencyCaseService emergencyCaseService;
     @GetMapping("/getAllEmergency")
-    public ResponseEntity<?> login() {
+    public ResponseEntity<?> getAllEmergency() {
         logger.info("Getting resources processing : ");
         try {
             List<EmergencyCaseDTO> emergencyCaseDTOS = EmergencyCaseDTO.listMapper(emergencyCaseService.getAllEmergencyCase());

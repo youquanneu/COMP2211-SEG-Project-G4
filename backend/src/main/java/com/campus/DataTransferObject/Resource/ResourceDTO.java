@@ -4,6 +4,8 @@ import com.campus.Entity.Resource.Resource;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResourceDTO {
     public ResourceDTO(){}
@@ -20,6 +22,13 @@ public class ResourceDTO {
                 resource.getResourceName(),
                 resource.getOpenTime(),
                 resource.getCloseTime());
+    }
+    public static List<ResourceDTO> listMapper(List<Resource>resources){
+        List<ResourceDTO> resourceDTOS = new ArrayList<>();
+        for (Resource resource: resources){
+            resourceDTOS.add(mapper(resource));
+        }
+        return resourceDTOS;
     }
     @JsonProperty
     private Integer resourceId;

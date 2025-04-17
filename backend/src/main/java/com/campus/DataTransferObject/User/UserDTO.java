@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserDTO {
     public UserDTO(){}
     public UserDTO(Integer userId,String username,
@@ -18,6 +21,13 @@ public class UserDTO {
     }
     public static UserDTO mapper(User user){
         return new UserDTO(user.getUserId(), user.getUsername(), user.getEmail(), user.getUserRole());
+    }
+    public static List<UserDTO> listMapper(List<User> users){
+        List<UserDTO> userDTOS = new ArrayList<>();
+        for (User user : users){
+            userDTOS.add(mapper(user));
+        }
+        return userDTOS;
     }
     @JsonProperty
     private Integer userId;

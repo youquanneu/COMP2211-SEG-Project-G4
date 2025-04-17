@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +29,10 @@ public class EventService {
     }
     public Event saveEvent(Event event){
         return eventRepository.save(event);
+    }
+    @Transactional
+    public List<Event> getAllEvent(){
+        return eventRepository.findAll();
     }
     @Transactional
     public void registerForEvent(Event event, User user){

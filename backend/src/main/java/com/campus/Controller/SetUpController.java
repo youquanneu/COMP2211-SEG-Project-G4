@@ -151,6 +151,7 @@ public class SetUpController  implements CommandLineRunner {
         List<User> lecturerList = administrativeStaffService.getUserByUserRole(UserRole.Lecturer);
         List<Venue> labList = venueService.filterVenue(null,"lab",null,null,null);
         Event event1 = new Event("Lab Open Event",
+                "Fun",
                 LocalDateTime.now().plusHours(5),
                 LocalDateTime.now().plusHours(15),
                 "The event is open for anybody to visit the labs",
@@ -158,6 +159,7 @@ public class SetUpController  implements CommandLineRunner {
         List<User> studentList = administrativeStaffService.getUserByUserRole(UserRole.Student);
         List<Venue> basketballCourt = venueService.filterVenue(null,"basketball",null,null,null);
         Event event2 = new Event("Basket ball event",
+                "Event",
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(3),
                 "The event is open for anybody to play ball",

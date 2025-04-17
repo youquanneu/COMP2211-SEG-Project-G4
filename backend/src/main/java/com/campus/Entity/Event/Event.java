@@ -13,12 +13,14 @@ import java.util.List;
 public class Event {
     public Event(){}
     public Event(String eventTitle,
+                 String area,
                  LocalDateTime eventStarting,
                  LocalDateTime eventEnding,
                  String eventDescription,
                  List<Venue> venues,
                  List<User> organizer){
         setEventTitle(eventTitle);
+        setArea(area);
         checkStartAndEndTime(eventStarting,eventEnding);
         setEventStarting(eventStarting);
         setEventEnding(eventEnding);
@@ -33,15 +35,17 @@ public class Event {
     @NotNull
     private String eventTitle;
     @NotNull
+    private String area;
+    @NotNull
     private LocalDateTime eventStarting;
     @NotNull
     private LocalDateTime eventEnding;
     private String eventDescription;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Venue> venues;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> organizer;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> participant;
     public void addParticipant(User user){
         this.participant.add(user);
@@ -55,12 +59,16 @@ public class Event {
     public String getEventTitle() {
         return eventTitle;
     }
-    public LocalDateTime getEventEnding() {
-        return eventEnding;
+    public String getArea() {
+        return area;
     }
     public LocalDateTime getEventStarting() {
         return eventStarting;
     }
+    public LocalDateTime getEventEnding() {
+        return eventEnding;
+    }
+
     public String getEventDescription() {
         return eventDescription;
     }
@@ -75,6 +83,9 @@ public class Event {
     }
     private void setEventTitle(String eventTitle) {
         this.eventTitle = eventTitle;
+    }
+    private void setArea(String area) {
+        this.area = area;
     }
     private void setEventStarting(LocalDateTime eventStarting) {
         this.eventStarting = eventStarting;
