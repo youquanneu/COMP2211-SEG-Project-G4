@@ -11,16 +11,33 @@ function UserEvent() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  // Send log to backend
+  const sendLog = async (action, value) => {
+    try {
+      await axios.post(getAPI_URL('api/logs'), { action, value });
+    } catch (err) {
+      console.error('Log error:', err.message);
+    }
+  };
+
   // Fetch events on component mount
   useEffect(() => {
     const fetchEvents = async () => {
+      await sendLog('fetch_events', 'Fetched events');
       try {
         const response = await axios.get(getAPI_URL('user/event/getAllEvent'));
         console.log('API Response:', response.data); // Debug
-        if (Array.isArray(response.data)) {
-          setEvents(response.data);
+        let eventData = response.data;
+        if (!Array.isArray(eventData) && eventData.events) {
+          eventData = eventData.events; // Handle { events: [...] }
+        }
+        if (Array.isArray(eventData)) {
+          setEvents(eventData);
+          if (eventData.length === 0) {
+            setError('No events found in the database.');
+          }
         } else {
-          setError('Invalid event data format.');
+          setError('Invalid event data format. Expected an array.');
         }
       } catch (err) {
         setError('Failed to load events. Check if backend is running.');
@@ -31,15 +48,36 @@ function UserEvent() {
   }, []);
 
   const handleEventClick = (event) => {
+    console.log('Selected event:', event); // Debug
     setSelectedEvent(event);
+    sendLog('select_event', event.topic || 'Unknown');
   };
 
   const closePopup = () => {
     setSelectedEvent(null);
+    sendLog('close_popup', 'Closed event popup');
   };
 
   const handleBack = () => {
-    navigate('/');
+    navigate('/userhome');
+    sendLog('back', 'Clicked back to userhome');
+  };
+
+  // Format date safely
+  const formatDate = (dateStr) => {
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      return date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return 'Invalid Date';
+    }
   };
 
   return (
@@ -52,31 +90,30 @@ function UserEvent() {
         {error && <p className="error-message">{error}</p>}
         <div className="events-list">
           {events.length > 0 ? (
-            events.map((event) => (
+            events.map((event, index) => (
               <div
-                key={event.id}
+                key={event.id || index}
                 className="event-card"
                 onClick={() => handleEventClick(event)}
               >
                 <img
                   src={event.imageUrl || logo}
-                  alt={event.topic}
+                  alt={event.topic || 'Event'}
                   className="event-image"
                   onError={(e) => {
                     e.target.src = logo;
                   }}
                 />
                 <div className="event-details">
-                  <h3>{event.topic}</h3>
+                  <h3>{event.topic || 'Untitled Event'}</h3>
                   <p>
-                    <strong>Area:</strong> {event.area}
+                    <strong>Area:</strong> {event.area || 'N/A'}
                   </p>
                   <p>
-                    <strong>Date:</strong>{' '}
-                    {new Date(event.date).toLocaleDateString()}
+                    <strong>Date:</strong> {formatDate(event.date)}
                   </p>
                   <p>
-                    <strong>Time:</strong> {event.time}
+                    <strong>Time:</strong> {event.time || 'N/A'}
                   </p>
                 </div>
               </div>
@@ -98,31 +135,30 @@ function UserEvent() {
             </button>
             <img
               src={selectedEvent.imageUrl || logo}
-              alt={selectedEvent.topic}
+              alt={selectedEvent.topic || 'Event'}
               className="popup-image"
               onError={(e) => {
                 e.target.src = logo;
               }}
             />
-            <h2>{selectedEvent.topic}</h2>
+            <h2>{selectedEvent.topic || 'Untitled Event'}</h2>
             <p>
-              <strong>Area:</strong> {selectedEvent.area}
+              <strong>Area:</strong> {selectedEvent.area || 'N/A'}
             </p>
             <p>
-              <strong>Date:</strong>{' '}
-              {new Date(selectedEvent.date).toLocaleDateString()}
+              <strong>Date:</strong> {formatDate(selectedEvent.date)}
             </p>
             <p>
-              <strong>Time:</strong> {selectedEvent.time}
+              <strong>Time:</strong> {selectedEvent.time || 'N/A'}
             </p>
             <p>
-              <strong>Venue:</strong> {selectedEvent.venue}
+              <strong>Venue:</strong> {selectedEvent.venue || 'N/A'}
             </p>
             <p>
-              <strong>Organizer:</strong> {selectedEvent.organizer}
+              <strong>Organizer:</strong> {selectedEvent.organizer || 'N/A'}
             </p>
             <p>
-              <strong>Description:</strong> {selectedEvent.description}
+              <strong>Description:</strong> {selectedEvent.description || 'No description available.'}
             </p>
           </div>
         </div>
