@@ -42,7 +42,8 @@ public class EmailSenderService {
     public void reportNewEmergency(EmergencyCase emergencyCase){
         List<AdministrativeStaff> admins = administrativeStaffService.getAllAdmin();
         for (User user : admins){
-            sendEmail(user.getEmail(), "Emergency Case Reported",emergencyCase.toString());
+            sendEmail(user.getEmail(), "Emergency Case Reported",
+                    emergencyCase.getDescription() + " happened at " + emergencyCase.getLocation());
         }
     }
     public void alertEmergency(EmergencyCase emergencyCase){

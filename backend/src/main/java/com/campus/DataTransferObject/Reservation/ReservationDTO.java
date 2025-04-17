@@ -6,12 +6,18 @@ import com.campus.Entity.Reservation.Reservation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReservationDTO {
     public ReservationDTO(){}
-    public ReservationDTO(Integer reservationId, ResourceDTO resourceDTO,
-                          LocalDateTime reservationStarting, LocalDateTime reservationEnding){
+    public ReservationDTO(Integer reservationId,
+                          UserDTO userDTO,
+                          ResourceDTO resourceDTO,
+                          LocalDateTime reservationStarting,
+                          LocalDateTime reservationEnding){
         setReservationId(reservationId);
+        setUserDTO(userDTO);
         setResourceDTO(resourceDTO);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
@@ -19,10 +25,18 @@ public class ReservationDTO {
     public static ReservationDTO mapper(Reservation reservation){
         return new ReservationDTO(
                 reservation.getReservationId(),
+                UserDTO.mapper(reservation.getBooker()),
                 ResourceDTO.mapper(reservation.getResource()),
                 reservation.getReservationStarting(),
                 reservation.getReservationEnding()
                 );
+    }
+    public static List<ReservationDTO> listMapper(List<Reservation> reservations){
+        List<ReservationDTO> reservationDTOS = new ArrayList<>();
+        for (Reservation reservation: reservations){
+            reservationDTOS.add(mapper(reservation));
+        }
+        return reservationDTOS;
     }
     @JsonProperty
     private Integer reservationId;

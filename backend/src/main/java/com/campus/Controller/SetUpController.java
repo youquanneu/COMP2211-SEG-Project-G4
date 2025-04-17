@@ -47,6 +47,8 @@ public class SetUpController  implements CommandLineRunner {
 //        testNewEvent();
 //        generateAllTimeSlot();
 //        addNewEmergencyCase();
+        System.out.println("——————————————————————————————————————————————————————————");
+        logger.info("Initial Set Up complete");
     }
 
     public void testRegisterUser(){

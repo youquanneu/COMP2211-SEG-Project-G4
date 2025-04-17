@@ -27,9 +27,7 @@ public class EventController {
         logger.info("Getting events processing : ");
         try {
             List<Event> events = eventService.getAllEvent();
-            // Explicitly fetch the venues within the transactional context
             for (Event event : events) {
-                // Trigger the loading of the lazy-loaded 'venues' collection
                 event.getVenues().size();
             }
             List<EventDTO> eventDTOS = EventDTO.listMapper(events);

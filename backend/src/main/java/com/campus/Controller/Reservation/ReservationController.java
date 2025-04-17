@@ -4,6 +4,8 @@ import com.campus.DataTransferObject.Reservation.AvailableTimeRequest;
 import com.campus.DataTransferObject.Reservation.ReservationDTO;
 import com.campus.DataTransferObject.Reservation.ReservationRequest;
 import com.campus.DataTransferObject.Reservation.TimeSlotDTO;
+import com.campus.DataTransferObject.User.UserDTO;
+import com.campus.DataTransferObject.User.UserEmailDTO;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
@@ -67,6 +69,18 @@ public class ReservationController {
             Reservation reservation = reservationService.createNewReservation(booker,resource,reservationRequest.getPurpose(),reservationStarting,reservationEnding);
             logger.info("Reservation successful : " + reservation.toString());
             return ResponseEntity.ok(ReservationDTO.mapper(reservation));
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+    @PostMapping("/myReservation")
+    public ResponseEntity<?> myReservation(@RequestBody UserEmailDTO userEmailDTO) {
+        logger.info("Processing my reservation: " + userEmailDTO.getEmail());
+        try {
+            User booker = userService.getUserByEmail(userEmailDTO.getEmail());
+            List<ReservationDTO> reservationDTOS = ReservationDTO.listMapper(reservationService.getMyReservationList(booker));
+            return ResponseEntity.ok(reservationDTOS);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

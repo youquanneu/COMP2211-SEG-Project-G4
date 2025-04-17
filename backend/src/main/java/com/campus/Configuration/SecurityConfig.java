@@ -39,6 +39,8 @@ public class SecurityConfig {
                     auth.requestMatchers("/auth/**").permitAll();
                     auth.requestMatchers("/public/**").permitAll();
                     auth.requestMatchers("/user/**").permitAll();
+                    auth.requestMatchers("/emergency/**").permitAll();
+                    auth.requestMatchers("/admin/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
