@@ -1,37 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './UserEmergency.css';
+import { getAPI_URL } from "../services/api";
 
 function UserEmergency() {
   const navigate = useNavigate();
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
+  const [resources, setResources] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState('');
 
   // Send log to backend
   const sendLog = async (action, value) => {
     try {
-      await axios.post('http://localhost:8080/api/logs', { action, value });
+      await axios.post(getAPI_URL('api/logs'), { action, value });
     } catch (err) {
       console.error('Log error:', err.message);
     }
   };
 
+  // Fetch resources on component mount
+  useEffect(() => {
+    const fetchResources = async () => {
+      await sendLog('fetch_resources', 'Fetched resources for emergency');
+      try {
+        const response = await axios.get(getAPI_URL('user/resource/getAllResource'));
+        console.log('Resources Response:', response.data); // Debug
+        let resourceData = response.data;
+        if (!Array.isArray(resourceData)) {
+          if (resourceData.resources && Array.isArray(resourceData.resources)) {
+            resourceData = resourceData.resources;
+          } else if (resourceData.data && Array.isArray(resourceData.data)) {
+            resourceData = resourceData.data;
+          } else {
+            setError('Invalid resource data format. Expected an array.');
+            console.error('Resource structure:', JSON.stringify(response.data, null, 2));
+            return;
+          }
+        }
+        setResources(resourceData);
+        if (resourceData.length > 0) {
+          setLocation(resourceData[0].name); // Set default to first resource
+        }
+      } catch (err) {
+        setError('Failed to load resources. Please try again.');
+        console.error('Fetch resources error:', err.message, err.response?.data);
+      }
+    };
+    fetchResources();
+  }, []);
+
   const handleSubmit = async () => {
     if (!location || !description) {
-      setError('Please fill in both location and description.');
+      setError('Please select a location and enter a description.');
+      await sendLog('submit_emergency_error', 'Missing location or description');
       return;
     }
 
     try {
       const reportData = { location, description };
-      await axios.post('http://localhost:8080/api/emergencies', reportData);
+      await axios.post(getAPI_URL('api/emergencies'), reportData);
       await sendLog('submit_emergency', `Location: ${location}, Description: ${description}`);
       setShowPopup(true);
       setError('');
-      setLocation('');
+      setLocation(resources.length > 0 ? resources[0].name : '');
       setDescription('');
       setTimeout(() => {
         setShowPopup(false);
@@ -39,6 +73,7 @@ function UserEmergency() {
     } catch (err) {
       setError('Failed to submit emergency. Please try again.');
       console.error('Submit error:', err.message, err.response?.data);
+      await sendLog('submit_emergency_error', `Failed: ${err.message}`);
     }
   };
 
@@ -62,12 +97,26 @@ function UserEmergency() {
         {error && <p className="error-message">{error}</p>}
         <div className="form-group">
           <label>Location:</label>
-          <input
-            type="text"
+          <select
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder=""
-          />
+            onChange={(e) => {
+              setLocation(e.target.value);
+              sendLog('select_location', `Selected: ${e.target.value}`);
+            }}
+            className="location-dropdown"
+          >
+            {resources.length > 0 ? (
+              resources.map((resource) => (
+                <option key={resource.id} value={resource.name}>
+                  {resource.name}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>
+                No resources available
+              </option>
+            )}
+          </select>
         </div>
         <div className="form-group">
           <label>Description:</label>

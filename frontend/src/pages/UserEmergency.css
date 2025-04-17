@@ -1,4 +1,3 @@
-/* src/pages/UserEmergency.css */
 .emergency-container {
   width: 90%;
   max-width: 400px;
@@ -28,7 +27,7 @@
 }
 
 .form-group label {
-  color: #FF0000; /* Changed to pure red */
+  color: #FF0000; /* pure red */
   font-size: calc(var(--font-size-base) * 0.875);
   width: 100px;
   margin-right: 10px;
@@ -36,7 +35,8 @@
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select.location-dropdown {
   flex: 1;
   padding: 8px;
   border: 1px solid var(--border-color);
@@ -50,16 +50,27 @@
   resize: vertical;
 }
 
+.form-group select.location-dropdown {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position-x: 98%;
+  background-position-y: 50%;
+}
+
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select.location-dropdown:focus {
   outline: none;
-  border-color: #FF0000; /* Changed to pure red */
+  border-color: #FF0000; /* pure red */
 }
 
 .submit-button {
   width: 120px;
   padding: 8px;
-  background: linear-gradient(to right, #FF0000, #CC0000); /* Changed to pure red gradient */
+  background: linear-gradient(to right, #FF0000, #CC0000); /* pure red gradient */
   color: white;
   border: none;
   border-radius: 6px;
@@ -72,13 +83,13 @@
 
 .submit-button:hover {
   transform: translateY(-2px);
-  background: #CC0000; /* Darker red on hover */
+  background: #CC0000; /* darker red */
 }
 
 .back-button {
   width: 120px;
   padding: 8px;
-  background: linear-gradient(to right, #6c757d, #5a6268); /* Keep Back button as grey */
+  background: linear-gradient(to right, #6c757d, #5a6268); /* grey */
   color: white;
   border: none;
   border-radius: 6px;
@@ -110,53 +121,55 @@
 
 @media (min-width: 768px) {
   .emergency-container {
-      padding: 25px;
+    padding: 25px;
   }
 
   .emergency-content h1 {
-      font-size: calc(var(--font-size-base) * 1.625);
+    font-size: calc(var(--font-size-base) * 1.625);
   }
 
   .form-group label {
-      font-size: calc(var(--font-size-base) * 1);
-      width: 120px;
+    font-size: calc(var(--font-size-base) * 1);
+    width: 120px;
   }
 
   .form-group input,
-  .form-group textarea {
-      font-size: calc(var(--font-size-base) * 1);
+  .form-group textarea,
+  .form-group select.location-dropdown {
+    font-size: calc(var(--font-size-base) * 1);
   }
 
   .submit-button,
   .back-button {
-      font-size: calc(var(--font-size-base) * 1);
-      width: 140px;
+    font-size: calc(var(--font-size-base) * 1);
+    width: 140px;
   }
 
   .popup {
-      font-size: calc(var(--font-size-base) * 1);
-      padding: 20px 30px;
+    font-size: calc(var(--font-size-base) * 1);
+    padding: 20px 30px;
   }
 }
 
 @media (max-width: 360px) {
   .emergency-container {
-      padding: 15px;
+    padding: 15px;
   }
 
   .form-group {
-      flex-direction: column;
-      align-items: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .form-group label {
-      width: 100%;
-      margin-bottom: 5px;
-      margin-right: 0;
+    width: 100%;
+    margin-bottom: 5px;
+    margin-right: 0;
   }
 
   .form-group input,
-  .form-group textarea {
-      width: 100%;
+  .form-group textarea,
+  .form-group select.location-dropdown {
+    width: 100%;
   }
 }
