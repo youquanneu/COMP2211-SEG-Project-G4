@@ -8,7 +8,7 @@ function UserEmergency() {
   const navigate = useNavigate();
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
-  const [resources, setResources] = useState([]);
+  const [venues, setVenues] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,60 +21,64 @@ function UserEmergency() {
     }
   };
 
-  // Fetch resources on component mount
+  // Fetch venues on component mount
   useEffect(() => {
-    const fetchResources = async () => {
-      await sendLog('fetch_resources', 'Fetched resources for emergency');
+    const fetchVenues = async () => {
+      await sendLog('fetch_venues', 'Fetched venues for emergency');
       try {
         const response = await axios.get(getAPI_URL('user/venue/getAllVenue'));
-        console.log('Resources Response:', response.data); // Debug
-        let resourceData = response.data;
+        console.log('Venues Response:', response.data); // Debug
+        let venueData = response.data;
 
         // Handle various response structures
-        if (!Array.isArray(resourceData)) {
-          if (resourceData.resources && Array.isArray(resourceData.resources)) {
-            resourceData = resourceData.resources;
-          } else if (resourceData.data && Array.isArray(resourceData.data)) {
-            resourceData = resourceData.data;
-          } else if (resourceData.result && Array.isArray(resourceData.result)) {
-            resourceData = resourceData.result;
+        if (!Array.isArray(venueData)) {
+          if (venueData.venues && Array.isArray(venueData.venues)) {
+            venueData = venueData.venues;
+          } else if (venueData.data && Array.isArray(venueData.data)) {
+            venueData = venueData.data;
+          } else if (venueData.result && Array.isArray(venueData.result)) {
+            venueData = venueData.result;
           } else {
-            setError('Invalid resource data format. Expected an array.');
-            console.error('Resource structure:', JSON.stringify(response.data, null, 2));
+            setError('Invalid venue data format. Expected an array.');
+            console.error('Venue structure:', JSON.stringify(response.data, null, 2));
             return;
           }
         }
 
-        // Log resource count and first resource's keys
-        console.log('Resource count:', resourceData.length);
-        if (resourceData.length > 0) {
-          console.log('First resource keys:', Object.keys(resourceData[0]));
+        // Log venue count and first venue's keys
+        console.log('Venue count:', venueData.length);
+        if (venueData.length > 0) {
+          console.log('First venue keys:', Object.keys(venueData[0]));
+          console.log('First venue values:', venueData[0]);
         }
 
-        // Check for missing id/resourceId
-        resourceData.forEach((resource, index) => {
-          if (!resource.id && !resource.resourceId) {
-            console.warn(`Resource at index ${index} missing id/resourceId:`, resource);
+        // Check for missing id/venueId
+        venueData.forEach((venue, index) => {
+          if (!venue.id && !venue.venueId) {
+            console.warn(`Venue at index ${index} missing id/venueId:`, venue);
+          }
+          if (!venue.name && !venue.venueName) {
+            console.warn(`Venue at index ${index} missing name/venueName:`, venue);
           }
         });
 
-        setResources(resourceData);
-        if (resourceData.length > 0) {
-          setLocation(resourceData[0].name || resourceData[0].resourceName || '');
+        setVenues(venueData);
+        if (venueData.length > 0) {
+          setLocation(venueData[0].name || venueData[0].venueName || '');
         }
       } catch (err) {
-        setError('Failed to load resources. Please try again.');
-        console.error('Fetch resources error:', err.message, err.response?.data);
-        await sendLog('fetch_resources_error', `Failed: ${err.message}`);
+        setError('Failed to load venues. Check if backend is running.');
+        console.error('Fetch venues error:', err.message, err.response?.data);
+        await sendLog('fetch_venues_error', `Failed: ${err.message}`);
       }
     };
-    fetchResources();
+    fetchVenues();
   }, []);
 
   const handleSubmit = async () => {
     if (!location || !description) {
-      setError('Please select a location and enter a description.');
-      await sendLog('submit_emergency_error', 'Missing location or description');
+      setError('Please select a venue and enter a description.');
+      await sendLog('submit_emergency_error', 'Missing venue or description');
       return;
     }
 
@@ -84,7 +88,7 @@ function UserEmergency() {
       await sendLog('submit_emergency', `Location: ${location}, Description: ${description}`);
       setShowPopup(true);
       setError('');
-      setLocation(resources.length > 0 ? (resources[0].name || resources[0].resourceName || '') : '');
+      setLocation(venues.length > 0 ? (venues[0].name || venues[0].venueName || '') : '');
       setDescription('');
       setTimeout(() => {
         setShowPopup(false);
@@ -124,18 +128,18 @@ function UserEmergency() {
             }}
             className="location-dropdown"
           >
-            {resources.length > 0 ? (
-              resources.map((resource, index) => (
+            {venues.length > 0 ? (
+              venues.map((venue, index) => (
                 <option
-                  key={resource.id || resource.resourceId || index}
-                  value={resource.name || resource.resourceName}
+                  key={venue.id || venue.venueId || index}
+                  value={venue.name || venue.venueName}
                 >
-                  {resource.name || resource.resourceName || 'Unknown Resource'}
+                  {venue.name || venue.venueName || 'Unknown Venue'}
                 </option>
               ))
             ) : (
               <option value="" disabled>
-                No resources available
+                No venues available
               </option>
             )}
           </select>
