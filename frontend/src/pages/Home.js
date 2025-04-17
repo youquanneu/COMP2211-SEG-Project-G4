@@ -26,7 +26,7 @@ function Home() {
     const selectedPage = event.target.value;
     if (selectedPage === 'login') {
       navigate('/login');
-    } else if (selectedPage === 'navigation') {
+    } else if (selectedPage === 'directory') {
       navigate('/navigation');
     }
   };
@@ -39,9 +39,6 @@ function Home() {
     navigate('/settings');
   };
 
-  const handleNavigationPage = () => {
-    navigate('/navigation');
-  };
 
   return (
     <div className="home-container">
@@ -69,11 +66,6 @@ function Home() {
           The University of Southampton Malaysia (UoSM) is a branch campus of the University of Southampton, UK, a world-leading, research-intensive university and founding member of the prestigious Russell Group. Established in October 2012 at the invitation of the Malaysian Ministry of Higher Education, UoSM initially opened within the EduCity development in Iskandar, Johor. In October 2021, it relocated to a new, state-of-the-art campus in Eco Galleria, Iskandar Puteri, Johor, designed to accommodate up to 2,000 students.
         </p>
         <img src={campusPhoto} alt="UoSM Campus" className="home-photo" />
-        <div className="navigation-button-container">
-          <button className="navigation-button" onClick={handleNavigationPage}>
-            Explore Campus Navigation
-          </button>
-        </div>
         <p>
           UoSM offers a range of foundation, undergraduate, and postgraduate programs, with a strong emphasis on engineering, business, and computer science. Its split-campus programs allow students to study the first two years in Malaysia and the final two in the UK, providing a globally recognized education at a reduced cost—up to 75% savings compared to studying fully in the UK. The university is ranked 80th in the QS World University Rankings 2025, making it the top UK university in Malaysia.
         </p>

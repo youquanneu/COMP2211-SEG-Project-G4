@@ -400,7 +400,7 @@ const CampusNavigation = () => {
       <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 1 }}>
         <IconButton
           color="primary"
-          onClick={() => navigate('/userhome')}
+          onClick={() => navigate(-1)}
           size="small"
           sx={{
             borderRadius: 1,
