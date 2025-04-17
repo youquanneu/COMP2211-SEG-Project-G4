@@ -5,7 +5,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class SmartCampusBackendApplicationTests {
+
 	@Test
 	void contextLoads() {
 	}
+
 }

@@ -4,10 +4,10 @@ import java.time.LocalTime;
 
 public class IndoorVenueDTO extends VenueDTO{
     public IndoorVenueDTO(){}
-    public IndoorVenueDTO(Integer resourceId, String resourceName,
+    public IndoorVenueDTO(String resourceName,
                           LocalTime openTime, LocalTime closeTime,
                           String building, String roomNumber){
-        super(resourceId,resourceName,openTime,closeTime);
+        super(resourceName,openTime,closeTime);
         setBuilding(building);
         setRoomNumber(roomNumber);
     }

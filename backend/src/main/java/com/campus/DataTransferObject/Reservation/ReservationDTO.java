@@ -1,61 +1,33 @@
 package com.campus.DataTransferObject.Reservation;
 
+import com.campus.Classification.Approval;
 import com.campus.DataTransferObject.Resource.ResourceDTO;
 import com.campus.DataTransferObject.User.UserDTO;
-import com.campus.Entity.Reservation.Reservation;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReservationDTO {
     public ReservationDTO(){}
-    public ReservationDTO(Integer reservationId,
-                          UserDTO userDTO,
-                          ResourceDTO resourceDTO,
-                          LocalDateTime reservationStarting,
-                          LocalDateTime reservationEnding){
-        setReservationId(reservationId);
-        setUserDTO(userDTO);
-        setResourceDTO(resourceDTO);
+    public ReservationDTO(UserDTO booker, List<ResourceDTO> resources,
+                          LocalDateTime reservationStarting, LocalDateTime reservationEnding,
+                          Approval approval){
+        setBooker(booker);
+        setResources(resources);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
+        setApproval(approval);
     }
-    public static ReservationDTO mapper(Reservation reservation){
-        return new ReservationDTO(
-                reservation.getReservationId(),
-                UserDTO.mapper(reservation.getBooker()),
-                ResourceDTO.mapper(reservation.getResource()),
-                reservation.getReservationStarting(),
-                reservation.getReservationEnding()
-                );
-    }
-    public static List<ReservationDTO> listMapper(List<Reservation> reservations){
-        List<ReservationDTO> reservationDTOS = new ArrayList<>();
-        for (Reservation reservation: reservations){
-            reservationDTOS.add(mapper(reservation));
-        }
-        return reservationDTOS;
-    }
-    @JsonProperty
-    private Integer reservationId;
-    @JsonProperty
-    private UserDTO userDTO;
-    @JsonProperty
-    private ResourceDTO resourceDTO;
-    @JsonProperty
+    private UserDTO booker;
+    private List<ResourceDTO> resources;
     private LocalDateTime reservationStarting;
-    @JsonProperty
     private LocalDateTime reservationEnding;
-    public Integer getReservationId() {
-        return reservationId;
+    private Approval approval;
+    public UserDTO getBooker() {
+        return booker;
     }
-    public UserDTO getUserDTO() {
-        return userDTO;
-    }
-    public ResourceDTO getResourceDTO() {
-        return resourceDTO;
+    public List<ResourceDTO> getResources() {
+        return resources;
     }
     public LocalDateTime getReservationStarting() {
         return reservationStarting;
@@ -63,14 +35,14 @@ public class ReservationDTO {
     public LocalDateTime getReservationEnding() {
         return reservationEnding;
     }
-    private void setReservationId(Integer reservationId) {
-        this.reservationId = reservationId;
+    public Approval getApproval() {
+        return approval;
     }
-    private void setUserDTO(UserDTO userDTO) {
-        this.userDTO = userDTO;
+    private void setBooker(UserDTO booker) {
+        this.booker = booker;
     }
-    private void setResourceDTO(ResourceDTO resourceDTO) {
-        this.resourceDTO = resourceDTO;
+    private void setResources(List<ResourceDTO> resources) {
+        this.resources = resources;
     }
     private void setReservationStarting(LocalDateTime reservationStarting) {
         this.reservationStarting = reservationStarting;
@@ -78,5 +50,7 @@ public class ReservationDTO {
     private void setReservationEnding(LocalDateTime reservationEnding) {
         this.reservationEnding = reservationEnding;
     }
-
+    private void setApproval(Approval approval) {
+        this.approval = approval;
+    }
 }
