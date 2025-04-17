@@ -20,6 +20,16 @@ public class AdminController {
     public User registerUser(@RequestBody User user) {
         return administrativeStaffService.registerNewUser(user);
     }
+    @PostMapping("/userManagement/registerUser")
+    public ResponseEntity<?> registerUser() {
+        logger.info("processing : " );
+        try {
+            return ResponseEntity.ok("");
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
     @PostMapping("")
     public ResponseEntity<?> booking() {
         logger.info("processing : " );

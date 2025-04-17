@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class LogsController {
     private static final Logger logger = Logger.getLogger(LogsController.class.getName());
     @PostMapping("/logs")
-    public ResponseEntity<?> login(@RequestBody LogAction logAction) {
+    public ResponseEntity<?> logs(@RequestBody LogAction logAction) {
         logger.info("Logs : " + logAction);
 //        try {
 //            UserDTO userDTO = UserDTO.mapper(

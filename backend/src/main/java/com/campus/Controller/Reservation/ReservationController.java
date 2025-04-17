@@ -31,7 +31,7 @@ public class ReservationController {
     @Autowired
     private ResourceService resourceService;
     @PostMapping("/getAvailableTimeSlot")
-    public ResponseEntity<?> availableTime(@RequestBody AvailableTimeRequest availableTimeRequest){
+    public ResponseEntity<?> getAvailableTimeSlot(@RequestBody AvailableTimeRequest availableTimeRequest){
         logger.info("Available time request processing : "+ availableTimeRequest );
         try {
             Resource resource = resourceService.getResourceByID(
@@ -51,7 +51,7 @@ public class ReservationController {
         }
     }
     @PostMapping("/makeReservation")
-    public ResponseEntity<?> booking(@RequestBody ReservationRequest reservationRequest) {
+    public ResponseEntity<?> makeReservation(@RequestBody ReservationRequest reservationRequest) {
         logger.info("Reservation request processing : " + reservationRequest.toString() );
         try {
             User booker = userService.getUserByEmail(reservationRequest.getUserEmail());

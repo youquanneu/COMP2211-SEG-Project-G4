@@ -17,7 +17,7 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
     @GetMapping("/getAllResource")
-    public ResponseEntity<?> login() {
+    public ResponseEntity<?> getAllResource() {
         logger.info("Getting resources processing : ");
         try {
             List<ResourceDTO> resourceDTOS = resourceService.getAllResourceDTO();
