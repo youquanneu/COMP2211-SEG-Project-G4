@@ -35,6 +35,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import LabelIcon from '@mui/icons-material/Label';
 import LabelOffIcon from '@mui/icons-material/LabelOff';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate } from 'react-router-dom';
 import './NavigationMap.css'; // Styles for this component
 // Using direct import - no more relative path issues
 import floorPlanImage from '../assets/floor-plan.png';
@@ -43,6 +45,7 @@ const CampusNavigation = () => {
   // Theme and media query for responsive design
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate(); // For navigation
   
   const [startRoom, setStartRoom] = useState("");
   const [endRoom, setEndRoom] = useState("");
@@ -394,6 +397,26 @@ const CampusNavigation = () => {
 
   return (
     <Box className="navigation-container">
+      <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 1 }}>
+        <IconButton
+          color="primary"
+          onClick={() => navigate('/userhome')}
+          size="small"
+          sx={{
+            borderRadius: 1,
+            border: '1px solid rgba(25, 118, 210, 0.5)',
+            p: 0.8,
+            bgcolor: 'rgba(25, 118, 210, 0.08)',
+            '&:hover': {
+              bgcolor: 'rgba(25, 118, 210, 0.15)',
+            }
+          }}
+          aria-label="go to home"
+        >
+          <ArrowBackIcon fontSize="small" />
+        </IconButton>
+      </Box>
+      
       <Typography 
         variant="h5" 
         component="h2" 
@@ -499,19 +522,22 @@ const CampusNavigation = () => {
             sx={{ 
               display: 'flex', 
               flexDirection: 'row',
-              justifyContent: 'space-between', 
+              justifyContent: 'center', 
               alignItems: 'center', 
               mb: isMobile ? 2 : 3,
-              gap: isMobile ? 1.5 : 1,
               bgcolor: '#f9f9f9',
               p: 1.5,
-              borderRadius: 2
+              borderRadius: 2,
+              width: '100%',
+              overflow: 'hidden'
             }}
           >
             <Box sx={{ 
               display: 'flex', 
-              gap: 1.5,
-              width: isMobile ? '100%' : 'auto',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: 1,
+              width: '100%',
             }}>
               <Button
                 variant="contained"
@@ -519,33 +545,35 @@ const CampusNavigation = () => {
                 disabled={!startRoom || !endRoom || loading}
                 onClick={calculatePath}
                 startIcon={<RouteIcon />}
-                fullWidth={isMobile}
-                size={isMobile ? "medium" : "medium"}
+                size="small"
                 sx={{ 
-                  px: 3,
-                  py: 1,
+                  px: 1.5,
+                  py: 0.7,
                   borderRadius: 1.5,
                   fontWeight: 500,
                   boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                   textTransform: 'none',
+                  minWidth: 0,
                   '&:hover': {
                     boxShadow: '0 4px 8px rgba(0,0,0,0.15)'
                   }
                 }}
               >
-                {isMobile ? "Find Route" : "Find Directions"}
+                {isMobile ? "Find" : "Find Directions"}
               </Button>
               
               <Button
                 variant="outlined"
                 onClick={resetPath}
-                size="medium"
+                size="small"
                 startIcon={<RestartAltIcon />}
                 disabled={!startRoom && !endRoom}
                 sx={{ 
                   borderRadius: 1.5,
                   textTransform: 'none',
-                  px: 2
+                  px: 1.5,
+                  py: 0.7,
+                  minWidth: 0
                 }}
               >
                 Reset
@@ -557,30 +585,35 @@ const CampusNavigation = () => {
                   color="info"
                   onClick={() => setShowWaypoints(!showWaypoints)}
                   startIcon={showWaypoints ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  size="small"
                   sx={{ 
                     borderRadius: 1.5,
                     textTransform: 'none',
-                    px: 2
+                    px: 1.5,
+                    py: 0.7,
+                    minWidth: 0
                   }}
                 >
-                  {isMobile ? "" : (showWaypoints ? "Hide" : "Show") + " Waypoints"}
+                  {isMobile ? "" : "Waypoints"}
                 </Button>
               </Tooltip>
               
-              {/* Labels toggle - added this for better testing */}
               <Tooltip title={showNodeLabels ? "Hide node labels" : "Show node labels"}>
                 <Button
                   variant={showNodeLabels ? "contained" : "outlined"}
                   color="secondary"
                   onClick={toggleNodeLabels}
                   startIcon={showNodeLabels ? <LabelOffIcon /> : <LabelIcon />}
+                  size="small"
                   sx={{ 
                     borderRadius: 1.5,
                     textTransform: 'none',
-                    px: 2
+                    px: 1.5,
+                    py: 0.7,
+                    minWidth: 0
                   }}
                 >
-                  {isMobile ? "" : (showNodeLabels ? "Hide" : "Show") + " Labels"}
+                  {isMobile ? "" : "Labels"}
                 </Button>
               </Tooltip>
               
@@ -590,13 +623,16 @@ const CampusNavigation = () => {
                   color="secondary"
                   onClick={checkConnectivity}
                   startIcon={<CheckCircleOutlineIcon />}
+                  size="small"
                   sx={{ 
                     borderRadius: 1.5,
                     textTransform: 'none',
-                    px: 2
+                    px: 1.5,
+                    py: 0.7,
+                    minWidth: 0
                   }}
                 >
-                  {isMobile ? "" : "Verify Connections"}
+                  {isMobile ? "" : "Verify"}
                 </Button>
               </Tooltip>
             </Box>

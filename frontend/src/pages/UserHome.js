@@ -21,6 +21,8 @@ function UserHome() {
       navigate('/emergency');
     } else if (selectedPage === 'home') {
       navigate('/userhome');
+    }else if (selectedPage === 'directory') {
+      navigate('/navigation');
     }
   };
 
