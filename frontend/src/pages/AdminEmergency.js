@@ -4,7 +4,7 @@ import { FaExclamation } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../assets/logo.png';
-import { getEmergencies, sendPanicAlert } from '../api'; // Import the new functions
+import { getEmergencies, sendPanicAlert } from '../api';
 import './AdminEmergency.css';
 
 function AdminEmergency() {
@@ -69,10 +69,10 @@ function AdminEmergency() {
     const doc = new jsPDF();
     autoTable(doc, {
       startY: 20,
-      head: [['Date', 'Emergency', 'Description', 'Status']],
+      head: [['Date', 'Location', 'Description', 'Status']], // Updated "Emergency" to "Location"
       body: filteredEmergencies.map((emergency) => [
         emergency.date,
-        emergency.emergency,
+        emergency.location, // Updated to use location
         emergency.description,
         emergency.status,
       ]),
@@ -161,7 +161,7 @@ function AdminEmergency() {
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Emergency</th>
+                <th>Location</th> {/* Updated "Emergency" to "Location" */}
                 <th>Description</th>
                 <th>Status</th>
               </tr>
@@ -171,7 +171,7 @@ function AdminEmergency() {
                 filteredEmergencies.map((emergency, index) => (
                   <tr key={index}>
                     <td>{emergency.date}</td>
-                    <td>{emergency.emergency}</td>
+                    <td>{emergency.location}</td> {/* Updated to use location */}
                     <td>{emergency.description}</td>
                     <td>{emergency.status}</td>
                   </tr>

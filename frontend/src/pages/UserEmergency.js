@@ -6,7 +6,7 @@ import { getAPI_URL } from "../services/api";
 
 function UserEmergency() {
   const navigate = useNavigate();
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState(null);
   const [description, setDescription] = useState('');
   const [venues, setVenues] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
@@ -64,7 +64,7 @@ function UserEmergency() {
 
         setVenues(venueData);
         if (venueData.length > 0) {
-          setLocation(venueData[0].name || venueData[0].venueName || '');
+          setLocation(venueData[0]);
         }
       } catch (err) {
         setError('Failed to load venues. Check if backend is running.');
@@ -84,7 +84,8 @@ function UserEmergency() {
 
     try {
       const reportData = { location, description };
-      await axios.post(getAPI_URL('api/emergencies'), reportData);
+      console.log(reportData)
+      await axios.post(getAPI_URL('emergency/reportEmergency'), reportData);
       await sendLog('submit_emergency', `Location: ${location}, Description: ${description}`);
       setShowPopup(true);
       setError('');
@@ -121,9 +122,10 @@ function UserEmergency() {
         <div className="form-group">
           <label>Location:</label>
           <select
-            value={location}
+            value={location ? location.resourceId : ''}
             onChange={(e) => {
-              setLocation(e.target.value);
+              const locationSelected = venues.find(venue => venue.resourceId === parseInt(e.target.value))
+              setLocation(locationSelected);
               sendLog('select_location', `Selected: ${e.target.value}`);
             }}
             className="location-dropdown"
@@ -131,10 +133,10 @@ function UserEmergency() {
             {venues.length > 0 ? (
               venues.map((venue, index) => (
                 <option
-                  key={venue.id || venue.venueId || index}
-                  value={venue.name || venue.venueName}
+                  key={venue.resourceId || index}
+                  value={venue.resourceId}
                 >
-                  {venue.name || venue.venueName || 'Unknown Venue'}
+                  {venue.resourceName || 'Unknown Venue'}
                 </option>
               ))
             ) : (
