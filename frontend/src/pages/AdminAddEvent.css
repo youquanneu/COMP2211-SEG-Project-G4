@@ -169,4 +169,12 @@
       font-size: calc(var(--font-size-base) * 0.75);
       width: 130px;
     }
+
+    /* src/pages/AdminAddEvent.css */
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
   }

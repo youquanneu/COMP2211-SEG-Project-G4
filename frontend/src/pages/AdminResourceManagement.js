@@ -7,19 +7,23 @@ function AdminResourceManagement() {
   const navigate = useNavigate();
 
   const handleVenueManagement = () => {
-    navigate('/adminvenuemanagement');
+    localStorage.setItem('previousPage', '/resourcemanagement');
+    navigate('/adminvenuemanagement', { state: { from: '/resourcemanagement' } });
   };
 
   const handleEquipmentManagement = () => {
-    navigate('/adminequipmentmanagement');
+    localStorage.setItem('previousPage', '/resourcemanagement');
+    navigate('/adminequipmentmanagement', { state: { from: '/resourcemanagement' } });
   };
 
   const handleEquipmentApproval = () => {
-    navigate('/equipmentapproval');
+    localStorage.setItem('previousPage', '/resourcemanagement');
+    navigate('/equipmentapproval', { state: { from: '/resourcemanagement' } });
   };
 
   const handleBack = () => {
-    navigate('/admindashboard'); // Updated to navigate to AdminDashboard
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/admindashboard', { state: { from: '/admindashboard' } });
   };
 
   return (

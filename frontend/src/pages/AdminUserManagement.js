@@ -1,40 +1,65 @@
-// src/pages/AdminUserManagement.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import RegisterNewUser from './RegisterNewUser';
+import { getStudents, getLecturers } from '../api'; // Import the new functions
 import './AdminUserManagement.css';
 
 function AdminUserManagement() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState('');
-  const [showRegisterPopup, setShowRegisterPopup] = useState(false); // State for pop-up visibility
+  const [showRegisterPopup, setShowRegisterPopup] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [lecturers, setLecturers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const students = [
-    { id: 'S001', name: 'John Doe', email: 'john.doe@example.com' },
-    { id: 'S002', name: 'Jane Smith', email: 'jane.smith@example.com' },
-  ];
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const [studentsResponse, lecturersResponse] = await Promise.all([
+          getStudents(),
+          getLecturers(),
+        ]);
 
-  const lecturers = [
-    { id: 'L001', name: 'Dr. Alice Brown', email: 'alice.brown@example.com' },
-    { id: 'L002', name: 'Prof. Bob Wilson', email: 'bob.wilson@example.com' },
-  ];
+        if (studentsResponse.success) {
+          setStudents(studentsResponse.data);
+        } else {
+          setError('Failed to fetch students.');
+        }
+
+        if (lecturersResponse.success) {
+          setLecturers(lecturersResponse.data);
+        } else {
+          setError('Failed to fetch lecturers.');
+        }
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred while fetching users.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
   };
 
   const handleRegisterNewUser = (event) => {
-    event.preventDefault(); // Prevent default navigation behavior of the <a> tag
-    setShowRegisterPopup(true); // Show the pop-up
+    event.preventDefault();
+    setShowRegisterPopup(true);
   };
 
   const closeRegisterPopup = () => {
-    setShowRegisterPopup(false); // Close the pop-up
+    setShowRegisterPopup(false);
   };
 
   const handleBack = () => {
-    navigate('/admindashboard'); // Navigate back to AdminHome
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/admindashboard', { state: { from: '/admindashboard' } });
   };
 
   const userList = filter === 'students' ? students : filter === 'lecturers' ? lecturers : [];
@@ -46,6 +71,11 @@ function AdminUserManagement() {
       </header>
       <main className="user-management-content">
         <h1>User Management</h1>
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
         <div className="filter-section">
           <label>Filter:</label>
           <select className="filter-dropdown" onChange={handleFilterChange} value={filter}>
@@ -58,7 +88,9 @@ function AdminUserManagement() {
           <div className="info-section">
             <h3>Information:</h3>
             <div className="info-box">
-              {userList.length > 0 ? (
+              {loading ? (
+                <p>Loading users...</p>
+              ) : userList.length > 0 ? (
                 userList.map((user) => (
                   <div key={user.id} className="user-item">
                     <p><strong>ID:</strong> {user.id}</p>

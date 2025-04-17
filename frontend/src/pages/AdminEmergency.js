@@ -1,43 +1,52 @@
-// src/pages/AdminEmergency.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaExclamation } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../assets/logo.png';
+import { getEmergencies, sendPanicAlert } from '../api'; // Import the new functions
 import './AdminEmergency.css';
 
 function AdminEmergency() {
   const navigate = useNavigate();
-  const [fromDate, setFromDate] = useState(''); // State for "From" date
-  const [toDate, setToDate] = useState(''); // State for "To" date
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [showPanicPopup, setShowPanicPopup] = useState(false);
   const [panicClickCount, setPanicClickCount] = useState(0);
+  const [emergencies, setEmergencies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Mock data with varied dates
-  const emergencies = [
-    { date: '2025-04-14', emergency: 'Fire in Lab', description: 'Fire broke out in the chemistry lab.', status: 'Pending' },
-    { date: '2025-04-13', emergency: 'Medical Emergency', description: 'Student fainted in the hallway.', status: 'Solved' },
-    { date: '2025-04-10', emergency: 'Power Outage', description: 'Power outage in the main building.', status: 'Solved' },
-    { date: '2025-03-20', emergency: 'Flood Alert', description: 'Flooding reported in basement.', status: 'Pending' },
-    { date: '2025-03-15', emergency: 'Security Breach', description: 'Unauthorized access in restricted area.', status: 'Solved' },
-    { date: '2024-12-25', emergency: 'Fire Alarm', description: 'Fire alarm triggered in building A.', status: 'Solved' },
-    { date: '2024-11-30', emergency: 'Medical Emergency', description: 'Staff member had a heart attack.', status: 'Solved' },
-    { date: '2024-06-15', emergency: 'Power Outage', description: 'Campus-wide power outage.', status: 'Solved' },
-  ];
+  useEffect(() => {
+    const fetchEmergencies = async () => {
+      setLoading(true);
+      try {
+        const response = await getEmergencies();
+        if (response.success) {
+          setEmergencies(response.data);
+        } else {
+          setError('Failed to fetch emergencies.');
+        }
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred while fetching emergencies.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Function to filter emergencies based on the selected date range
+    fetchEmergencies();
+  }, []);
+
   const getFilteredEmergencies = () => {
     if (!fromDate || !toDate) {
-      return emergencies; // If no dates are selected, show all emergencies
+      return emergencies;
     }
 
     const startDate = new Date(fromDate);
     const endDate = new Date(toDate);
 
-    // Ensure endDate is not before startDate
     if (endDate < startDate) {
-      return []; // Return empty array if the range is invalid
+      return [];
     }
 
     return emergencies.filter((emergency) => {
@@ -73,18 +82,30 @@ function AdminEmergency() {
   };
 
   const handleBack = () => {
-    navigate('/admindashboard');
+    localStorage.setItem('previousPage', '/admindashboard');
+    navigate('/admindashboard', { state: { from: '/admindashboard' } });
   };
 
-  const handlePanicClick = () => {
+  const handlePanicClick = async () => {
     setPanicClickCount((prevCount) => {
       const newCount = prevCount + 1;
       if (newCount === 3) {
-        setShowPanicPopup(true);
-        setTimeout(() => {
-          setShowPanicPopup(false);
-        }, 2000);
-        return 0; // Reset count after showing popup
+        sendPanicAlert()
+          .then((response) => {
+            if (response.success) {
+              setShowPanicPopup(true);
+              setTimeout(() => {
+                setShowPanicPopup(false);
+              }, 2000);
+            } else {
+              setError('Failed to send panic alert.');
+            }
+          })
+          .catch((err) => {
+            setError(err.response?.data?.error || 'An error occurred while sending the panic alert.');
+          });
+
+        return 0;
       }
       return newCount;
     });
@@ -105,6 +126,11 @@ function AdminEmergency() {
           </div>
         )}
         <h1>Emergency Report</h1>
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
         <div className="filter-group">
           <div className="date-input-group">
             <label htmlFor="from-date">From:</label>
@@ -113,7 +139,7 @@ function AdminEmergency() {
               id="from-date"
               value={fromDate}
               onChange={handleFromDateChange}
-              max={toDate || '2025-04-15'} // Prevent selecting future dates beyond "To" date or current date
+              max={toDate || '2025-04-15'}
             />
           </div>
           <div className="date-input-group">
@@ -123,38 +149,42 @@ function AdminEmergency() {
               id="to-date"
               value={toDate}
               onChange={handleToDateChange}
-              min={fromDate} // Prevent selecting dates before "From" date
-              max="2025-04-15" // Prevent selecting future dates
+              min={fromDate}
+              max="2025-04-15"
             />
           </div>
         </div>
-        <table className="emergency-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Emergency</th>
-              <th>Description</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredEmergencies.length > 0 ? (
-              filteredEmergencies.map((emergency, index) => (
-                <tr key={index}>
-                  <td>{emergency.date}</td>
-                  <td>{emergency.emergency}</td>
-                  <td>{emergency.description}</td>
-                  <td>{emergency.status}</td>
-                </tr>
-              ))
-            ) : (
+        {loading ? (
+          <p>Loading emergencies...</p>
+        ) : (
+          <table className="emergency-table">
+            <thead>
               <tr>
-                <td colSpan="4">No emergencies found for this date range.</td>
+                <th>Date</th>
+                <th>Emergency</th>
+                <th>Description</th>
+                <th>Status</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-        <button className="export-button" onClick={handleExportReport}>
+            </thead>
+            <tbody>
+              {filteredEmergencies.length > 0 ? (
+                filteredEmergencies.map((emergency, index) => (
+                  <tr key={index}>
+                    <td>{emergency.date}</td>
+                    <td>{emergency.emergency}</td>
+                    <td>{emergency.description}</td>
+                    <td>{emergency.status}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">No emergencies found for this date range.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+        <button className="export-button" onClick={handleExportReport} disabled={loading}>
           Export Report
         </button>
         <button className="back-button" onClick={handleBack}>
