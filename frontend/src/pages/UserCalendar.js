@@ -33,27 +33,46 @@ function UserCalendar() {
         // Fetch events
         const eventsResponse = await axios.get(getAPI_URL('user/event/getAllEvent'));
         const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
-        console.log(eventsResponse.data)
-        if (Array.isArray(eventsResponse.data)) {
-          setEvents(eventsResponse.data);
-        } else {
-          setError('Invalid event data format.');
-          console.error('Expected an array, got:', eventsResponse.data);
+        console.log('Events Response:', eventsResponse.data);
+        let eventData = eventsResponse.data;
+        if (!Array.isArray(eventData)) {
+          if (eventData.events && Array.isArray(eventData.events)) {
+            eventData = eventData.events;
+          } else if (eventData.data && Array.isArray(eventData.data)) {
+            eventData = eventData.data;
+          } else if (eventData.result && Array.isArray(eventData.result)) {
+            eventData = eventData.result;
+          } else {
+            setError('Invalid event data format. Expected an array.');
+            console.error('Event structure:', JSON.stringify(eventsResponse.data, null, 2));
+            return;
+          }
         }
+        setEvents(eventData);
+
         // Fetch bookings
-        console.log('email : ' , userEmail)
+        console.log('Email:', userEmail);
         const bookingsResponse = await axios.post(getAPI_URL('user/reservation/myReservation'), {
           email: userEmail,
         });
-        console.log(bookingsResponse.data)
-        if (Array.isArray(bookingsResponse.data)) {
-          setBookings(bookingsResponse.data);
-        } else {
-          setError('Invalid booking data format.');
-          console.error('Expected an array, got:', bookingsResponse.data);
+        console.log('Bookings Response:', bookingsResponse.data);
+        let bookingData = bookingsResponse.data;
+        if (!Array.isArray(bookingData)) {
+          if (bookingData.bookings && Array.isArray(bookingData.bookings)) {
+            bookingData = bookingData.bookings;
+          } else if (bookingData.data && Array.isArray(bookingData.data)) {
+            bookingData = bookingData.data;
+          } else if (bookingData.result && Array.isArray(bookingData.result)) {
+            bookingData = bookingData.result;
+          } else {
+            setError('Invalid booking data format. Expected an array.');
+            console.error('Booking structure:', JSON.stringify(bookingsResponse.data, null, 2));
+            return;
+          }
         }
+        setBookings(bookingData);
       } catch (err) {
-        setError('Failed to load data. Please try again later.');
+        setError('Failed to load data. Check if backend is running.');
         console.error('Fetch error:', err.message, err.response?.data);
       }
     };
@@ -67,7 +86,6 @@ function UserCalendar() {
       .map((event) => ({ ...event, type: 'event' })),
     ...bookings
       .filter((booking) => {
-        // Convert booking date (e.g., "April 15, 2025") to ISO format
         const bookingDate = new Date(booking.reservationStarting).toISOString().split('T')[0];
         return bookingDate === date.toISOString().split('T')[0];
       })
@@ -79,8 +97,7 @@ function UserCalendar() {
         organizers: booking.userDTO?.email || 'User',
         description: booking.time,
         type: 'booking',
-      })
-      ),
+      })),
   ];
 
   // Mark dates with events or bookings
@@ -110,8 +127,11 @@ function UserCalendar() {
       <div className="calendar-group">
         <Calendar
           onChange={(selectedDate) => {
-            setDate(selectedDate);
-            sendLog('select_date', selectedDate.toISOString().split('T')[0]);
+            const normalizedDate = new Date(selectedDate);
+            normalizedDate.setHours(0, 0, 0, 0);
+            console.log('Selected Date:', normalizedDate.toISOString().split('T')[0]); // Debug
+            setDate(normalizedDate);
+            sendLog('select_date', normalizedDate.toISOString().split('T')[0]);
           }}
           value={date}
           className="custom-calendar"
