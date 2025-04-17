@@ -19,6 +19,7 @@ import AdminResourceManagement from './pages/AdminResourceManagement';
 import AdminVenueManagement from './pages/AdminVenueManagement'; // New import
 import AdminEquipmentManagement from './pages/AdminEquipmentManagement'; // New import
 import EquipmentApproval from './pages/EquipmentApproval'; // Import the new page (to be created)
+import NavigationPage from './pages/NavigationPage';
 
 function App() {
   useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
       default:
         root.style.setProperty('--font-size-base', '16px');
     }
+
 
     if (localStorage.getItem('darkTheme') === null) {
       localStorage.setItem('darkTheme', 'false');
@@ -87,6 +89,7 @@ function App() {
       <Route path="/adminvenuemanagement" element={<AdminVenueManagement />} /> {/* New route */}
       <Route path="/adminequipmentmanagement" element={<AdminEquipmentManagement />} /> {/* New route */}
       <Route path="/equipmentapproval" element={<EquipmentApproval />} />
+      <Route path="/navigation" element={<NavigationPage />} />
     </Routes>
   );
 }

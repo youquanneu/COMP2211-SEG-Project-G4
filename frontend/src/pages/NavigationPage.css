@@ -1,0 +1,48 @@
+.navigation-page-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navigation-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.navigation-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.navigation-title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.navigation-subtitle {
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.map-section {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .navigation-page-container {
+    padding: 16px;
+  }
+  
+  .navigation-logo {
+    width: 100px;
+  }
+}
