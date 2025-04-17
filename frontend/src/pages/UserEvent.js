@@ -29,7 +29,7 @@ function UserEvent() {
         console.log('API Response:', response.data); // Debug
         let eventData = response.data;
         if (!Array.isArray(eventData) && eventData.events) {
-          eventData = eventData.events; // Handle { events: [...] }
+          eventData = eventData.events;
         }
         if (Array.isArray(eventData)) {
           setEvents(eventData);
@@ -78,6 +78,14 @@ function UserEvent() {
     } catch {
       return 'Invalid Date';
     }
+  };
+
+  // Format organizer safely
+  const formatOrganizer = (organizer) => {
+    if (typeof organizer === 'object' && organizer) {
+      return organizer.username || organizer.email || 'N/A';
+    }
+    return organizer || 'N/A';
   };
 
   return (
@@ -155,7 +163,7 @@ function UserEvent() {
               <strong>Venue:</strong> {selectedEvent.venue || 'N/A'}
             </p>
             <p>
-              <strong>Organizer:</strong> {selectedEvent.organizer || 'N/A'}
+              <strong>Organizer:</strong> {formatOrganizer(selectedEvent.organizer)}
             </p>
             <p>
               <strong>Description:</strong> {selectedEvent.description || 'No description available.'}
