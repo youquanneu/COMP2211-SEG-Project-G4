@@ -1,29 +1,27 @@
 import React, { useState } from 'react';
-import { registerUser } from '../api'; // Import the registerUser function
+import { registerUser } from '../services/api'; // Import the registerUser function
 import './RegisterNewUser.css';
 
 function RegisterNewUser({ onClose }) {
   const [role, setRole] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [faculty, setFaculty] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!role || !firstName || !lastName || !email || !faculty) {
+    if (!role || !username || !email ) {
       alert('Please fill in all fields.');
       return;
     }
-
     setLoading(true);
     setError(null);
 
-    const userData = { role, firstName, lastName, email, faculty };
-
+    const userData = { username, email, userRole:role };
+    console.log("Input :" )
+    console.log(userData)
     try {
       const response = await registerUser(userData);
       if (response.success) {
@@ -34,10 +32,8 @@ function RegisterNewUser({ onClose }) {
         }, 2000);
 
         setRole('');
-        setFirstName('');
-        setLastName('');
+        setUsername('');
         setEmail('');
-        setFaculty('');
       } else {
         setError('Failed to register user.');
       }
@@ -66,25 +62,16 @@ function RegisterNewUser({ onClose }) {
               className="role-dropdown"
             >
               <option value="">Select a role</option>
-              <option value="student">Student</option>
-              <option value="lecturer">Lecturer</option>
+              <option value="Student">Student</option>
+              <option value="Lecturer">Lecturer</option>
             </select>
           </div>
           <div className="form-group">
-            <label>First Name:</label>
+            <label>Username:</label>
             <input
               type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder=""
-            />
-          </div>
-          <div className="form-group">
-            <label>Last Name:</label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder=""
             />
           </div>
@@ -94,15 +81,6 @@ function RegisterNewUser({ onClose }) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder=""
-            />
-          </div>
-          <div className="form-group">
-            <label>Faculty:</label>
-            <input
-              type="text"
-              value={faculty}
-              onChange={(e) => setFaculty(e.target.value)}
               placeholder=""
             />
           </div>

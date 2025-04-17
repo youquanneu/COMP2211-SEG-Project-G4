@@ -92,15 +92,7 @@ export const addEvent = async (eventData) => {
 
 
 
-// Register new user
-export const registerUser = async (userData) => {
-  try {
-    return { success: true, data: userData };
-  } catch (error) {
-    console.error('Error registering user:', error);
-    throw error;
-  }
-};
+
 
 // Fetch venues
 export const getVenues = async () => {

@@ -14,34 +14,35 @@ function AdminUserManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const fetchUsers = async () => {
+        setLoading(true);
+        try {
+          const [studentsResponse, lecturersResponse] = await Promise.all([
+            getStudents(),
+            getLecturers(),
+          ]);
+
+          if (studentsResponse.success) {
+            setStudents(studentsResponse.data);
+          } else {
+            setError('Failed to fetch students.');
+          }
+
+          if (lecturersResponse.success) {
+            setLecturers(lecturersResponse.data);
+          } else {
+            setError('Failed to fetch lecturers.');
+          }
+        } catch (err) {
+          setError(err.response?.data?.error || 'An error occurred while fetching users.');
+        } finally {
+          setLoading(false);
+        }
+      };
   useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const [studentsResponse, lecturersResponse] = await Promise.all([
-          getStudents(),
-          getLecturers(),
-        ]);
-
-        if (studentsResponse.success) {
-          setStudents(studentsResponse.data);
-        } else {
-          setError('Failed to fetch students.');
-        }
-
-        if (lecturersResponse.success) {
-          setLecturers(lecturersResponse.data);
-        } else {
-          setError('Failed to fetch lecturers.');
-        }
-      } catch (err) {
-        setError(err.response?.data?.error || 'An error occurred while fetching users.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    if(filter){
     fetchUsers();
+    }
   }, []);
 
   const handleFilterChange = (event) => {
@@ -55,6 +56,7 @@ function AdminUserManagement() {
 
   const closeRegisterPopup = () => {
     setShowRegisterPopup(false);
+    fetchUsers();
   };
 
   const handleBack = () => {

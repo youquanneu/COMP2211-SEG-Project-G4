@@ -137,3 +137,15 @@ export const getLecturers = async () => {
     throw error;
   }
 };
+
+// Register new user
+export const registerUser = async (userData) => {
+  try {
+    const response = await axios.post(getAPI_URL('admin/userManagement/registerUser'), userData);
+      return { success: true, data: response.data };
+    return { success: true, data: userData };
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw error;
+  }
+};
