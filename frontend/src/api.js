@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Create an Axios instance with a base URL
 const api = axios.create({
-  baseURL: 'http://localhost:8082', // Use the base URL you provided
-  timeout: 5000, // Request timeout in milliseconds
+  baseURL: 'http://localhost:8082',
+  timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -11,7 +11,7 @@ const api = axios.create({
 
 export default api;
 
-// Utility function to construct API paths (retained from your original file)
+// Utility function to construct API paths
 export function getAPI_URL(path) {
   return `http://localhost:8082/${path}`;
 }
@@ -19,8 +19,6 @@ export function getAPI_URL(path) {
 // User authentication
 export const loginUser = async (credentials) => {
   try {
-    // For now, keep the mock response as per your original file
-    // This will be replaced with an actual API call using the Axios instance later
     return {
       success: true,
       user: {
@@ -40,8 +38,6 @@ export const loginUser = async (credentials) => {
 // Get campus locations
 export const getCampusLocations = async () => {
   try {
-    // For now, keep the mock response
-    // This will be replaced with an actual API call later
     return [
       { id: 1, name: 'Main Building', type: 'academic', position: { x: 100, y: 150 } },
       { id: 2, name: 'Library', type: 'academic', position: { x: 250, y: 200 } },
@@ -58,8 +54,6 @@ export const getCampusLocations = async () => {
 // Get available rooms
 export const getAvailableRooms = async (date) => {
   try {
-    // For now, keep the mock response
-    // This will be replaced with an actual API call later
     return [
       { id: 1, name: 'Study Room 101', capacity: 4, building: 'Library', availableTimes: ['9:00', '10:00', '11:00'] },
       { id: 2, name: 'Conference Room A', capacity: 12, building: 'Main Building', availableTimes: ['13:00', '14:00', '15:00'] },
@@ -71,27 +65,16 @@ export const getAvailableRooms = async (date) => {
   }
 };
 
-// Add new API functions for the pages (to be implemented with backend later)
-// Add event
-export const addEvent = async (eventData) => {
-  try {
-    const response = await api.post('/events', eventData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', // For file uploads
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error adding event:', error);
-    throw error;
-  }
-};
-
 // Fetch emergencies
 export const getEmergencies = async () => {
   try {
-    const response = await api.get('/emergencies');
-    return response.data;
+    return {
+      success: true,
+      data: [
+        { date: '2025-04-14', location: 'Chemistry Lab', description: 'Fire broke out in the lab.', status: 'Pending' },
+        { date: '2025-04-13', location: 'Hallway B', description: 'Student fainted in the hallway.', status: 'Solved' },
+      ],
+    };
   } catch (error) {
     console.error('Error fetching emergencies:', error);
     throw error;
@@ -101,10 +84,26 @@ export const getEmergencies = async () => {
 // Send panic alert
 export const sendPanicAlert = async () => {
   try {
-    const response = await api.post('/panic');
-    return response.data;
+    return { success: true };
   } catch (error) {
     console.error('Error sending panic alert:', error);
+    throw error;
+  }
+};
+
+// Add event (Re-added to fix the export error)
+export const addEvent = async (eventData) => {
+  try {
+    return { success: true, data: eventData }; // Mock response for now
+    // Uncomment the below when backend is ready
+    // const response = await api.post('/events', eventData, {
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data', // For file uploads
+    //   },
+    // });
+    // return response.data;
+  } catch (error) {
+    console.error('Error adding event:', error);
     throw error;
   }
 };
@@ -112,8 +111,13 @@ export const sendPanicAlert = async () => {
 // Fetch students
 export const getStudents = async () => {
   try {
-    const response = await api.get('/users/students');
-    return response.data;
+    return {
+      success: true,
+      data: [
+        { id: 'S001', name: 'John Doe', email: 'john.doe@example.com' },
+        { id: 'S002', name: 'Jane Smith', email: 'jane.smith@example.com' },
+      ],
+    };
   } catch (error) {
     console.error('Error fetching students:', error);
     throw error;
@@ -123,8 +127,13 @@ export const getStudents = async () => {
 // Fetch lecturers
 export const getLecturers = async () => {
   try {
-    const response = await api.get('/users/lecturers');
-    return response.data;
+    return {
+      success: true,
+      data: [
+        { id: 'L001', name: 'Dr. Alice Brown', email: 'alice.brown@example.com' },
+        { id: 'L002', name: 'Prof. Bob Wilson', email: 'bob.wilson@example.com' },
+      ],
+    };
   } catch (error) {
     console.error('Error fetching lecturers:', error);
     throw error;
@@ -134,8 +143,7 @@ export const getLecturers = async () => {
 // Register new user
 export const registerUser = async (userData) => {
   try {
-    const response = await api.post('/users/register', userData);
-    return response.data;
+    return { success: true, data: userData };
   } catch (error) {
     console.error('Error registering user:', error);
     throw error;
@@ -145,8 +153,15 @@ export const registerUser = async (userData) => {
 // Fetch venues
 export const getVenues = async () => {
   try {
-    const response = await api.get('/venues');
-    return response.data;
+    return {
+      success: true,
+      data: [
+        { id: 1, name: 'Lecture Hall A', available: true },
+        { id: 2, name: 'Seminar Room B', available: true },
+        { id: 3, name: 'Auditorium C', available: true },
+        { id: 4, name: 'Conference Room D', available: true },
+      ],
+    };
   } catch (error) {
     console.error('Error fetching venues:', error);
     throw error;
@@ -156,8 +171,7 @@ export const getVenues = async () => {
 // Update venue availability
 export const updateVenueAvailability = async (id, available) => {
   try {
-    const response = await api.put(`/venues/${id}`, { available });
-    return response.data;
+    return { success: true };
   } catch (error) {
     console.error('Error updating venue availability:', error);
     throw error;
@@ -167,8 +181,15 @@ export const updateVenueAvailability = async (id, available) => {
 // Fetch equipment
 export const getEquipment = async () => {
   try {
-    const response = await api.get('/equipment');
-    return response.data;
+    return {
+      success: true,
+      data: [
+        { id: 1, name: 'Projector A', available: true },
+        { id: 2, name: 'Laptop B', available: true },
+        { id: 3, name: 'Microphone C', available: true },
+        { id: 4, name: 'Speaker D', available: true },
+      ],
+    };
   } catch (error) {
     console.error('Error fetching equipment:', error);
     throw error;
@@ -178,8 +199,7 @@ export const getEquipment = async () => {
 // Update equipment availability
 export const updateEquipmentAvailability = async (id, available) => {
   try {
-    const response = await api.put(`/equipment/${id}`, { available });
-    return response.data;
+    return { success: true };
   } catch (error) {
     console.error('Error updating equipment availability:', error);
     throw error;
