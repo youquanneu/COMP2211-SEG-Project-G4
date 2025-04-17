@@ -9,9 +9,11 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OutdoorVenueRepository extends JpaRepository<OutdoorVenue,Integer> {
+    Optional<OutdoorVenue> findByResourceNameEqualsIgnoreCase(String resourceName);
     List<OutdoorVenue> findOutdoorVenueByLocationContainingIgnoreCase(String location);
     @Query("select outdoorVenue from OutdoorVenue outdoorVenue " +
             "where  (:resourceId        is null or outdoorVenue.resourceId  = :resourceId)  " +

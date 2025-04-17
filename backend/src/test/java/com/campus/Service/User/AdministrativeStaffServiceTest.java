@@ -1,241 +1,168 @@
 package com.campus.Service.User;
 
+
 import com.campus.Classification.Restriction;
 import com.campus.Classification.UserRole;
-import com.campus.Entity.Resource.*;
-import com.campus.Entity.User.AdministrativeStaff;
-import com.campus.Entity.User.Lecturer;
-import com.campus.Entity.User.Student;
+import com.campus.Entity.Resource.Equipment;
+import com.campus.Entity.Resource.IndoorVenue;
+import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.User.User;
-import com.campus.Service.Resource.ResourceService;
+import com.campus.Repository.Resource.EquipmentRepository;
+import com.campus.Repository.Resource.IndoorVenueRepository;
+import com.campus.Repository.Resource.ResourceRepository;
+import com.campus.Repository.User.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 
 public class AdministrativeStaffServiceTest {
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private ResourceRepository resourceRepository;
+
+    @Mock
+    private EquipmentRepository equipmentRepository;
+
+    @Mock
+    private IndoorVenueRepository indoorVenueRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @InjectMocks
     private AdministrativeStaffService administrativeStaffService;
-    private UserService userService;
-    private ResourceService resourceService;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);  // Initialize mocks
+    }
+
     @Test
-    public void testRegisterUser(){
-        List<User> userForRegister = userListForRegisterTest();
-        for (User user : userForRegister){
-            administrativeStaffService.registerNewUser(user);
-        }
+    public void testRegisterNewUser_Success() {
+        User newUser = new User(
+                "testUser",
+                "test@example.com",
+                "password123",
+                UserRole.AdministrativeStaff);
+        when(userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+//        when(userRepository.save(any(User.class))).thenReturn(newUser);
+
+        User result = administrativeStaffService.registerNewUser(newUser);
+
+        assertNotNull(result);
+        assertEquals("testUser", result.getUsername());
+        verify(userRepository, times(1)).save(newUser);  // Ensure save was called
     }
-    private List<User> userListForRegisterTest(){
-        List<User> userList = new ArrayList<>();
-        User student1 = new Student("student1","student1@gmail.com","passwordStd1");
-        User student2 = new Student("student2","student2@gmail.com","passwordStd2");
-        User student3 = new Student("student2","student3@gmail.com","passwordStd3");
-        User lecturer1 = new Lecturer("lecturer1","lecturer1@gmail.com","passwordLec1");
-        User lecturer2 = new Lecturer("lecturer2","lecturer1@gmail.com","passwordLec2");
-        User administrativeStaff = new AdministrativeStaff("Admin1","Admin1@gmail.com","adminPassword");
-        userList.add(student1);
-        userList.add(student2);
-        userList.add(student3);
-        userList.add(lecturer1);
-        userList.add(lecturer2);
-        userList.add(administrativeStaff);
-        return userList;
+
+    @Test
+    public void testRegisterNewUser_UsernameOrEmailExists() {
+        User newUser = new User("testUser", "test@example.com", "password123", UserRole.AdministrativeStaff);
+        when(userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.of(newUser));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> administrativeStaffService.registerNewUser(newUser));
+        assertEquals("User with this email or username already exists.", exception.getMessage());
     }
-    @org.junit.Test
-    public void testModifyUserInformation(){
-        User user = userService.getUserById(1);
-        administrativeStaffService.modifyUsername(user,"Alex");
-        administrativeStaffService.modifyEmail(user,"Alex@gmail.com");
+
+    @Test
+    public void testModifyUsername_Success() {
+        User user = new User("oldUsername", "test@example.com", "encodedPassword", UserRole.AdministrativeStaff);
+        when(userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
+
+        User modifiedUser = administrativeStaffService.modifyUsername(user, "newUsername");
+
+        assertNotNull(modifiedUser);
+        assertEquals("newUsername", modifiedUser.getUsername());
+        verify(userRepository, times(1)).save(user);
     }
-    @org.junit.Test
-    public void testDeleteUser(){
-        User user = userService.getUserById(3);
+
+    @Test
+    public void testModifyUsername_UsernameExists() {
+        User user = new User("oldUsername", "test@example.com", "encodedPassword", UserRole.AdministrativeStaff);
+        when(userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.of(new User()));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> administrativeStaffService.modifyUsername(user, "existingUsername"));
+        assertEquals("User with this email or username already exists.", exception.getMessage());
+    }
+
+    @Test
+    public void testModifyEmail_Success() {
+        User user = new User("testUser", "old@example.com", "encodedPassword", UserRole.AdministrativeStaff);
+        when(userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
+
+        User modifiedUser = administrativeStaffService.modifyEmail(user, "new@example.com");
+
+        assertNotNull(modifiedUser);
+        assertEquals("new@example.com", modifiedUser.getEmail());
+        verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    public void testModifyEmail_EmailExists() {
+        User user = new User("testUser", "old@example.com", "encodedPassword", UserRole.AdministrativeStaff);
+        when(userRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.of(new User()));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> administrativeStaffService.modifyEmail(user, "existing@example.com"));
+        assertEquals("User with this email or username already exists.", exception.getMessage());
+    }
+
+    @Test
+    public void testAddNewEquipment_Success() {
+        Equipment equipment = new Equipment(
+                "Equipment",
+                LocalTime.NOON,
+                LocalTime.MIDNIGHT,
+                Restriction.NonRestriction,
+                "serial123");
+        when(equipmentRepository.findBySerialNumberEqualsIgnoreCase(anyString())).thenReturn(Optional.empty());
+//        when(resourceRepository.save(any(Equipment.class))).thenReturn(equipment);
+
+        Resource result = administrativeStaffService.addNewResource(equipment);
+
+        assertNotNull(result);
+        assertTrue(result instanceof Equipment);
+        verify(resourceRepository, times(1)).save(equipment);
+    }
+
+    @Test
+    public void testAddNewIndoorVenue_Success() {
+        // Arrange
+        IndoorVenue indoorVenue = new IndoorVenue(
+                "IndoorVenue",
+                LocalTime.NOON,
+                LocalTime.MIDNIGHT,
+                Restriction.NonRestriction,
+                "BuildingA", "Room101");
+        when(indoorVenueRepository.findIndoorVenueByBuildingEqualsIgnoreCaseAndRoomNumberEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
+//        when(resourceRepository.save(any(IndoorVenue.class))).thenReturn(indoorVenue);
+
+        Resource result = administrativeStaffService.addNewResource(indoorVenue);
+
+        assertNotNull(result);
+        assertTrue(result instanceof IndoorVenue);
+        verify(resourceRepository, times(1)).save(indoorVenue);
+    }
+
+    @Test
+    public void testDeleteUser_Success() {
+        User user = new User("testUser", "test@example.com", "password123", UserRole.AdministrativeStaff);
+
         administrativeStaffService.deleteUser(user);
+
+        verify(userRepository, times(1)).delete(user);
     }
-    @org.junit.Test
-    public void testGetByRole(){
-        System.out.println("Student: ");
-        System.out.println(administrativeStaffService.getUserByUserRole(UserRole.Student));
-        System.out.println();
-        System.out.println("Lecturer: ");
-        System.out.println(administrativeStaffService.getUserByUserRole(UserRole.Lecturer));
-        System.out.println();
-        System.out.println("Administrative Staff: ");
-        System.out.println(administrativeStaffService.getUserByUserRole(UserRole.AdministrativeStaff));
-        System.out.println();
-    }
-    @org.junit.Test
-    public void testFilterUsers(){
-        System.out.println("No filtering : ");
-        System.out.println(administrativeStaffService.getAllUsers());
-        System.out.println();
-        System.out.println("Find by user Id : ");
-        System.out.println(administrativeStaffService.filterUsers(3,
-                null,null,null));
-        System.out.println();
-        System.out.println("Filter by user username : ");
-        System.out.println(administrativeStaffService.filterUsers(null,
-                "de",null,null));
-        System.out.println();
-        System.out.println("Filter by user email : ");
-        System.out.println(administrativeStaffService.filterUsers(null,
-                null,"tu",null));
-        System.out.println();
-        System.out.println("Filter by user user role and username: ");
-        System.out.println(administrativeStaffService.filterUsers(null,
-                "1",null, UserRole.Student));
-        System.out.println();
-    }
-    @org.junit.Test
-    public void testAddNewResource(){
-        for (Resource resource: testResourceList()) {
-            administrativeStaffService.addNewResource(resource  );
-        }
-    }   // Demonstration method : Add a new resource
-    private List<Resource> testResourceList(){
-        List<Resource> resourceList = new ArrayList<>();
-        Resource equipment1 = new Equipment("Equipment1", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.NonRestriction,"SerialNumber1");
-        Resource equipment2 = new Equipment("Equipment1", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.NonRestriction,"SerialNumber2");
-        Resource equipment3 = new Equipment("Equipment1", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.NonRestriction,"SerialNumber1");
-        Resource indoorVenue1 = new IndoorVenue("Lab1",LocalTime.of(9,0),LocalTime.of(20,0),Restriction.ApprovalRequired,"Block 2","3R01");
-        Resource indoorVenue2 = new IndoorVenue("Lab2",LocalTime.of(9,0),LocalTime.of(20,0),Restriction.ApprovalRequired,"Block 2","3R01");
-        Resource indoorVenue3 = new IndoorVenue("Lab3",LocalTime.of(9,0),LocalTime.of(18,0),Restriction.ApprovalRequired,"Block 3","3R01");
-        Resource outdoorVenue1 = new OutdoorVenue("Basketball Court",null,null,Restriction.NonRestriction,"Beside field");
-        Resource outdoorVenue2 = new OutdoorVenue("Swimming Pool",null,null,Restriction.Restricted,"Beside main entrance (Construction on going)");
-        resourceList.add(equipment1);
-        resourceList.add(equipment2);
-        resourceList.add(equipment3);
-        resourceList.add(indoorVenue1);
-        resourceList.add(indoorVenue2);
-        resourceList.add(indoorVenue3);
-        resourceList.add(outdoorVenue1);
-        resourceList.add(outdoorVenue2);
-        return resourceList;
-    }
-    @org.junit.Test
-    public void testChangeInfo(){
-        Resource resource = resourceService.getResourceByID(1);
-        administrativeStaffService.changeResourceName(resource,"Computer");
-        administrativeStaffService.changeOpenTime(resource,null);
-        administrativeStaffService.changeCloseTime(resource,null);
-        administrativeStaffService.changeRestriction(resource,Restriction.ApprovalRequired);
-    }
-    @org.junit.Test
-    public void testDeleteResource(){
-        administrativeStaffService.deleteResource(resourceService.getResourceByID(4));
-    }
-//    class Unknown{
-//        public void testRegisterUser(){
-//            List<User> userForRegister = userListForRegisterTest();
-//            for (User user : userForRegister){
-//                administrativeStaffService.registerNewUser(user);
-//            }
-//        }
-//        private List<User> userListForRegisterTest(){
-//            List<User> userList = new ArrayList<>();
-//            User student1 = new Student("student1","student1@gmail.com","passwordStd1");
-//            User student2 = new Student("student2","student2@gmail.com","passwordStd2");
-//            User student3 = new Student("student3","student3@gmail.com","passwordStd3");
-//            User lecturer1 = new Lecturer("lecturer1","lecturer1@gmail.com","passwordLec1");
-//            User lecturer2 = new Lecturer("lecturer2","lecturer2@gmail.com","passwordLec2");
-//            User administrativeStaff = new AdministrativeStaff("Admin1","Admin1@gmail.com","adminPassword");
-//            userList.add(student1);
-//            userList.add(student2);
-//            userList.add(student3);
-//            userList.add(lecturer1);
-//            userList.add(lecturer2);
-//            userList.add(administrativeStaff);
-//            return userList;
-//        }
-//        public void testAddNewResource(){
-//            for (Resource resource: testResourceList()) {
-//                administrativeStaffService.addNewResource(resource  );
-//            }
-//        }   // Demonstration method : Add a new resource
-//        private List<Resource> testResourceList(){
-//            List<Resource> resourceList = new ArrayList<>();
-//            Resource equipment1 = new Equipment("Equipment1", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.NonRestriction,"SerialNumber1");
-//            Resource equipment2 = new Equipment("Equipment1", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.NonRestriction,"SerialNumber2");
-//            Resource equipment3 = new Equipment("Equipment2", null,null, Restriction.NonRestriction,"SerialNumber3");
-//            Resource indoorVenue1 = new IndoorVenue("Lab1",LocalTime.of(9,0),LocalTime.of(20,0),Restriction.ApprovalRequired,"Block 1","1R01");
-//            Resource indoorVenue2 = new IndoorVenue("Lab2",LocalTime.of(9,0),LocalTime.of(20,0),Restriction.ApprovalRequired,"Block 1","1R02");
-//            Resource indoorVenue3 = new IndoorVenue("Lab3",LocalTime.of(9,0),LocalTime.of(18,0),Restriction.ApprovalRequired,"Block 1","2R01");
-//            Resource outdoorVenue1 = new OutdoorVenue("Basketball Court",null,null,Restriction.NonRestriction,"Beside field");
-//            Resource outdoorVenue2 = new OutdoorVenue("Swimming Pool",null,null,Restriction.Restricted,"Beside main entrance (Construction on going)");
-//            resourceList.add(equipment1);
-//            resourceList.add(equipment2);
-//            resourceList.add(equipment3);
-//            resourceList.add(indoorVenue1);
-//            resourceList.add(indoorVenue2);
-//            resourceList.add(indoorVenue3);
-//            resourceList.add(outdoorVenue1);
-//            resourceList.add(outdoorVenue2);
-//            return resourceList;
-//        }
-//        public void testNewReservation(){
-//            for (Reservation reservation : reservationsTestList()){
-//                reservationService.saveReservation(reservation);
-//            }
-//        }
-//        private List<Reservation> reservationsTestList(){
-//            List<Reservation> reservations =new ArrayList<>();
-//            Reservation reservation1 = reservationService.createNewReservation(
-//                    userService.getUserById(1),
-//                    resourceService.getResourceByID(2),
-//                    LocalDateTime.now(),
-//                    LocalDateTime.now().plusHours(1));
-//            Reservation reservation2 = reservationService.createNewReservation(
-//                    userService.getUserById(1),
-//                    resourceService.getResourceByID(6),
-//                    LocalDateTime.now().plusDays(2),
-//                    LocalDateTime.now().plusWeeks(1));
-//            Reservation reservation3 = reservationService.createNewReservation(
-//                    userService.getUserById(1),
-//                    resourceService.getResourceByID(3),
-//                    LocalDateTime.now().minusDays(1),
-//                    LocalDateTime.now().plusDays(1));
-//            Reservation reservation4 = reservationService.createNewReservation(
-//                    userService.getUserById(4),
-//                    resourceService.getResourceByID(2),
-//                    LocalDateTime.now(),
-//                    LocalDateTime.now().plusHours(1));
-//            Reservation reservation5 = reservationService.createNewReservation(
-//                    userService.getUserById(4),
-//                    resourceService.getResourceByID(2),
-//                    LocalDateTime.now().plusDays(2),
-//                    LocalDateTime.now().plusWeeks(1));
-//            reservations.add(reservation1);
-//            reservations.add(reservation2);
-//            reservations.add(reservation3);
-//            reservations.add(reservation4);
-//            reservations.add(reservation5);
-//            reservations.removeIf(Objects::isNull);
-//            return reservations;
-//        }
-//        public void testNewEvent(){
-//            for (Event event: testEventList()){
-//                administrativeStaffService.createNewEvent(event);
-//            }
-//        }
-//        private List<Event> testEventList(){
-//            List<Event> eventList = new ArrayList<>();
-//            List<User> lecturerList = administrativeStaffService.getUserByUserRole(UserRole.Lecturer);
-//            List<Venue> labList = venueService.filterVenue(null,"lab",null,null,null);
-//            Event event1 = new Event("Lab Open Event",
-//                    LocalDateTime.now().plusHours(5),
-//                    LocalDateTime.now().plusHours(15),
-//                    "The event is open for anybody to visit the labs",
-//                    labList,lecturerList);
-//            List<User> studentList = administrativeStaffService.getUserByUserRole(UserRole.Student);
-//            List<Venue> basketballCourt = venueService.filterVenue(null,"basketball",null,null,null);
-//            Event event2 = new Event("Basket ball event",
-//                    LocalDateTime.now().plusDays(1),
-//                    LocalDateTime.now().plusDays(3),
-//                    "The event is open for anybody to play ball",
-//                    basketballCourt,studentList);
-//            eventList.add(event1);
-//            eventList.add(event2);
-//            return eventList;
-//        }
-//    }
 }

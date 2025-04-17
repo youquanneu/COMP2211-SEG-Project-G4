@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface OneTimePasswordRepository extends JpaRepository<OneTimePassword,Integer> {
+    Optional<OneTimePassword> findByEmail(String email);
     @Transactional
     void deleteAllByEmail(String email);
     @Modifying

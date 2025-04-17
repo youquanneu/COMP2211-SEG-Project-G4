@@ -8,8 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface VenueRepository extends JpaRepository<Venue,Integer> {
+    Optional<Venue> findByResourceNameEqualsIgnoreCase(String resourceName);
     @Query("select venue from Venue venue " +
             "where  (:resourceId        is null or venue.resourceId   = :resourceId)  " +
             "and    (:resourceName      is null or upper(venue.resourceName)  like concat('%',upper(:resourceName),'%'))" +

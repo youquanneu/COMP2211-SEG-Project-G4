@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface IndoorVenueRepository extends JpaRepository<IndoorVenue,Integer> {
+    Optional<IndoorVenue> findByResourceNameEqualsIgnoreCase(String resourceName);
     Optional<IndoorVenue> findIndoorVenueByBuildingEqualsIgnoreCaseAndRoomNumberEqualsIgnoreCase(String building, String roomNumber);
     List<IndoorVenue> findByRestriction(Restriction restriction);
     List<IndoorVenue> findByBuildingEqualsIgnoreCase(String building);

@@ -80,11 +80,11 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("Password Incorrect");
         }
     }   // Function : Verify current password
-    void changePassword(User user, String currentPassword, String newPassword, String confirmationPassword) {
+    public void changePassword(User user, String currentPassword, String newPassword, String confirmationPassword) {
         verifyCurrentPassword(user,currentPassword);
         changeToNewPassword(user,newPassword,confirmationPassword);
     }   // Function: Change password for user
-    void changeToNewPassword(User user, String newPassword, String confirmationPassword) {
+    public void changeToNewPassword(User user, String newPassword, String confirmationPassword) {
         verifyNewPassword(user, newPassword, confirmationPassword);
         String encoderNewPassword = passwordEncoder.encode(newPassword);
         user.changePassword(encoderNewPassword);

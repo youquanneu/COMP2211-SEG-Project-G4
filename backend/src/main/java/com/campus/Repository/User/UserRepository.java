@@ -2,6 +2,7 @@ package com.campus.Repository.User;
 
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

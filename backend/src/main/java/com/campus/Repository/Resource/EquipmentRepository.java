@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface EquipmentRepository extends JpaRepository<Equipment,Integer> {
+    Optional<Equipment> findByResourceNameEqualsIgnoreCase(String resourceName);
     Optional<Equipment> findBySerialNumberEqualsIgnoreCase(String serialNumber);
     List<Equipment> findBySerialNumberContainingIgnoreCase(String serialNumber);
     @Query("select equipment from Equipment equipment " +

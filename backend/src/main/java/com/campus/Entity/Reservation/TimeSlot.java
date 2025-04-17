@@ -22,6 +22,9 @@ public class TimeSlot {
     private LocalTime startingTime;
     @NotNull
     private LocalTime endingTime;
+    public Integer getTimeSlotId() {
+        return timeSlotId;
+    }
     public LocalTime getStartingTime() {
         return startingTime;
     }
