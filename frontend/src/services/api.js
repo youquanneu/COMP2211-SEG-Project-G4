@@ -62,3 +62,34 @@ export const getAvailableRooms = async (date) => {
     throw error;
   }
 };
+
+// Fetch emergencies
+export const getEmergencies = async () => {
+  try {
+    const response = await axios.get(getAPI_URL('emergency/getAllEmergency'));
+    const emergency = response.data
+    console.log(emergency)
+    const formattedEmergencies = emergency.map((item) => ({
+      date: item.reportedTime ? item.reportedTime.split('T')[0] : 'Unknown',
+      location: item.location?.resourceName || 'Unknown',
+      description: item.description || 'No description',
+      status: item.status || 'Pending', // If 'status' isn't in the data, default to 'Pending'
+    }));
+    return {
+      success: true,
+      data: formattedEmergencies,
+    };
+  } catch (error) {
+    console.error('Error fetching emergencies:', error);
+    throw error;
+  }
+};
+// Send panic alert
+export const sendPanicAlert = async () => {
+  try {
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending panic alert:', error);
+    throw error;
+  }
+};

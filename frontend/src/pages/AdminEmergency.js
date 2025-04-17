@@ -4,7 +4,8 @@ import { FaExclamation } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from '../assets/logo.png';
-import { getEmergencies, sendPanicAlert } from '../api';
+import { getAPI_URL } from "../services/api";
+import { getEmergencies, sendPanicAlert } from '../services/api';
 import './AdminEmergency.css';
 
 function AdminEmergency() {

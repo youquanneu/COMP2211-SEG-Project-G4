@@ -65,31 +65,11 @@ export const getAvailableRooms = async (date) => {
   }
 };
 
-// Fetch emergencies
-export const getEmergencies = async () => {
-  try {
-    return {
-      success: true,
-      data: [
-        { date: '2025-04-14', location: 'Chemistry Lab', description: 'Fire broke out in the lab.', status: 'Pending' },
-        { date: '2025-04-13', location: 'Hallway B', description: 'Student fainted in the hallway.', status: 'Solved' },
-      ],
-    };
-  } catch (error) {
-    console.error('Error fetching emergencies:', error);
-    throw error;
-  }
-};
 
-// Send panic alert
-export const sendPanicAlert = async () => {
-  try {
-    return { success: true };
-  } catch (error) {
-    console.error('Error sending panic alert:', error);
-    throw error;
-  }
-};
+
+
+
+
 
 // Add event (Re-added to fix the export error)
 export const addEvent = async (eventData) => {
