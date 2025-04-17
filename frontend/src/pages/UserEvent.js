@@ -50,7 +50,7 @@ function UserEvent() {
   const handleEventClick = (event) => {
     console.log('Selected event:', event); // Debug
     setSelectedEvent(event);
-    sendLog('select_event', event.topic || 'Unknown');
+    sendLog('select_event', event.eventTitle || 'Unknown');
   };
 
   const closePopup = () => {
@@ -106,14 +106,14 @@ function UserEvent() {
               >
                 <img
                   src={event.imageUrl || logo}
-                  alt={event.topic || 'Event'}
+                  alt={event.eventTitle || 'Event'}
                   className="event-image"
                   onError={(e) => {
                     e.target.src = logo;
                   }}
                 />
                 <div className="event-details">
-                  <h3>{event.topic || 'Untitled Event'}</h3>
+                  <h3>{event.eventTitle || 'Untitled Event'}</h3>
                   <p>
                     <strong>Area:</strong> {event.area || 'N/A'}
                   </p>

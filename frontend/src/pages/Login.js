@@ -27,7 +27,7 @@ function Login() {
       const token = localStorage.getItem('token');
       if (requireToken && !token) return;
       await axios.post(
-        'http://localhost:8080/api/logs',
+        getAPI_URL('api/logs'),
         { action, value },
         token ? { headers: { Authorization: `Bearer ${token}` } } : {}
       );
