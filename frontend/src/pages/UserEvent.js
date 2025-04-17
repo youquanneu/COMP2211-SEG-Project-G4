@@ -29,8 +29,8 @@ function UserEvent() {
       if (useMockData) {
         const mockEvents = [
           {
-            id: 1,
-            topic: 'AI Seminar',
+            eventId: 1,
+            eventTitle: 'AI Seminar',
             area: 'Lecture Hall 1',
             date: '2025-04-15',
             time: '09:00-10:00',
@@ -58,12 +58,26 @@ function UserEvent() {
             eventData = eventData.events;
           } else if (eventData.data && Array.isArray(eventData.data)) {
             eventData = eventData.data;
+          } else if (eventData.result && Array.isArray(eventData.result)) {
+            eventData = eventData.result;
           } else {
             setError('Invalid event data format. Expected an array.');
             console.error('Response structure:', JSON.stringify(response.data, null, 2));
             return;
           }
         }
+
+        // Log first event's keys to debug field names
+        if (eventData.length > 0) {
+          console.log('First event keys:', Object.keys(eventData[0]));
+        }
+
+        // Check for missing eventId/id
+        eventData.forEach((event, index) => {
+          if (!event.eventId && !event.id) {
+            console.warn(`Event at index ${index} missing eventId/id:`, event);
+          }
+        });
 
         setEvents(eventData);
         if (eventData.length === 0) {
@@ -130,7 +144,7 @@ function UserEvent() {
           {events.length > 0 ? (
             events.map((event, index) => (
               <div
-                key={event.id || index}
+                key={event.eventId || event.id || index}
                 className="event-card"
                 onClick={() => handleEventClick(event)}
               >
@@ -173,13 +187,13 @@ function UserEvent() {
             </button>
             <img
               src={selectedEvent.imageUrl || logo}
-              alt={selectedEvent.topic || 'Event'}
+              alt={selectedEvent.eventTitle || 'Event'}
               className="popup-image"
               onError={(e) => {
                 e.target.src = logo;
               }}
             />
-            <h2>{selectedEvent.topic || 'Untitled Event'}</h2>
+            <h2>{selectedEvent.eventTitle || 'Untitled Event'}</h2>
             <p>
               <strong>Area:</strong> {selectedEvent.area || 'N/A'}
             </p>

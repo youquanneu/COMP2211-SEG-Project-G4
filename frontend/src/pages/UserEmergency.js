@@ -29,24 +29,43 @@ function UserEmergency() {
         const response = await axios.get(getAPI_URL('user/resource/getAllResource'));
         console.log('Resources Response:', response.data); // Debug
         let resourceData = response.data;
+
+        // Handle various response structures
         if (!Array.isArray(resourceData)) {
           if (resourceData.resources && Array.isArray(resourceData.resources)) {
             resourceData = resourceData.resources;
           } else if (resourceData.data && Array.isArray(resourceData.data)) {
             resourceData = resourceData.data;
+          } else if (resourceData.result && Array.isArray(resourceData.result)) {
+            resourceData = resourceData.result;
           } else {
             setError('Invalid resource data format. Expected an array.');
             console.error('Resource structure:', JSON.stringify(response.data, null, 2));
             return;
           }
         }
+
+        // Log resource count and first resource's keys
+        console.log('Resource count:', resourceData.length);
+        if (resourceData.length > 0) {
+          console.log('First resource keys:', Object.keys(resourceData[0]));
+        }
+
+        // Check for missing id/resourceId
+        resourceData.forEach((resource, index) => {
+          if (!resource.id && !resource.resourceId) {
+            console.warn(`Resource at index ${index} missing id/resourceId:`, resource);
+          }
+        });
+
         setResources(resourceData);
         if (resourceData.length > 0) {
-          setLocation(resourceData[0].name); // Set default to first resource
+          setLocation(resourceData[0].name || resourceData[0].resourceName || '');
         }
       } catch (err) {
         setError('Failed to load resources. Please try again.');
         console.error('Fetch resources error:', err.message, err.response?.data);
+        await sendLog('fetch_resources_error', `Failed: ${err.message}`);
       }
     };
     fetchResources();
@@ -65,7 +84,7 @@ function UserEmergency() {
       await sendLog('submit_emergency', `Location: ${location}, Description: ${description}`);
       setShowPopup(true);
       setError('');
-      setLocation(resources.length > 0 ? resources[0].name : '');
+      setLocation(resources.length > 0 ? (resources[0].name || resources[0].resourceName || '') : '');
       setDescription('');
       setTimeout(() => {
         setShowPopup(false);
@@ -106,9 +125,12 @@ function UserEmergency() {
             className="location-dropdown"
           >
             {resources.length > 0 ? (
-              resources.map((resource) => (
-                <option key={resource.id} value={resource.name}>
-                  {resource.name}
+              resources.map((resource, index) => (
+                <option
+                  key={resource.id || resource.resourceId || index}
+                  value={resource.name || resource.resourceName}
+                >
+                  {resource.name || resource.resourceName || 'Unknown Resource'}
                 </option>
               ))
             ) : (
