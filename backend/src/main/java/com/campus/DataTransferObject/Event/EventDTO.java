@@ -35,7 +35,7 @@ public class EventDTO {
                 event.getArea(),
                 event.getEventStarting(),
                 event.getEventEnding(),
-                VenueDTO.eventListMapper(event.getVenues()),
+                VenueDTO.venueListMapper(event.getVenues()),
                 UserDTO.listMapper(event.getOrganizer()),
                 event.getEventDescription()
                 );

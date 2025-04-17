@@ -19,7 +19,7 @@ public class VenueDTO extends ResourceDTO{
                 venue.getOpenTime(),
                 venue.getCloseTime());
     }
-    public static List<VenueDTO> eventListMapper(List<Venue>venues){
+    public static List<VenueDTO> venueListMapper(List<Venue>venues){
         List<VenueDTO> venueDTOS = new ArrayList<>();
         for (Venue venue : venues){
             venueDTOS.add(mapper(venue));

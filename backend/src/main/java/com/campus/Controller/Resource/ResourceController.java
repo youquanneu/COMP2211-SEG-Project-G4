@@ -18,10 +18,10 @@ public class ResourceController {
     private ResourceService resourceService;
     @GetMapping("/getAllResource")
     public ResponseEntity<?> getAllResource() {
-        logger.info("Getting resources processing : ");
+        logger.info("Processing getAllResource ");
         try {
             List<ResourceDTO> resourceDTOS = resourceService.getAllResourceDTO();
-            logger.info("Get get resources" + resourceDTOS);
+            logger.info("Get resources" + resourceDTOS);
             return ResponseEntity.ok(resourceDTOS);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());
