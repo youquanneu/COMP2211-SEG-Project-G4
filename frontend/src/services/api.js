@@ -66,7 +66,7 @@ export const getAvailableRooms = async (date) => {
 // Fetch emergencies
 export const getEmergencies = async () => {
   try {
-    const response = await axios.get(getAPI_URL('emergency/getAllEmergency'));
+    const response = await axios.get(getAPI_URL('admin/emergency/getAllEmergency'));
     const emergency = response.data
     console.log(emergency)
     const formattedEmergencies = emergency.map((item) => ({

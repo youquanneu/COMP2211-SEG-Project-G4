@@ -6,7 +6,7 @@ import { getAPI_URL } from "../services/api";
 
 function UserEmergency() {
   const navigate = useNavigate();
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState(null);
   const [description, setDescription] = useState('');
   const [venues, setVenues] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
@@ -27,7 +27,7 @@ function UserEmergency() {
       await sendLog('fetch_venues', 'Fetched venues for emergency');
       try {
         const response = await axios.get(getAPI_URL('user/venue/getAllVenue'));
-        console.log('Venues Response:', response.data);
+        console.log('Venues Response:', response.data); // Debug
         let venueData = response.data;
 
         // Handle various response structures
@@ -52,19 +52,19 @@ function UserEmergency() {
           console.log('First venue values:', venueData[0]);
         }
 
-        // Check for missing resourceId/resourceName
+        // Check for missing id/venueId
         venueData.forEach((venue, index) => {
-          if (!venue.resourceId) {
-            console.warn(`Venue at index ${index} missing resourceId:`, venue);
+          if (!venue.id && !venue.venueId) {
+            console.warn(`Venue at index ${index} missing id/venueId:`, venue);
           }
-          if (!venue.resourceName) {
-            console.warn(`Venue at index ${index} missing resourceName:`, venue);
+          if (!venue.name && !venue.venueName) {
+            console.warn(`Venue at index ${index} missing name/venueName:`, venue);
           }
         });
 
         setVenues(venueData);
         if (venueData.length > 0) {
-          setLocation(venueData[0].resourceName || '');
+          setLocation(venueData[0]);
         }
       } catch (err) {
         setError('Failed to load venues. Check if backend is running.');
@@ -83,39 +83,19 @@ function UserEmergency() {
     }
 
     try {
-      const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
-      const token = localStorage.getItem('token'); // Adjust based on your auth key
-      const reportData = {
-        location: location, // Send resourceName as string
-        description,
-        userEmail // Include userEmail for backend
-      };
-      console.log('Submitting reportData:', reportData);
-      console.log('Authorization Token:', token || 'None');
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { Authorization: `Bearer ${token}` }) // Add token if exists
-        }
-      };
-
-      const response = await axios.post(
-        getAPI_URL('emergency/reportEmergency'),
-        reportData,
-        config
-      );
-      console.log('Submit Response:', response.data);
+      const reportData = { location, description };
+      console.log(reportData)
+      await axios.post(getAPI_URL('emergency/reportEmergency'), reportData);
       await sendLog('submit_emergency', `Location: ${location}, Description: ${description}`);
       setShowPopup(true);
       setError('');
-      setLocation(venues.length > 0 ? (venues[0].resourceName || '') : '');
+      setLocation(venues.length > 0 ? (venues[0].name || venues[0].venueName || '') : '');
       setDescription('');
       setTimeout(() => {
         setShowPopup(false);
       }, 2000);
     } catch (err) {
-      setError('Failed to submit emergency. Authentication may be required.');
+      setError('Failed to submit emergency. Please try again.');
       console.error('Submit error:', err.message, err.response?.data);
       await sendLog('submit_emergency_error', `Failed: ${err.message}`);
     }
@@ -142,9 +122,10 @@ function UserEmergency() {
         <div className="form-group">
           <label>Location:</label>
           <select
-            value={location}
+            value={location ? location.resourceId : ''}
             onChange={(e) => {
-              setLocation(e.target.value);
+              const locationSelected = venues.find(venue => venue.resourceId === parseInt(e.target.value))
+              setLocation(locationSelected);
               sendLog('select_location', `Selected: ${e.target.value}`);
             }}
             className="location-dropdown"
@@ -153,7 +134,7 @@ function UserEmergency() {
               venues.map((venue, index) => (
                 <option
                   key={venue.resourceId || index}
-                  value={venue.resourceName || ''}
+                  value={venue.resourceId}
                 >
                   {venue.resourceName || 'Unknown Venue'}
                 </option>
