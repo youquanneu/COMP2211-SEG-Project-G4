@@ -2,16 +2,14 @@ package com.campus.Entity.Resource;
 
 import com.campus.Classification.ResourceCategory;
 import com.campus.Classification.Restriction;
+import com.campus.Entity.Event.EmergencyCase;
 import com.campus.Entity.Event.Event;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 
 import java.time.LocalTime;
 import java.util.List;
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Venue extends Resource{
     public Venue(){}
     public Venue(String resourceName,
@@ -22,4 +20,6 @@ public class Venue extends Resource{
     }
     @ManyToMany
     private List<Event> events;
+    @OneToMany
+    private List<EmergencyCase> emergencyCases;
 }
