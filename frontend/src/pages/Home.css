@@ -174,7 +174,7 @@
 
 @media (max-width: 360px) {
   .home-header {
-    flex-direction: column; /* Keep row layout */
+    flex-direction: row; /* Keep row layout */
     align-items: center;
     gap: 8px;
   }

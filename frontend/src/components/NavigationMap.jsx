@@ -1,18 +1,21 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+// My campus navigation component 
+import React, { useState, useRef, useEffect } from 'react';
+import { rooms, waypoints, allNodes, isRoom, navigationConfig } from '../data/navigationData';
+import { findPath, getNodeById, getNodePosition, verifyConnections } from '../utils/navigationUtils';
 import { 
-  Box, 
-  FormControl, 
-  InputLabel, 
-  MenuItem, 
-  Select, 
-  Button, 
-  Typography, 
-  Grid, 
-  Paper, 
-  CircularProgress, 
-  Divider, 
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Button,
+  Typography,
+  Grid,
+  Paper,
+  CircularProgress,
+  Divider,
   Chip,
-  Switch, 
+  Switch,
   FormControlLabel,
   useMediaQuery,
   useTheme,
@@ -20,397 +23,375 @@ import {
   Tooltip,
   Alert
 } from '@mui/material';
-import ExploreIcon from '@mui/icons-material/Explore';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PinDropIcon from '@mui/icons-material/PinDrop';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import RouteIcon from '@mui/icons-material/Route';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ExploreIcon from '@mui/icons-material/Explore';
 import InfoIcon from '@mui/icons-material/Info';
-import BugReportIcon from '@mui/icons-material/BugReport';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import LabelIcon from '@mui/icons-material/Label';
+import LabelOffIcon from '@mui/icons-material/LabelOff';
+import './NavigationMap.css'; // Styles for this component
+// Using direct import - no more relative path issues
+import floorPlanImage from '../assets/floor-plan.png';
 
-import {
-  findShortestPath,
-  generateDirections,
-  getAllRooms,
-  calculateDistance,
-  getNodeConnections
-} from '../utils/navigationUtils';
-import './NavigationMap.css';
-
-// Import floor plan for reference but not pathing display
-import floorPlanImg from '../assets/floor-plan-nodes.png';
-
-// Compass component for direction reference
-const CompassRose = () => {
-  return (
-    <Box sx={{ 
-      position: 'absolute', 
-      top: 8, 
-      right: 8, 
-      bgcolor: 'rgba(255,255,255,0.9)', 
-      borderRadius: '50%',
-      width: 65, 
-      height: 65, 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center',
-      boxShadow: '0 3px 8px rgba(0,0,0,0.15)',
-      zIndex: 10,
-      transition: 'transform 0.2s ease',
-      '&:hover': {
-        transform: 'scale(1.05)',
-      }
-    }}>
-      <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-        <Typography 
-          sx={{ 
-            position: 'absolute', 
-            top: -2, 
-            left: '50%', 
-            transform: 'translateX(-50%)',
-            fontSize: '0.8rem',
-            fontWeight: 'bold',
-            color: '#1976d2'
-          }}
-        >
-          N
-        </Typography>
-        <Typography 
-          sx={{ 
-            position: 'absolute', 
-            bottom: -2, 
-            left: '50%', 
-            transform: 'translateX(-50%)',
-            fontSize: '0.8rem',
-            fontWeight: 'bold'
-          }}
-        >
-          S
-        </Typography>
-        <Typography 
-          sx={{ 
-            position: 'absolute', 
-            left: -2, 
-            top: '50%', 
-            transform: 'translateY(-50%)',
-            fontSize: '0.8rem',
-            fontWeight: 'bold'
-          }}
-        >
-          W
-        </Typography>
-        <Typography 
-          sx={{ 
-            position: 'absolute', 
-            right: -2, 
-            top: '50%', 
-            transform: 'translateY(-50%)',
-            fontSize: '0.8rem',
-            fontWeight: 'bold'
-          }}
-        >
-          E
-        </Typography>
-        
-        <Box sx={{ 
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 40,
-          height: 40,
-          borderRadius: '50%',
-          border: '1px solid #ddd',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background: 'rgba(240, 240, 240, 0.5)'
-        }}>
-          <ArrowUpwardIcon 
-            sx={{ 
-              position: 'absolute', 
-              top: -2, 
-              left: '50%', 
-              transform: 'translateX(-50%)',
-              color: '#1976d2',
-              fontSize: '1.1rem'
-            }} 
-          />
-          <ArrowDownwardIcon 
-            sx={{ 
-              position: 'absolute', 
-              bottom: -2, 
-              left: '50%', 
-              transform: 'translateX(-50%)',
-              fontSize: '1.1rem'
-            }} 
-          />
-          <ArrowBackIcon 
-            sx={{ 
-              position: 'absolute', 
-              left: -2, 
-              top: '50%', 
-              transform: 'translateY(-50%)',
-              fontSize: '1.1rem'
-            }} 
-          />
-          <ArrowForwardIcon 
-            sx={{ 
-              position: 'absolute', 
-              right: -2, 
-              top: '50%', 
-              transform: 'translateY(-50%)',
-              fontSize: '1.1rem'
-            }} 
-          />
-        </Box>
-      </Box>
-    </Box>
-  );
-};
-
-// Room marker component to show selected rooms
-const RoomMarker = ({ room, type, dimension, onClick }) => {
-  const isStart = type === 'start';
-  
-  return (
-    <Box
-      sx={{
-        position: 'absolute',
-        left: (room.x / dimension.width) * 100 + '%',
-        top: (room.y / dimension.height) * 100 + '%',
-        width: isStart ? 18 : 16,
-        height: isStart ? 18 : 16,
-        marginLeft: isStart ? -9 : -8,
-        marginTop: isStart ? -9 : -8,
-        bgcolor: isStart ? '#4caf50' : '#f44336',
-        border: '2px solid white',
-        borderRadius: '50%',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-        zIndex: 20,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer',
-        transition: 'transform 0.2s ease',
-        '&:hover': {
-          transform: 'scale(1.2)',
-        },
-        '@media (max-width: 600px)': {
-          width: isStart ? 16 : 14,
-          height: isStart ? 16 : 14,
-          marginLeft: isStart ? -8 : -7,
-          marginTop: isStart ? -8 : -7,
-        }
-      }}
-      onClick={onClick}
-    >
-      {isStart ? (
-        <MyLocationIcon sx={{ color: 'white', fontSize: '0.8rem' }} />
-      ) : (
-        <LocationOnIcon sx={{ color: 'white', fontSize: '0.8rem' }} />
-      )}
-    </Box>
-  );
-};
-
-const NavigationMap = () => {
+const CampusNavigation = () => {
   // Theme and media query for responsive design
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
-  // State for start and end node selection
-  const [startNode, setStartNode] = useState('');
-  const [endNode, setEndNode] = useState('');
-  
-  // State for all available rooms
-  const [rooms, setRooms] = useState([]);
-  
-  // State for the current path
-  const [currentPath, setCurrentPath] = useState(null);
-  
-  // State for loading indicator
+  const [startRoom, setStartRoom] = useState("");
+  const [endRoom, setEndRoom] = useState("");
+  const [path, setPath] = useState([]);
+  const canvasRef = useRef(null);
+  const imgRef = useRef(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [animationFrame, setAnimationFrame] = useState(0);
+  const animationRef = useRef(null);
+  const [showWaypoints, setShowWaypoints] = useState(true);
+  const [showNodeLabels, setShowNodeLabels] = useState(navigationConfig.showNodeLabels);
+  const [connectionStatus, setConnectionStatus] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  // State for debugging information
-  const [debug, setDebug] = useState(false);
-  const [debugInfo, setDebugInfo] = useState(null);
-  
-  // Refs for the map container (canvas will be hidden)
-  const mapContainerRef = useRef(null);
-  
-  // State for the image dimensions
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
-  
-  // Load rooms on component mount
+
+  // Load the floor plan image
   useEffect(() => {
-    try {
-      setInitialLoading(true);
-      const roomNodes = getAllRooms();
-      setRooms(roomNodes);
-      setInitialLoading(false);
-    } catch (err) {
-      setError('Failed to load navigation data');
-      setInitialLoading(false);
-      console.error('Navigation error details:', err);
-    }
+    const img = new Image();
+    img.src = floorPlanImage; // Using imported image
+    console.log("Loading image from:", floorPlanImage);
+    
+    img.onload = () => {
+      console.log("Image loaded successfully!");
+      imgRef.current = img;
+      setImageLoaded(true);
+    };
+    
+    img.onerror = (error) => {
+      console.error("Error loading image:", error);
+    };
   }, []);
-  
-  // Function to handle image load and get dimensions
-  const handleImageLoad = (e) => {
-    const { width, height } = e.target;
-    setImageDimensions({ width, height });
-  };
-  
-  // Function to handle start node selection
-  const handleStartNodeChange = (event) => {
-    setStartNode(event.target.value);
-    // Clear the current path when changing nodes
-    setCurrentPath(null);
-    setDebugInfo(null);
-    // If end node is already selected, prevent selecting the same node
-    if (endNode === event.target.value) {
-      setEndNode('');
+
+  // Animation loop for path markers - makes them move along the path
+  useEffect(() => {
+    if (path.length <= 1) return;
+    
+    const animate = () => {
+      setAnimationFrame(prev => (prev + 1) % 60); // 60 frames cycle
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    // Start animation
+    animationRef.current = requestAnimationFrame(animate);
+    
+    // Cleanup - cancel animation when component unmounts
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+    };
+  }, [path]);
+
+  // Draw the rooms and path on canvas
+  useEffect(() => {
+    if (!canvasRef.current || !imageLoaded || !imgRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the floor plan image
+    ctx.drawImage(imgRef.current, 0, 0, canvas.width, canvas.height);
+
+    // Draw rooms with highlighting
+    rooms.forEach(room => {
+      // Use red highlight for disconnected rooms
+      const isDisconnected = connectionStatus?.disconnectedRooms.includes(room.id);
+      // Make boxes fully transparent (alpha = 0) to hide them
+      ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+      ctx.fillRect(room.x, room.y, room.width, room.height);
+      
+      // Draw room labels if enabled in config
+      if (showNodeLabels) {
+        ctx.font = 'bold 12px Arial';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillText(room.id, room.x + 5, room.y + 15);
+      }
+    });
+
+    // Draw waypoints if enabled
+    if (showWaypoints) {
+      waypoints.forEach(waypoint => {
+        ctx.beginPath();
+        
+        if (waypoint.type === 'junction') {
+          // Blue circle for junctions
+          ctx.fillStyle = 'rgba(0, 0, 255, 0.7)';
+          ctx.arc(waypoint.x, waypoint.y, 6, 0, Math.PI * 2);
+        } else {
+          // Red circle for corridors
+          ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+          ctx.arc(waypoint.x, waypoint.y, 4, 0, Math.PI * 2);
+        }
+        
+        ctx.fill();
+        
+        // Draw all waypoint IDs if enabled, not just junctions
+        if (showNodeLabels) {
+          ctx.font = waypoint.type === 'junction' ? 'bold 10px Arial' : '9px Arial';
+          ctx.fillStyle = waypoint.type === 'junction' ? 'rgba(0, 0, 100, 0.8)' : 'rgba(150, 0, 0, 0.7)';
+          
+          // Position the label based on node type
+          if (waypoint.type === 'junction') {
+            ctx.fillText(waypoint.id, waypoint.x - 8, waypoint.y - 8);
+          } else {
+            ctx.fillText(waypoint.id, waypoint.x + 6, waypoint.y - 2);
+          }
+        } else if (waypoint.type === 'junction') {
+          // Always show junction IDs as before
+          ctx.font = '10px Arial';
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+          ctx.fillText(waypoint.id, waypoint.x - 8, waypoint.y - 8);
+        }
+      });
     }
-  };
-  
-  // Function to handle end node selection
-  const handleEndNodeChange = (event) => {
-    setEndNode(event.target.value);
-    // Clear the current path when changing nodes
-    setCurrentPath(null);
-    setDebugInfo(null);
-    // If start node is already selected, prevent selecting the same node
-    if (startNode === event.target.value) {
-      setStartNode('');
+
+    // Draw path if we have one
+    if (path.length > 1) {
+      const nodeMap = new Map();
+      allNodes.forEach(node => nodeMap.set(node.id, node));
+
+      // Draw the path
+      ctx.beginPath();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(0, 128, 0, 0.8)';
+      
+      let isFirstPoint = true;
+      for (const nodeId of path) {
+        const node = nodeMap.get(nodeId);
+        if (!node) continue;
+        
+        const pos = getNodePosition(node);
+        
+        if (isFirstPoint) {
+          ctx.moveTo(pos.x, pos.y);
+          isFirstPoint = false;
+        } else {
+          ctx.lineTo(pos.x, pos.y);
+        }
+      }
+      ctx.stroke();
+
+      // Draw animated arrows along the path 
+      const arrowPositions = [];
+      const totalArrows = Math.min(path.length - 1, 5); // Max 5 arrows
+      
+      for (let i = 0; i < totalArrows; i++) {
+        const position = (i / totalArrows) + (animationFrame / 240); // Animation speed
+        const segmentIndex = Math.floor(position * (path.length - 1)) % (path.length - 1);
+        const segmentPosition = (position * (path.length - 1)) % 1;
+        
+        const node1 = nodeMap.get(path[segmentIndex]);
+        const node2 = nodeMap.get(path[segmentIndex + 1]);
+        
+        if (!node1 || !node2) continue;
+        
+        const pos1 = getNodePosition(node1);
+        const pos2 = getNodePosition(node2);
+        
+        const arrowX = pos1.x + segmentPosition * (pos2.x - pos1.x);
+        const arrowY = pos1.y + segmentPosition * (pos2.y - pos1.y);
+        
+        // Calculate angle for the arrow
+        const angle = Math.atan2(pos2.y - pos1.y, pos2.x - pos1.x);
+        
+        arrowPositions.push({ x: arrowX, y: arrowY, angle });
+      }
+      
+      // Draw each arrow
+      arrowPositions.forEach(({ x, y, angle }) => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        
+        // Draw arrow
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(0, 128, 0, 0.9)';
+        ctx.moveTo(10, 0);  // Arrow tip
+        ctx.lineTo(-5, 5);  // Bottom corner
+        ctx.lineTo(-2, 0);  // Middle indent
+        ctx.lineTo(-5, -5); // Top corner
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+      });
+
+      // Highlight the start and end rooms
+      const startNode = nodeMap.get(path[0]);
+      const endNode = nodeMap.get(path[path.length - 1]);
+
+      if (startNode && isRoom(startNode)) {
+        // Start room - make transparent to hide
+        ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+        ctx.fillRect(startNode.x, startNode.y, startNode.width, startNode.height);
+      }
+
+      if (endNode && isRoom(endNode)) {
+        // End room - make transparent to hide
+        ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+        ctx.fillRect(endNode.x, endNode.y, endNode.width, endNode.height);
+      }
+
+      // Draw path nodes (dots at junction points)
+      path.forEach(nodeId => {
+        const node = nodeMap.get(nodeId);
+        if (!node || isRoom(node)) return;
+        
+        const pos = getNodePosition(node);
+        ctx.beginPath();
+        
+        if (node.type === 'junction') {
+          // Highlight junction points more prominently
+          ctx.fillStyle = 'rgba(0, 128, 0, 0.9)';
+          ctx.arc(pos.x, pos.y, 6, 0, Math.PI * 2);
+        } else {
+          // Highlight corridor points
+          ctx.fillStyle = 'rgba(0, 128, 0, 0.7)';
+          ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
+        }
+        
+        ctx.fill();
+        
+        // Highlight the node IDs along the path
+        if (showNodeLabels) {
+          ctx.font = 'bold 11px Arial';
+          ctx.fillStyle = 'rgba(0, 100, 0, 0.9)';
+          ctx.fillText(node.id, pos.x + 7, pos.y - 3);
+        }
+      });
     }
+  }, [path, imageLoaded, animationFrame, showWaypoints, showNodeLabels, connectionStatus]);
+
+  // Toggle node labels
+  const toggleNodeLabels = () => {
+    setShowNodeLabels(!showNodeLabels);
   };
-  
-  // Function to find the path
-  const findPath = () => {
-    if (!startNode || !endNode) {
-      setError('Please select both start and end points');
+
+  // Check connectivity between all rooms
+  const checkConnectivity = () => {
+    setLoading(true);
+    
+    // Using setTimeout to let UI update first
+    setTimeout(() => {
+      const { connectedRooms, disconnectedRooms } = verifyConnections();
+      
+      setConnectionStatus({
+        verified: true,
+        connectedRooms,
+        disconnectedRooms
+      });
+      
+      setLoading(false);
+    }, 10);
+  };
+
+  // Calculate path between rooms
+  const calculatePath = () => {
+    if (!startRoom || !endRoom) {
       return;
     }
     
-    try {
-      setLoading(true);
-      setError(null);
-      setDebugInfo(null);
-      
-      // Using setTimeout to allow the UI to update before the calculation
-      setTimeout(() => {
-        // Get node connection information for debugging
-        const startConnections = getNodeConnections(startNode);
-        const endConnections = getNodeConnections(endNode);
-        
-        // Store debugging information
-        const debugData = {
-          startNode: startNode,
-          startConnections: startConnections,
-          endNode: endNode,
-          endConnections: endConnections
-        };
-        
-        // Find the shortest path using A* algorithm
-        const result = findShortestPath(startNode, endNode);
-        
-        if (result.path.length === 0) {
-          setError('No path found between these locations');
-          setCurrentPath(null);
-          setDebugInfo(debugData);
-        } else {
-          // Generate directions
-          const directions = generateDirections(result.path);
-          
-          // Set the current path with all details
-          setCurrentPath({
-            ...result,
-            directions
-          });
-          
-          // Store debug info with successful path
-          if (debug) {
-            debugData.pathNodes = result.path.map(node => node.name);
-            setDebugInfo(debugData);
-          }
-        }
-        
-        setLoading(false);
-      }, 10);
-    } catch (err) {
-      setError('Failed to find a path between the selected locations. Please try again.');
+    setLoading(true);
+    
+    // Using setTimeout so we don't block
+    setTimeout(() => {
+      const foundPath = findPath(startRoom, endRoom);
+      setPath(foundPath);
       setLoading(false);
-      console.error(err);
-    }
+    }, 10);
   };
-  
-  // Function to handle the reset button
-  const handleReset = () => {
-    setStartNode('');
-    setEndNode('');
-    setCurrentPath(null);
-    setDebugInfo(null);
+
+  // Reset the path
+  const resetPath = () => {
+    setStartRoom("");
+    setEndRoom("");
+    setPath([]);
+    setConnectionStatus(null);
   };
-  
-  // Add handler for map clicks to select rooms
-  const handleMapClick = useCallback((e) => {
-    if (!mapContainerRef.current) return;
+
+  // Get only room IDs for dropdown menus
+  const roomOptions = rooms.map(room => ({
+    id: room.id,
+    name: room.name
+  }));
+
+  // Generate navigation instructions
+  const generateInstructions = () => {
+    if (!path || path.length < 2) return [];
     
-    // Get click coordinates relative to the map
-    const rect = mapContainerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const instructions = [];
     
-    // Scale to match the original coordinates
-    const scaleX = imageDimensions.width / rect.width;
-    const scaleY = imageDimensions.height / rect.height;
-    
-    const clickX = x * scaleX;
-    const clickY = y * scaleY;
-    
-    // Find closest room to the click (within a threshold)
-    const threshold = isMobile ? 40 : 30; // Larger threshold for mobile
-    let closestRoom = null;
-    let minDistance = threshold;
-    
-    rooms.forEach(room => {
-      const distance = Math.sqrt(
-        Math.pow(room.x - clickX, 2) + Math.pow(room.y - clickY, 2)
-      );
+    path.forEach((nodeId, index) => {
+      const node = getNodeById(nodeId);
+      if (!node) return;
       
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestRoom = room;
+      if (isRoom(node)) {
+        if (index === 0) {
+          instructions.push({
+            type: 'start',
+            text: `Start at ${nodeId} (${node.name})`
+          });
+        } else if (index === path.length - 1) {
+          instructions.push({
+            type: 'destination',
+            text: `Arrive at destination ${nodeId} (${node.name})`
+          });
+        } else {
+          instructions.push({
+            type: 'room',
+            text: `Enter room ${nodeId} (${node.name})`
+          });
+        }
+      } else if (node.type === 'junction') {
+        instructions.push({
+          type: 'junction',
+          text: `Turn at corridor junction ${nodeId}`
+        });
+      } else {
+        const prevNode = index > 0 ? getNodeById(path[index - 1]) : null;
+        const nextNode = index < path.length - 1 ? getNodeById(path[index + 1]) : null;
+        
+        if (prevNode && nextNode && isRoom(prevNode) && !isRoom(nextNode)) {
+          instructions.push({
+            type: 'corridor',
+            text: 'Exit room and proceed through corridor'
+          });
+        } else if (prevNode && nextNode && !isRoom(prevNode) && isRoom(nextNode)) {
+          instructions.push({
+            type: 'approach',
+            text: `Approach the entrance of ${nextNode.id}`
+          });
+        } else {
+          instructions.push({
+            type: 'continue',
+            text: 'Continue through corridor'
+          });
+        }
       }
     });
     
-    if (closestRoom) {
-      // If no start node is selected, set it as start
-      if (!startNode) {
-        setStartNode(closestRoom.name);
-      } 
-      // Otherwise, if the clicked room isn't the start node, set it as end
-      else if (closestRoom.name !== startNode && !endNode) {
-        setEndNode(closestRoom.name);
-      }
-      // If both are already set, update the end node
-      else if (closestRoom.name !== startNode) {
-        setEndNode(closestRoom.name);
-        setCurrentPath(null);
-        setDebugInfo(null);
-      }
-    }
-  }, [startNode, endNode, rooms, imageDimensions, isMobile]);
-  
+    return instructions;
+  };
+
+  const instructions = generateInstructions();
+
   return (
     <Box className="navigation-container">
       <Typography 
@@ -451,14 +432,9 @@ const NavigationMap = () => {
           <InfoIcon fontSize="small" sx={{ mr: 0.8, color: '#1976d2' }} />
           Use the interactive map below to find the shortest path between two locations on campus.
         </Box>
-        <Box sx={{ pl: 3.5 }}>
-          Directions are given assuming north is at the top of the map.
-        </Box>
       </Typography>
-
       
-      
-      {initialLoading ? (
+      {!imageLoaded ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', my: 8 }}>
           <CircularProgress size={isMobile ? 40 : 50} thickness={4} />
           <Typography variant="body1" sx={{ mt: 2, fontWeight: 500 }}>
@@ -477,16 +453,16 @@ const NavigationMap = () => {
                 <Select
                   labelId="start-node-label"
                   id="start-node"
-                  value={startNode}
-                  onChange={handleStartNodeChange}
+                  value={startRoom}
+                  onChange={(e) => setStartRoom(e.target.value)}
                   label="Starting Point"
                 >
                   <MenuItem value="">
                     <em>Select start location</em>
                   </MenuItem>
-                  {rooms.map((room) => (
-                    <MenuItem key={`start-${room.name}`} value={room.name}>
-                      {room.name}
+                  {roomOptions.map((room) => (
+                    <MenuItem key={`start-${room.id}`} value={room.id}>
+                      {room.id} - {room.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -502,16 +478,16 @@ const NavigationMap = () => {
                 <Select
                   labelId="end-node-label"
                   id="end-node"
-                  value={endNode}
-                  onChange={handleEndNodeChange}
+                  value={endRoom}
+                  onChange={(e) => setEndRoom(e.target.value)}
                   label="Destination"
                 >
                   <MenuItem value="">
                     <em>Select destination</em>
                   </MenuItem>
-                  {rooms.map((room) => (
-                    <MenuItem key={`end-${room.name}`} value={room.name}>
-                      {room.name}
+                  {roomOptions.map((room) => (
+                    <MenuItem key={`end-${room.id}`} value={room.id}>
+                      {room.id} - {room.name}
                     </MenuItem>
                   ))}
                 </Select>
@@ -522,11 +498,11 @@ const NavigationMap = () => {
           <Box 
             sx={{ 
               display: 'flex', 
-              flexDirection: isMobile ? 'column' : 'row',
+              flexDirection: 'row',
               justifyContent: 'space-between', 
-              alignItems: isMobile ? 'flex-start' : 'center', 
+              alignItems: 'center', 
               mb: isMobile ? 2 : 3,
-              gap: isMobile ? 1.5 : 0,
+              gap: isMobile ? 1.5 : 1,
               bgcolor: '#f9f9f9',
               p: 1.5,
               borderRadius: 2
@@ -536,13 +512,12 @@ const NavigationMap = () => {
               display: 'flex', 
               gap: 1.5,
               width: isMobile ? '100%' : 'auto',
-              mb: isMobile ? 1 : 0
             }}>
               <Button
                 variant="contained"
                 color="primary"
-                disabled={!startNode || !endNode || loading}
-                onClick={findPath}
+                disabled={!startRoom || !endRoom || loading}
+                onClick={calculatePath}
                 startIcon={<RouteIcon />}
                 fullWidth={isMobile}
                 size={isMobile ? "medium" : "medium"}
@@ -561,60 +536,70 @@ const NavigationMap = () => {
                 {isMobile ? "Find Route" : "Find Directions"}
               </Button>
               
-              {isMobile ? (
-                <IconButton 
-                  onClick={handleReset} 
-                  color="primary" 
-                  disabled={!startNode && !endNode}
-                  sx={{ border: '1px solid #e0e0e0', borderRadius: 1.5 }}
-                >
-                  <RestartAltIcon />
-                </IconButton>
-              ) : (
+              <Button
+                variant="outlined"
+                onClick={resetPath}
+                size="medium"
+                startIcon={<RestartAltIcon />}
+                disabled={!startRoom && !endRoom}
+                sx={{ 
+                  borderRadius: 1.5,
+                  textTransform: 'none',
+                  px: 2
+                }}
+              >
+                Reset
+              </Button>
+              
+              <Tooltip title={showWaypoints ? "Hide waypoints" : "Show waypoints"}>
                 <Button
-                  variant="contained"
-                  onClick={handleReset}
-                  size="medium"
-                  startIcon={<RestartAltIcon />}
-                  disabled={!startNode && !endNode}
+                  variant={showWaypoints ? "contained" : "outlined"}
+                  color="info"
+                  onClick={() => setShowWaypoints(!showWaypoints)}
+                  startIcon={showWaypoints ? <VisibilityOffIcon /> : <VisibilityIcon />}
                   sx={{ 
                     borderRadius: 1.5,
                     textTransform: 'none',
                     px: 2
                   }}
                 >
-                  Reset
+                  {isMobile ? "" : (showWaypoints ? "Hide" : "Show") + " Waypoints"}
                 </Button>
-              )}
+              </Tooltip>
+              
+              {/* Labels toggle - added this for better testing */}
+              <Tooltip title={showNodeLabels ? "Hide node labels" : "Show node labels"}>
+                <Button
+                  variant={showNodeLabels ? "contained" : "outlined"}
+                  color="secondary"
+                  onClick={toggleNodeLabels}
+                  startIcon={showNodeLabels ? <LabelOffIcon /> : <LabelIcon />}
+                  sx={{ 
+                    borderRadius: 1.5,
+                    textTransform: 'none',
+                    px: 2
+                  }}
+                >
+                  {isMobile ? "" : (showNodeLabels ? "Hide" : "Show") + " Labels"}
+                </Button>
+              </Tooltip>
+              
+              <Tooltip title="Check if all rooms are properly connected">
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={checkConnectivity}
+                  startIcon={<CheckCircleOutlineIcon />}
+                  sx={{ 
+                    borderRadius: 1.5,
+                    textTransform: 'none',
+                    px: 2
+                  }}
+                >
+                  {isMobile ? "" : "Verify Connections"}
+                </Button>
+              </Tooltip>
             </Box>
-            
-            <Tooltip title={debug ? "Disable debug information" : "Show advanced path-finding information"}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={debug}
-                    onChange={(e) => setDebug(e.target.checked)}
-                    name="debug"
-                    color="primary"
-                    size={isMobile ? "small" : "medium"}
-                  />
-                }
-                label={isMobile ? "Debug Mode" : "Show Debug Info"}
-                sx={{ 
-                  m: 0,
-                  px: 1,
-                  py: 0.5,
-                  borderRadius: 1,
-                  bgcolor: debug ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
-                  border: debug ? '1px solid rgba(25, 118, 210, 0.2)' : 'none',
-                  '.MuiFormControlLabel-label': {
-                    fontSize: isMobile ? '0.8rem' : 'inherit',
-                    color: debug ? '#1976d2' : 'inherit',
-                    fontWeight: debug ? 500 : 'inherit'
-                  }
-                }}
-              />
-            </Tooltip>
           </Box>
           
           {loading && (
@@ -633,133 +618,78 @@ const NavigationMap = () => {
                 variant={isMobile ? "body2" : "body1"}
                 sx={{ fontWeight: 500, color: '#1976d2' }}
               >
-                Finding the optimal route between locations...
-              </Typography>
-            </Box>
-          )}
-          
-          {isMobile && (
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              mb: 2,
-              p: 1,
-              borderRadius: 1,
-              bgcolor: 'rgba(0, 0, 0, 0.02)'
-            }}>
-              <InfoIcon fontSize="small" sx={{ mr: 0.5, color: 'text.secondary' }} />
-              <Typography variant="caption" color="text.secondary">
-                Tap rooms on the map to select them
+                Processing navigation data...
               </Typography>
             </Box>
           )}
 
-          {error && (
-            <Box sx={{ 
-              my: 2, 
-              p: 1.5, 
-              bgcolor: '#ffebee', 
-              borderRadius: 2, 
-              display: 'flex', 
-              alignItems: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              borderLeft: '4px solid #f44336'
-            }}>
-              <InfoIcon color="error" sx={{ mr: 1.5 }} />
-              <Typography color="error" variant={isMobile ? "body2" : "body1"}>
-                {error}
-              </Typography>
-            </Box>
-          )}
-           
-          {/* Reference map for selecting rooms - no path drawing */}
-          <Box 
-            ref={mapContainerRef} 
-            className="map-container" 
-            onClick={handleMapClick}
-            style={{ cursor: 'pointer', position: 'relative' }}
-          >
-            <img 
-              src={floorPlanImg} 
-              alt="Floor Plan" 
-              className="floor-plan" 
-              onLoad={handleImageLoad}
-            />
-            <CompassRose />
-            
-            {/* Show markers for selected rooms
-            {startNode && rooms.length > 0 && imageDimensions.width > 0 && (
-              <RoomMarker 
-                room={rooms.find(r => r.name === startNode)} 
-                type="start" 
-                dimension={imageDimensions}
-                onClick={() => {
-                  setStartNode('');
-                  setCurrentPath(null);
-                  setDebugInfo(null);
-                }}
-              />
-            )}
-            
-            {endNode && rooms.length > 0 && imageDimensions.width > 0 && (
-              <RoomMarker 
-                room={rooms.find(r => r.name === endNode)} 
-                type="end" 
-                dimension={imageDimensions}
-                onClick={() => {
-                  setEndNode('');
-                  setCurrentPath(null);
-                  setDebugInfo(null);
-                }}
-              />
-            )} */}
-          </Box>
-           
-          {/* Debug information when debug mode is enabled */}
-          {debug && debugInfo && (
+          {connectionStatus?.verified && (
             <Alert 
-              severity="info" 
-              icon={<BugReportIcon />}
-              variant="filled"
+              severity={connectionStatus.disconnectedRooms.length === 0 ? "success" : "error"}
               sx={{ 
                 mt: 2, 
                 mb: 2,
                 borderRadius: 2,
-                '& .MuiAlert-message': {
-                  width: '100%'
-                }
               }}
             >
-              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>Path Debugging Information:</Typography>
-              <Box sx={{ 
-                p: 1.5, 
-                bgcolor: 'rgba(255,255,255,0.15)', 
-                borderRadius: 1,
-                mb: 1
-              }}>
-                <Typography variant="body2">
-                  <strong>Start:</strong> {debugInfo.startNode} (Connections: {debugInfo.startConnections?.length || 0})
-                  {debugInfo.startConnections && 
-                    <span> - Connected to: {debugInfo.startConnections.join(', ')}</span>
-                  }
-                </Typography>
-                <Typography variant="body2">
-                  <strong>End:</strong> {debugInfo.endNode} (Connections: {debugInfo.endConnections?.length || 0})
-                  {debugInfo.endConnections && 
-                    <span> - Connected to: {debugInfo.endConnections.join(', ')}</span>
-                  }
-                </Typography>
-              </Box>
-              {debugInfo.pathNodes && (
-                <Typography variant="body2">
-                  <strong>Path nodes:</strong> {debugInfo.pathNodes.join(' → ')}
-                </Typography>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                {connectionStatus.disconnectedRooms.length === 0
+                  ? 'All rooms are connected!'
+                  : `${connectionStatus.disconnectedRooms.length} rooms are not fully connected`}
+              </Typography>
+              
+              {connectionStatus.disconnectedRooms.length > 0 && (
+                <>
+                  <Typography variant="body2">
+                    The following rooms may not be reachable from all other rooms:
+                  </Typography>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    gap: 0.5,
+                    mt: 1
+                  }}>
+                    {connectionStatus.disconnectedRooms.map(roomId => (
+                      <Chip 
+                        key={roomId} 
+                        label={roomId} 
+                        size="small" 
+                        color="error" 
+                        variant="outlined"
+                      />
+                    ))}
+                  </Box>
+                </>
               )}
             </Alert>
           )}
            
-          {/* Directions display with enhanced styling */}
-          {currentPath && currentPath.path.length > 0 && (
+          {/* Map container with canvas - tried to make this responsive but it gets weird */}
+          <Box 
+            sx={{ 
+              position: 'relative',
+              width: '100%',
+              border: '1px solid #e0e0e0',
+              borderRadius: 2,
+              overflow: 'hidden',
+              mb: 3
+            }}
+          >
+            <canvas 
+              ref={canvasRef}
+              width={1200}
+              height={1200}
+              style={{ 
+                width: '100%', 
+                height: 'auto', 
+                display: 'block',
+                maxWidth: '100%'
+              }}
+            />
+          </Box>
+           
+          {/* Path details and directions */}
+          {path.length > 0 && (
             <Paper 
               sx={{ 
                 mt: 2, 
@@ -780,7 +710,7 @@ const NavigationMap = () => {
                   fontWeight: 500
                 }}
               >
-                <RouteIcon sx={{ mr: 1 }} /> Route Directions
+                <RouteIcon sx={{ mr: 1 }} /> Route Details
               </Typography>
               
               <Box sx={{ 
@@ -790,8 +720,22 @@ const NavigationMap = () => {
                 gap: 1
               }}>
                 <Chip 
+                  icon={<MyLocationIcon />} 
+                  label={`From: ${startRoom} - ${rooms.find(r => r.id === startRoom)?.name}`} 
+                  color="success" 
+                  variant="outlined"
+                  size={isMobile ? "small" : "medium"}
+                />
+                <Chip 
+                  icon={<LocationOnIcon />} 
+                  label={`To: ${endRoom} - ${rooms.find(r => r.id === endRoom)?.name}`} 
+                  color="error" 
+                  variant="outlined"
+                  size={isMobile ? "small" : "medium"}
+                />
+                <Chip 
                   icon={<RouteIcon />} 
-                  label={`Distance: ${Math.round(currentPath.distance)} meters`} 
+                  label={`Waypoints: ${path.length}`} 
                   color="primary" 
                   variant="outlined"
                   size={isMobile ? "small" : "medium"}
@@ -811,9 +755,10 @@ const NavigationMap = () => {
                 }}
               >
                 <NavigationIcon sx={{ mr: 1, fontSize: isMobile ? '1rem' : '1.2rem' }} />
-                Step-by-step directions:
+                Navigation Instructions:
               </Typography>
-              <Box className="directions"
+              
+              <Box
                 sx={{
                   maxHeight: { xs: '250px', sm: '350px' }, 
                   overflowY: 'auto',
@@ -822,64 +767,46 @@ const NavigationMap = () => {
                   bgcolor: '#fafafa',
                   border: '1px solid #eee',
                   borderRadius: 1.5,
-                  fontSize: '1rem',
                 }}
               >
-                {/* Check if currentPath.directions exists and is a string */}
-                {currentPath && typeof currentPath.directions === 'string' &&
-                  // Split the string by newlines and map each line to a styled paragraph
-                  currentPath.directions.split('\n').filter(step => step.trim() !== '').map((step, index) => {
-                    // Style special for different kinds of directions
-                    let color = 'inherit';
-                    let fontWeight = 400;
-                    let icon = null;
-                    
-                    if (step.startsWith('Start')) {
-                      color = '#4caf50'; // Green for start
-                      fontWeight = 600;
-                      icon = <MyLocationIcon fontSize="small" sx={{ mr: 1, color: '#4caf50' }} />;
-                    } else if (step.startsWith('Turn')) {
-                      color = '#ff9800'; // Orange for turns
-                      fontWeight = 600;
-                      icon = <NavigationIcon fontSize="small" sx={{ mr: 1, color: '#ff9800' }} />;
-                    } else if (step.includes('should be on your')) {
-                      color = '#f44336'; // Red for destination
-                      fontWeight = 600;
-                      icon = <LocationOnIcon fontSize="small" sx={{ mr: 1, color: '#f44336' }} />;
-                    } else if (step.startsWith('Total distance')) {
-                      color = '#1976d2'; // Blue for summary
-                      fontWeight = 600;
-                      icon = <RouteIcon fontSize="small" sx={{ mr: 1, color: '#1976d2' }} />;
-                    } else if (step.startsWith('Walk')) {
-                      icon = <ArrowUpwardIcon fontSize="small" sx={{ mr: 1, color: '#616161' }} />;
-                    } else if (step.startsWith('Continue')) {
-                      icon = <ArrowForwardIcon fontSize="small" sx={{ mr: 1, color: '#616161' }} />;
-                    }
-                    
-                    return (
-                      <Typography
-                        key={index}
-                        variant="body2"
-                        component="p"
-                        sx={{ 
-                          mb: 1.5,
-                          color,
-                          fontWeight,
-                          display: 'flex',
-                          alignItems: 'center',
-                          pl: 0,
-                        }}
-                      >
-                        {icon}
-                        {step.trim()}
-                      </Typography>
-                    );
-                  })
-                }
-                {/* Handle cases where directions might not be a string or are empty */}
-                {currentPath && typeof currentPath.directions !== 'string' && (
-                  <Typography variant="body2" color="error">Error: Directions format incorrect.</Typography>
-                )}
+                {instructions.map((instruction, index) => {
+                  // Style based on instruction type - had to handle each case
+                  let color = 'inherit';
+                  let fontWeight = 400;
+                  let icon = null;
+                  
+                  if (instruction.type === 'start') {
+                    color = '#4caf50'; // Green for start
+                    fontWeight = 600;
+                    icon = <MyLocationIcon fontSize="small" sx={{ mr: 1, color: '#4caf50' }} />;
+                  } else if (instruction.type === 'destination') {
+                    color = '#f44336'; // Red for destination
+                    fontWeight = 600;
+                    icon = <LocationOnIcon fontSize="small" sx={{ mr: 1, color: '#f44336' }} />;
+                  } else if (instruction.type === 'junction') {
+                    color = '#ff9800'; // Orange for turns
+                    fontWeight = 600;
+                    icon = <NavigationIcon fontSize="small" sx={{ mr: 1, color: '#ff9800' }} />;
+                  }
+                  
+                  return (
+                    <Typography
+                      key={`instruction-${index}`}
+                      variant="body2"
+                      component="p"
+                      sx={{ 
+                        mb: 1.5,
+                        color,
+                        fontWeight,
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {icon}
+                      {index + 1}. {instruction.text}
+                    </Typography>
+                  );
+                })}
               </Box>
             </Paper>
           )}
@@ -889,4 +816,4 @@ const NavigationMap = () => {
   );
 };
 
-export default NavigationMap; 
+export default CampusNavigation;

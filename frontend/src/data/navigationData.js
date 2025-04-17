@@ -1,362 +1,97 @@
-// Import or define your nodes
-const nodes = [
-  { name: "3R018", x: 2116, y: 725, type: "room" },
-  { name: "3R017", x: 1989, y: 466, type: "room" },
-  { name: "3R019", x: 1989, y: 723, type: "room" },
-  { name: "WC1", x: 2116, y: 605, type: "room" },
-  { name: "3R0T1", x: 2116, y: 509, type: "room" },
-  { name: "3R0T2", x: 2116, y: 357, type: "room" },
-  { name: "Emergency-Exit", x: 2075, y: 269, type: "room" },
-  { name: "3R016", x: 1926, y: 269, type: "room" },
-  { name: "3R014", x: 1656, y: 269, type: "room" },
-  { name: "3R012", x: 1266, y: 269, type: "room" },
-  { name: "3R010", x: 817, y: 269, type: "room" },
-  { name: "3R008", x: 526, y: 269, type: "room" },
-  { name: "3R013", x: 1142, y: 326, type: "room" },
-  { name: "3R006", x: 374, y: 414, type: "room" },
-  { name: "3R009", x: 558, y: 587, type: "room" },
-  { name: "3R005", x: 558, y: 670, type: "room" },
-  { name: "3R011", x: 793, y: 587, type: "room" },
-  { name: "3R004", x: 793, y: 670, type: "room" },
-  { name: "3R003", x: 1023, y: 670, type: "room" },
-  { name: "3R002", x: 1254, y: 670, type: "room" },
-  { name: "3R015", x: 1585, y: 850, type: "room" },
-  { name: "3R020", x: 2116, y: 916, type: "room" },
-  { name: "3R021", x: 1706, y: 1147, type: "room" },
-  { name: "3R022", x: 2116, y: 1156, type: "room" },
-  { name: "3R024", x: 2116, y: 1441, type: "room" },
-  { name: "3R025", x: 2116, y: 1711, type: "room" },
-  { name: "3R023", x: 1848, y: 1776, type: "room" },
-  { name: "3R026", x: 1588, y: 1845, type: "room" },
-  { name: "3R027", x: 1588, y: 1777, type: "room" },
-  { name: "3R028", x: 1588, y: 1270, type: "room" },
-  { name: "3R030", x: 670, y: 2097, type: "room" },
-  { name: "3R035", x: 1023, y: 2038, type: "room" },
-  { name: "Emergency-Exit-2", x: 1368, y: 2142, type: "room" },
-  { name: "3R031", x: 1021, y: 1565, type: "room" },
-  { name: "3R032", x: 904, y: 1503, type: "room" },
-  { name: "3R033", x: 786, y: 1565, type: "room" },
-  { name: "3R034", x: 549, y: 1565, type: "room" },
-  
-  // Main junctions - keep existing
-  { name: "Junction1", x: 1420, y: 960, type: "Junction" },
-  { name: "Junction2", x: 1420, y: 631, type: "Junction" },
-  { name: "Junction3", x: 1420, y: 309, type: "Junction" },
-  { name: "Junction4", x: 410, y: 310, type: "Junction" },
-  { name: "Junction5", x: 410, y: 631, type: "Junction" },
-  { name: "Junction6", x: 2048, y: 312, type: "Junction" },
-  { name: "Junction7", x: 2048, y: 931, type: "Junction" },
-  { name: "Junction8", x: 2048, y: 1809, type: "Junction" },
-  { name: "Junction9", x: 1308, y: 1531, type: "Junction" },
-  { name: "Junction10", x: 1308, y: 1812, type: "Junction" },
-  { name: "Junction11", x: 1308, y: 2087, type: "Junction" },
-  { name: "Junction12", x: 1588, y: 1147, type: "Junction" },
-  { name: "Junction13", x: 1588, y: 1531, type: "Junction" },
-  { name: "Junction14", x: 1848, y: 1147, type: "Junction" },
-  { name: "Junction15", x: 1848, y: 1531, type: "Junction" },
-  { name: "Junction16", x: 675, y: 1565, type: "Junction" },
-  { name: "Junction17", x: 675, y: 2087, type: "Junction" },
-  { name: "Junction18", x: 1023, y: 1812, type: "Junction" },
-  
-  // Add more junctions for problematic areas (especially upper left quadrant)
-  { name: "Junction19", x: 526, y: 350, type: "Junction" }, // Junction for 3R008 hallway
-  { name: "Junction20", x: 675, y: 350, type: "Junction" }, // Junction between 3R008 and 3R010
-  { name: "Junction21", x: 558, y: 450, type: "Junction" }, // Junction connecting 3R009 to upper hallway
-  { name: "Junction22", x: 675, y: 450, type: "Junction" }, // Junction for central upper left area
-  { name: "Junction23", x: 793, y: 450, type: "Junction" }, // Junction for central upper area
-  { name: "Junction24", x: 910, y: 450, type: "Junction" }, // Junction for right side of upper area
-  { name: "Junction25", x: 910, y: 350, type: "Junction" }, // Junction near 3R013
-  { name: "Junction26", x: 1142, y: 450, type: "Junction" }, // Junction connecting to 3R013
-  
-  // Existing hallway nodes
-  { name: "Hallway1", x: 1138, y: 670, type: "Hallway" },
-  { name: "Hallway2", x: 910, y: 670, type: "Hallway" },
-  { name: "Hallway3", x: 676, y: 670, type: "Hallway" },
-  { name: "Hallway4", x: 676, y: 587, type: "Hallway" },
-  { name: "Hallway5", x: 1138, y: 309, type: "Hallway" },
-  { name: "Hallway6", x: 675, y: 309, type: "Hallway" },
-  { name: "Hallway7", x: 1420, y: 450, type: "Hallway" },
-  { name: "Hallway8", x: 1420, y: 800, type: "Hallway" },
-  { name: "Hallway9", x: 1308, y: 1650, type: "Hallway" },
-  { name: "Hallway10", x: 1308, y: 1950, type: "Hallway" },
-  { name: "Hallway11", x: 1023, y: 1800, type: "Hallway" },
-  { name: "Hallway12", x: 786, y: 1450, type: "Hallway" },
-  { name: "Hallway13", x: 2048, y: 600, type: "Hallway" },
-  { name: "Hallway14", x: 2048, y: 1300, type: "Hallway" },
-  { name: "Hallway15", x: 2048, y: 1600, type: "Hallway" },
-  { name: "Hallway16", x: 1588, y: 1400, type: "Hallway" },
-  { name: "Hallway17", x: 1588, y: 1650, type: "Hallway" },
-  { name: "Hallway18", x: 1706, y: 1270, type: "Hallway" },
-  { name: "Hallway19", x: 1706, y: 1400, type: "Hallway" },
-  { name: "Hallway20", x: 1706, y: 1531, type: "Hallway" },
-  { name: "Hallway21", x: 1706, y: 1650, type: "Hallway" },
-  { name: "Hallway22", x: 1848, y: 1270, type: "Hallway" },
-  { name: "Hallway23", x: 1848, y: 1400, type: "Hallway" },
-  { name: "Hallway24", x: 1848, y: 1650, type: "Hallway" },
-  { name: "Hallway25", x: 2048, y: 1147, type: "Hallway" },
-  { name: "Hallway26", x: 1706, y: 1777, type: "Hallway" },
-  
-  // Add more hallway nodes for problematic areas
-  { name: "Hallway27", x: 526, y: 450, type: "Hallway" }, // Hallway connecting 3R008 and 3R009
-  { name: "Hallway28", x: 526, y: 520, type: "Hallway" }, // Hallway vertical between 3R009 and upper hallway
-  { name: "Hallway29", x: 675, y: 520, type: "Hallway" }, // Hallway horizontal for middle section
-  { name: "Hallway30", x: 793, y: 520, type: "Hallway" }, // Hallway for 3R011 connections
-  { name: "Hallway31", x: 910, y: 520, type: "Hallway" }, // Hallway for right side middle section
-  { name: "Hallway32", x: 910, y: 580, type: "Hallway" }, // Hallway near 3R003
-  { name: "Hallway33", x: 1142, y: 580, type: "Hallway" }, // Hallway near 3R002
-  { name: "Hallway34", x: 1266, y: 450, type: "Hallway" }, // Hallway connecting upper middle
-  { name: "Hallway35", x: 1266, y: 580, type: "Hallway" }, // Hallway near 3R002
-  { name: "Hallway36", x: 374, y: 350, type: "Hallway" }, // Hallway near 3R006
-  { name: "Hallway37", x: 374, y: 520, type: "Hallway" }, // Hallway vertical left side
-  { name: "Hallway38", x: 1656, y: 450, type: "Hallway" }, // Upper right hallway near 3R014
-  { name: "Hallway39", x: 1926, y: 450, type: "Hallway" }, // Upper right hallway near 3R016
-  { name: "Hallway40", x: 817, y: 350, type: "Hallway" }, // Hallway near 3R010
-];
+// This file has all the room data and connections for the navigation system
 
-// Create adjacency list for graph
-const createNavigationGraph = () => {
-  // Clone the nodes array and add connections property
-  const graph = nodes.map(node => ({
-    ...node,
-    connections: []
-  }));
-
-  // Create node lookup by name for faster access
-  const nodeMap = {};
-  graph.forEach(node => {
-    nodeMap[node.name] = node;
-  });
-
-  // Helper function to calculate distance between two nodes
-  const calculateDistance = (node1, node2) => {
-    return Math.sqrt(
-      Math.pow(node1.x - node2.x, 2) + Math.pow(node1.y - node2.y, 2)
-    );
-  };
-
-  // Helper function to find adjacent nodes of the same type (room-to-room, hallway-to-hallway)
-  const findSameTypeAdjacentNodes = (node, threshold = 80) => {
-    const adjacentNodes = [];
-    
-    graph.forEach(otherNode => {
-      if (otherNode.name !== node.name && otherNode.type === node.type) {
-        const distance = calculateDistance(node, otherNode);
-        if (distance < threshold) {
-          adjacentNodes.push(otherNode);
-        }
-      }
-    });
-    
-    return adjacentNodes;
-  };
-
-  // Helper function to find nearest junction or hallway for a room
-  const findNearestNavigationNode = (room, maxDistance = 150) => {
-    const navigationNodes = [];
-    
-    graph.forEach(node => {
-      if ((node.type === "Junction" || node.type === "Hallway") && node.name !== room.name) {
-        const distance = calculateDistance(room, node);
-        if (distance < maxDistance) {
-          navigationNodes.push({ node, distance });
-        }
-      }
-    });
-    
-    // Sort by distance and return the closest nodes (up to 3)
-    return navigationNodes
-      .sort((a, b) => a.distance - b.distance)
-      .slice(0, 3)
-      .map(item => item.node);
-  };
-
-  // Connect each node to appropriate navigation nodes
-  graph.forEach(node => {
-    // Connect rooms to navigation nodes
-    if (node.type === "room") {
-      // Find multiple nearby navigation nodes (not just the closest)
-      const nearestNodes = findNearestNavigationNode(node);
-      
-      nearestNodes.forEach(navNode => {
-        if (!node.connections.includes(navNode.name)) {
-          node.connections.push(navNode.name);
-          navNode.connections.push(node.name);
-        }
-      });
-      
-      // Also connect to adjacent rooms
-      const adjacentRooms = findSameTypeAdjacentNodes(node);
-      adjacentRooms.forEach(adjacentRoom => {
-        if (!node.connections.includes(adjacentRoom.name)) {
-          node.connections.push(adjacentRoom.name);
-          adjacentRoom.connections.push(node.name);
-        }
-      });
-    } 
-    // Connect hallways and junctions to nearby nodes of the same type
-    else if (node.type === "Hallway" || node.type === "Junction") {
-      const adjacentNodes = findSameTypeAdjacentNodes(node, 150);
-      adjacentNodes.forEach(adjacentNode => {
-        if (!node.connections.includes(adjacentNode.name)) {
-          node.connections.push(adjacentNode.name);
-          adjacentNode.connections.push(node.name);
-        }
-      });
-    }
-  });
-
-  // Connect nodes explicitly to ensure proper hallway navigation
-  const connectNodes = (node1Name, node2Name) => {
-    const n1 = nodeMap[node1Name];
-    const n2 = nodeMap[node2Name];
-    if (n1 && n2) {
-      if (!n1.connections.includes(n2.name)) {
-        n1.connections.push(n2.name);
-      }
-      if (!n2.connections.includes(n1.name)) {
-        n2.connections.push(n1.name);
-      }
-    }
-  };
-
-  // Connect all main hallways and junctions structurally
-  // Main corridor connections
-  connectNodes("Junction1", "Junction2");
-  connectNodes("Junction2", "Junction3");
-  connectNodes("Junction3", "Junction4");
-  connectNodes("Junction4", "Junction5");
-  connectNodes("Junction5", "Junction1");
-  
-  connectNodes("Junction3", "Junction6");
-  connectNodes("Junction6", "Junction7");
-  connectNodes("Junction7", "Junction8");
-  
-  connectNodes("Junction1", "Junction9");
-  connectNodes("Junction9", "Junction10");
-  connectNodes("Junction10", "Junction11");
-  
-  // Connect new junctions
-  connectNodes("Junction9", "Junction13");
-  connectNodes("Junction10", "Junction18");
-  connectNodes("Junction13", "Junction15");
-  connectNodes("Junction12", "Junction14");
-  connectNodes("Junction14", "Junction15");
-  connectNodes("Junction16", "Junction17");
-  
-  // Upper left quadrant - specific connections for 3R008, 3R009, etc.
-  connectNodes("Junction4", "Junction19");
-  connectNodes("Junction19", "Junction20");
-  connectNodes("Junction20", "Junction23");
-  connectNodes("Junction23", "Junction24");
-  connectNodes("Junction24", "Junction25");
-  connectNodes("Junction25", "Junction26");
-  connectNodes("Junction26", "Junction3");
-  
-  connectNodes("Junction19", "Junction21");
-  connectNodes("Junction21", "Junction22");
-  connectNodes("Junction22", "Junction23");
-  
-  // Connect rooms to proper junctions
-  connectNodes("3R008", "Junction19");
-  connectNodes("3R010", "Junction20");
-  connectNodes("3R009", "Junction21");
-  connectNodes("3R011", "Junction23");
-  connectNodes("3R013", "Junction26");
-  connectNodes("3R006", "Junction4");
-  
-  // Connect hallway nodes for proper paths
-  connectNodes("Hallway1", "Hallway2");
-  connectNodes("Hallway2", "Hallway3");
-  connectNodes("Hallway7", "Hallway8");
-  connectNodes("Hallway9", "Hallway10");
-  connectNodes("Hallway13", "Hallway14");
-  connectNodes("Hallway14", "Hallway15");
-  
-  // Connect 3R002, 3R003, 3R004, and 3R005
-  connectNodes("3R002", "Hallway33");
-  connectNodes("Hallway33", "Hallway35");
-  connectNodes("Hallway35", "Hallway1");
-  connectNodes("Hallway1", "3R003");
-  connectNodes("3R003", "Hallway32");
-  connectNodes("Hallway32", "Hallway31");
-  connectNodes("Hallway31", "Hallway30");
-  connectNodes("Hallway30", "3R004");
-  connectNodes("3R004", "Hallway3");
-  connectNodes("Hallway3", "3R005");
-  
-  // Connect the new hallway nodes for complex paths
-  connectNodes("3R027", "Hallway17");
-  connectNodes("Hallway17", "Hallway16");
-  connectNodes("Hallway16", "Junction13");
-  connectNodes("Junction13", "Hallway20");
-  connectNodes("Hallway20", "Hallway19");
-  connectNodes("Hallway19", "Hallway18");
-  connectNodes("Hallway18", "Junction12");
-  connectNodes("Junction12", "3R021");
-  
-  // Add new connections for improved navigation
-  connectNodes("3R009", "Hallway28");
-  connectNodes("Hallway28", "Hallway27");
-  connectNodes("Hallway27", "3R008");
-  connectNodes("3R009", "Hallway29");
-  connectNodes("Hallway29", "Hallway30");
-  connectNodes("3R011", "Hallway30");
-  
-  // Connect upper hallways
-  connectNodes("Junction19", "Hallway27");
-  connectNodes("Hallway27", "Hallway28");
-  connectNodes("Hallway28", "Hallway29");
-  connectNodes("Hallway29", "Hallway30");
-  connectNodes("Hallway30", "Hallway31");
-  connectNodes("Hallway31", "Hallway32");
-  connectNodes("Hallway32", "Hallway33");
-  connectNodes("Hallway33", "Hallway35");
-  connectNodes("Hallway35", "Hallway34");
-  connectNodes("Hallway34", "Junction2");
-  
-  // Additional connections for 3R006
-  connectNodes("3R006", "Hallway36");
-  connectNodes("Hallway36", "Hallway37");
-  connectNodes("Hallway37", "3R005");
-  
-  // Connect upper right section
-  connectNodes("Junction3", "Hallway38");
-  connectNodes("Hallway38", "3R014");
-  connectNodes("Hallway38", "Hallway39");
-  connectNodes("Hallway39", "3R016");
-  
-  // Left side connections
-  connectNodes("Junction4", "Hallway36");
-  connectNodes("Hallway36", "3R006");
-  
-  // Center upper connections
-  connectNodes("Junction20", "Hallway40");
-  connectNodes("Hallway40", "3R010");
-  
-  // Let's also verify and fix any missing connections
-  connectNodes("3R028", "Hallway18");
-  connectNodes("3R023", "Hallway24");
-  connectNodes("Hallway24", "Hallway23");
-  connectNodes("Hallway23", "Hallway22");
-  connectNodes("Hallway22", "Junction14");
-  connectNodes("3R026", "Hallway26");
-  connectNodes("Hallway26", "3R027");
-  
-  // Horizontal connections for grid-like movement
-  connectNodes("Hallway16", "Hallway19");
-  connectNodes("Hallway19", "Hallway23");
-  connectNodes("Hallway17", "Hallway21");
-  connectNodes("Hallway21", "Hallway24");
-  connectNodes("Junction15", "Hallway23");
-  connectNodes("Hallway25", "Junction14");
-  connectNodes("3R022", "Hallway25");
-  connectNodes("Junction7", "Hallway25");
-  connectNodes("Junction12", "Hallway16");
-
-  return { nodes: graph, nodeMap };
+// Quick check to see if a node is a room (vs a junction/corridor)
+export const isRoom = (node) => {
+  return 'width' in node && 'height' in node;
 };
 
-// Create and export the navigation graph
-const navigationGraph = createNavigationGraph();
+// Config settings for nav system
+export const navigationConfig = {
+  // Turn this on to show all the node labels (can get messy)
+  showNodeLabels: false
+};
 
-export default navigationGraph; 
+export const waypoints = [
+  // Blue waypoints (junctions)
+  { id: "J1", type: "junction", x: 205, y: 160, connections: ["J2", "J4", "C1", "3R006", "3R008"] },
+  { id: "J2", type: "junction", x: 710, y: 160, connections: ["J1", "J3", "J5", "C13", "C3", "3R012", "3R014", "C43"] },
+  { id: "J3", type: "junction", x: 1025, y: 220, connections: ["J2", "J6", "C9", "C42", "3R016", "3R012T", "3R017"] },
+  { id: "J4", type: "junction", x: 205, y: 330, connections: ["J1", "J5", "C11", "C18", "3R005", "3R009"] },
+  { id: "J5", type: "junction", x: 710, y: 330, connections: ["J2", "J4", "J7", "C13", "C19", "3R015"] },
+  { id: "J6", type: "junction", x: 1025, y: 485, connections: ["J3", "J7", "J10", "C22", "CR2", "3R018", "3R019", "3R020"] },
+  { id: "J7", type: "junction", x: 710, y: 485, connections: ["J5", "J6", "J8", "C24", "3R021"] },
+  { id: "J8", type: "junction", x: 710, y: 800, connections: ["J7", "J9", "J11", "CV4"] },
+  { id: "J9", type: "junction", x: 775, y: 600, connections: ["J7", "J8", "J10", "J12", "C34", "3R027", "3R028"] },
+  { id: "J10", type: "junction", x: 1025, y: 775, connections: ["J6", "J6", "J12", "C42", "3R024", "3R025"] },
+  { id: "J11", type: "junction", x: 650, y: 800, connections: ["J8", "J13", "C31", "C28", "C32", "C33", "C38", "CH7"] },
+  { id: "J12", type: "junction", x: 1025, y: 940, connections: [ "J10", "J13", "C40", "C41"] },
+  { id: "J13", type: "junction", x: 642, y: 945, connections: ["J11", "J12", "C41", "CH3", "CH7", "3R026", "C40"] },
+
+  // Corridors - needed these for smoother paths and direct room access
+  { id: "C1", type: "corridor", x: 267, y: 160, connections: ["J1", "J2", "3R008", "3R010", "C43"] },
+  { id: "C3", type: "corridor", x: 630, y: 160, connections: ["J2", "3R012", "3R014"] },
+  { id: "C9", type: "corridor", x: 1000, y: 200, connections: ["J3", "3R017", "3R011T"] },
+  { id: "C11", type: "corridor", x: 368, y: 290, connections: ["J4", "J5", "3R011", "3R004"] },
+  { id: "C13", type: "corridor", x: 580, y: 160, connections: ["J2", "3R013", "3R015"] },
+  { id: "C18", type: "corridor", x: 368, y: 325, connections: ["J4", "J5", "3R004", "3R003"] },
+  { id: "C19", type: "corridor", x: 477, y: 325, connections: ["J5", "3R003", "3R002"] },
+  { id: "C22", type: "corridor", x: 1025, y: 420, connections: ["J6", "3R018", "3R019", "C24"] },
+  { id: "C24", type: "corridor", x: 863, y: 490, connections: ["J7", "J6", "3R019", "3R021"] },
+  { id: "C28", type: "corridor", x: 460, y: 800, connections: ["J8", "J11", "3R032"] },
+  { id: "C31", type: "corridor", x: 300, y: 800, connections: ["J11", "3R034"] },
+  { id: "C32", type: "corridor", x: 400, y: 800, connections: ["J11", "3R033"] },
+  { id: "C33", type: "corridor", x: 510, y: 800, connections: ["J11", "3R031"] },
+  { id: "C34", type: "corridor", x: 715, y: 940, connections: ["J8", "J9", "3R027"] },
+  { id: "C34.5", type: "corridor", x: 800, y: 940, connections: ["C34", "3R027"] },
+  { id: "C38", type: "corridor", x: 500, y: 1080, connections: ["3R035", "CH7", "3R030"] },
+  { id: "C40", type: "corridor", x: 900, y: 940, connections: ["J12", "J13", "3R023"] },
+  { id: "C41", type: "corridor", x: 742, y: 940, connections: ["J13", "3R026"] },
+  { id: "C42", type: "corridor", x: 1025, y: 600, connections: ["J6", "J10", "3R022"] },
+  { id: "C43", type: "corridor", x: 380, y: 160, connections: [ "C1", "J2", "3R022"] },
+  
+  { id: "CV4", type: "corridor", x: 800, y: 625, connections: ["J8", "J9", "3R028"] },
+  { id: "CR2", type: "corridor", x: 1020, y: 450, connections: ["J6", "3R020"] },
+  { id: "CH1", type: "corridor", x: 300, y: 780, connections: ["J11", "3R034"] },
+  { id: "CH3", type: "corridor", x: 580, y: 945, connections: ["J11", "J13"] },
+  { id: "CH7", type: "corridor", x: 642, y: 1080, connections: ["J13", "3R035"] }
+];
+
+export const rooms = [
+  { id: "3R002", name: "Lecture Room", type: "Room", x: 584, y: 362, width: 65, height: 41, connections: ["C19", "J5"] },
+  { id: "3R003", name: "Lecture Room", type: "Room", x: 477, y: 362, width: 65, height: 41, connections: ["C18", "C19", "J5"] },
+  { id: "3R004", name: "Lecture Room", type: "Room", x: 365, y: 362, width: 65, height: 41, connections: ["C11", "C18"] },
+  { id: "3R005", name: "Enterprise and Innovation Centre", type: "Centre", x: 254, y: 398, width: 83, height: 41, connections: ["J4"] },
+  { id: "3R006", name: "Lecture Room", type: "Room", x: 135, y: 244, width: 83, height: 41, connections: ["J1"] },
+  { id: "3R008", name: "RMC", type: "Centre", x: 226, y: 94, width: 83, height: 41, connections: ["C1", "J1"] },
+  { id: "3R009", name: "Lecture Room", type: "Room", x: 230, y: 216, width: 122, height: 47, connections: ["J4"] },
+  { id: "3R010", name: "Mechanical Workshop", type: "Lab", x: 380, y: 74, width: 122, height: 47, connections: ["C43"] },
+  { id: "3R011", name: "Lecture Room", type: "Room", x: 368, y: 216, width: 122, height: 47, connections: ["C11"] },
+  { id: "3R011T", name: "Women's Bathroom", type: "Bathroom", x: 1065, y: 250, width: 65, height: 41, connections: ["C9", "J3"] },
+  { id: "3R012", name: "Green Engineering Lab", type: "Lab", x: 589, y: 74, width: 122, height: 47, connections: ["C3", "J2"] },
+  { id: "3R012T", name: "Men's Bathroom", type: "Bathroom", x: 1065, y: 170, width: 65, height: 41, connections: ["J3"] },
+  { id: "3R013", name: "Materials and structure Lab", type: "Lab", x: 533, y: 223, width: 122, height: 47, connections: ["C13"] },
+  { id: "3R014", name: "Aerospace Lab", type: "Lab", x: 771, y: 74, width: 122, height: 47, connections: ["C3", "J2"] },
+  { id: "3R015", name: "Design Studio", type: "Studio", x: 741, y: 287, width: 122, height: 47, connections: ["C13", "J5"] },
+  { id: "3R016", name: "Thermodynamics & Fluid Mechanics Lab", type: "Lab", x: 915, y: 74, width: 122, height: 47, connections: ["J3"] },
+  { id: "3R017", name: "Lecture Room", type: "Room", x: 863, y: 228, width: 122, height: 47, connections: ["C9", "J3"] },
+  { id: "3R018", name: "Lecture Room", type: "Room", x: 1085, y: 350, width: 65, height: 41, connections: ["C22", "J6"] },
+  { id: "3R019", name: "Lecture Room", type: "Room", x: 863, y: 341, width: 122, height: 47, connections: ["C22"] },
+  { id: "3R020", name: "Lecture Room", type: "Room", x: 1085, y: 450, width: 65, height: 41, connections: ["CR2", "J6"] },
+  { id: "3R021", name: "Lecture Room", type: "Room", x: 863, y: 543, width: 122, height: 47, connections: ["C24", "J7"] },
+  { id: "3R022", name: "Lecture Room", type: "Room", x: 1085, y: 600, width: 65, height: 41, connections: ["C42"] },
+  { id: "3R023", name: "Computer Science Lab 1", type: "Lab", x: 863, y: 850, width: 122, height: 47, connections: ["C40"] },
+  { id: "3R024", name: "Lecture Room", type: "Room", x: 1085, y: 750, width: 65, height: 41, connections: ["J10"] },
+  { id: "3R025", name: "Lecture Room", type: "Room", x: 1085, y: 850, width: 65, height: 41, connections: ["J10", "J12"] },
+  { id: "3R026", name: "Lecture Hall", type: "Hall", x: 742, y: 972, width: 122, height: 47, connections: ["C41"] },
+  { id: "3R027", name: "Computer Science Lab 2", type: "Lab", x: 735, y: 820, width: 122, height: 47, connections: ["C34.5"] },
+  { id: "3R028", name: "Computer Science Lab 3", type: "Lab", x: 742, y: 650, width: 122, height: 47, connections: ["CV4"] },
+  { id: "3R030", name: "Lecture Room", type: "Room", x: 477, y: 950, width: 65, height: 41, connections: ["C38"] },
+  { id: "3R031", name: "Lecture Room", type: "Room", x: 477, y: 820, width: 65, height: 41, connections: ["C33"] },
+  { id: "3R032", name: "Engineering Foundation Lab 1", type: "Lab", x: 400, y: 700, width: 122, height: 47, connections: ["C28"] },
+  { id: "3R033", name: "Engineering Foundation Lab 2", type: "Lab", x: 365, y: 820, width: 122, height: 47, connections: ["C32"] },
+  { id: "3R034", name: "Engineering Foundation Lab 3", type: "Lab", x: 254, y: 820, width: 122, height: 47, connections: ["C31", "CH1"] },
+  { id: "3R035", name: "Female Surau", type: "Room", x: 254, y: 1080, width: 83, height: 41, connections: ["CH7"] }
+];
+
+// Combined array of all the nodes - easier to loop through
+export const allNodes = [...rooms, ...waypoints];
