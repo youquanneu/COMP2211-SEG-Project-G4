@@ -82,20 +82,29 @@ function UserCalendar() {
   // Combine events and bookings for selected date
   const selectedDateItems = [
     ...events
-      .filter((event) => event.date === date.toISOString().split('T')[0])
+      .filter((event) => {
+        const eventDate = new Date(event.date);
+        eventDate.setHours(0, 0, 0, 0); // Normalize event date to midnight
+        const selectedDateNormalized = new Date(date);
+        selectedDateNormalized.setHours(0, 0, 0, 0);
+        return eventDate.getTime() === selectedDateNormalized.getTime();
+      })
       .map((event) => ({ ...event, type: 'event' })),
     ...bookings
       .filter((booking) => {
-        const bookingDate = new Date(booking.reservationStarting).toISOString().split('T')[0];
-        return bookingDate === date.toISOString().split('T')[0];
+        const bookingDate = new Date(booking.reservationStarting);
+        bookingDate.setHours(0, 0, 0, 0); // Normalize booking date to midnight
+        const selectedDateNormalized = new Date(date);
+        selectedDateNormalized.setHours(0, 0, 0, 0);
+        return bookingDate.getTime() === selectedDateNormalized.getTime();
       })
       .map((booking) => ({
-        id: booking.id,
+        id: booking.reservationId,
         date: new Date(booking.reservationStarting).toISOString().split('T')[0],
         topic: `Booking: ${booking.resourceDTO?.resourceName || 'Unknown'}`,
-        area: booking.purpose,
+        area: booking.purpose || 'No purpose specified', // Ensure purpose is shown, even if empty
         organizers: booking.userDTO?.email || 'User',
-        description: booking.time,
+        description: `${new Date(booking.reservationStarting).toLocaleString()} - ${new Date(booking.reservationEnding).toLocaleString()}`, // Formatting the time
         type: 'booking',
       })),
   ];

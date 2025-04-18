@@ -32,11 +32,11 @@ function UserEvent() {
             eventId: 1,
             eventTitle: 'AI Seminar',
             area: 'Lecture Hall 1',
-            date: '2025-04-15',
-            time: '09:00-10:00',
-            venue: 'Room A',
-            organizer: { userId: 1, username: 'john', email: 'john@example.com', userRole: 'student' },
-            description: 'Learn about AI advancements.',
+            eventStarting: '2025-04-15T09:00:00',
+            eventEnding: '2025-04-15T10:00:00',
+            venues: [{ venueName: 'Room A' }],
+            organizer: [{ userId: 1, username: 'john', email: 'john@example.com', userRole: 'student' }],
+            eventDescription: 'Learn about AI advancements.',
             imageUrl: 'http://example.com/image.jpg',
           },
         ];
@@ -45,11 +45,11 @@ function UserEvent() {
         return;
       }
 
-      await sendLog('fetch_events', 'Fetched events');
       try {
+        await sendLog('fetch_events', 'Fetching events from API');
         const response = await axios.get(getAPI_URL('user/event/getAllEvent'));
-        console.log('API Response:', response.data); // Debug
-        console.log('API Response Type:', typeof response.data, Array.isArray(response.data)); // Debug
+        console.log('API Response:', response.data);
+
         let eventData = response.data;
 
         // Handle various response structures
@@ -62,37 +62,24 @@ function UserEvent() {
             eventData = eventData.result;
           } else {
             setError('Invalid event data format. Expected an array.');
-            console.error('Response structure:', JSON.stringify(response.data, null, 2));
             return;
           }
         }
 
-        // Log first event's keys to debug field names
-        if (eventData.length > 0) {
-          console.log('First event keys:', Object.keys(eventData[0]));
-        }
-
-        // Check for missing eventId/id
-        eventData.forEach((event, index) => {
-          if (!event.eventId && !event.id) {
-            console.warn(`Event at index ${index} missing eventId/id:`, event);
-          }
-        });
-
         setEvents(eventData);
         if (eventData.length === 0) {
-          setError(''); // Clear error for empty array
+          setError('No events available.');
         }
+
       } catch (err) {
         setError('Failed to load events. Check if backend is running.');
-        console.error('Fetch error:', err.message, err.response?.data);
+        console.error('Fetch error:', err.message);
       }
     };
     fetchEvents();
   }, []);
 
   const handleEventClick = (event) => {
-    console.log('Selected event:', event); // Debug
     setSelectedEvent(event);
     sendLog('select_event', event.eventTitle || 'Unknown');
   };
@@ -107,29 +94,32 @@ function UserEvent() {
     sendLog('back', 'Clicked back to userhome');
   };
 
-  // Format date safely
-  const formatDate = (dateStr) => {
+  // Format date and time
+  const formatDateTime = (dateStr) => {
     try {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) {
         return 'Invalid Date';
       }
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleString('en-US', {
         month: 'long',
         day: 'numeric',
         year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       });
     } catch {
       return 'Invalid Date';
     }
   };
 
-  // Format organizer safely
-  const formatOrganizer = (organizer) => {
-    if (typeof organizer === 'object' && organizer) {
-      return organizer.username || organizer.email || 'N/A';
-    }
-    return organizer || 'N/A';
+  // Generate Google Calendar link
+  const generateCalendarLink = (event) => {
+    const startTime = new Date(event.eventStarting).toISOString();
+    const endTime = new Date(event.eventEnding).toISOString();
+    const calendarLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.eventTitle)}&dates=${startTime.replace(/[-:]/g, '')}/${endTime.replace(/[-:]/g, '')}&details=${encodeURIComponent(event.eventDescription)}&location=${encodeURIComponent(event.area)}&sf=true&output=xml`;
+
+    return calendarLink;
   };
 
   return (
@@ -162,11 +152,14 @@ function UserEvent() {
                     <strong>Area:</strong> {event.area || 'N/A'}
                   </p>
                   <p>
-                    <strong>Date:</strong> {formatDate(event.date)}
+                    <strong>Start:</strong> {formatDateTime(event.eventStarting)}
                   </p>
                   <p>
-                    <strong>Time:</strong> {event.time || 'N/A'}
+                    <strong>End:</strong> {formatDateTime(event.eventEnding)}
                   </p>
+                  <a href={generateCalendarLink(event)} target="_blank" rel="noopener noreferrer">
+                    <button className="add-to-calendar-btn">Add to Calendar</button>
+                  </a>
                 </div>
               </div>
             ))
@@ -198,20 +191,41 @@ function UserEvent() {
               <strong>Area:</strong> {selectedEvent.area || 'N/A'}
             </p>
             <p>
-              <strong>Date:</strong> {formatDate(selectedEvent.date)}
+              <strong>Start:</strong> {formatDateTime(selectedEvent.eventStarting)}
             </p>
             <p>
-              <strong>Time:</strong> {selectedEvent.time || 'N/A'}
+              <strong>End:</strong> {formatDateTime(selectedEvent.eventEnding)}
             </p>
+            <div>
+              <strong>Venues:</strong>
+              {selectedEvent.venues && selectedEvent.venues.length > 0 ? (
+                <ul>
+                  {selectedEvent.venues.map((venue, index) => (
+                    <li key={index}>{venue.venueName || venue.name || 'Unnamed Venue'}</li>
+                  ))}
+                </ul>
+              ) : (
+                ' N/A'
+              )}
+            </div>
+            <div>
+              <strong>Organizers:</strong>
+              {selectedEvent.organizer && selectedEvent.organizer.length > 0 ? (
+                <ul>
+                  {selectedEvent.organizer.map((org, index) => (
+                    <li key={index}>{org.username || org.name || org.email || 'Unnamed Organizer'}</li>
+                  ))}
+                </ul>
+              ) : (
+                ' N/A'
+              )}
+            </div>
             <p>
-              <strong>Venue:</strong> {selectedEvent.venue || 'N/A'}
+              <strong>Description:</strong> {selectedEvent.eventDescription || 'No description available.'}
             </p>
-            <p>
-              <strong>Organizer:</strong> {formatOrganizer(selectedEvent.organizer)}
-            </p>
-            <p>
-              <strong>Description:</strong> {selectedEvent.description || 'No description available.'}
-            </p>
+            <a href={generateCalendarLink(selectedEvent)} target="_blank" rel="noopener noreferrer">
+              <button className="add-to-calendar-btn">Add to Calendar</button>
+            </a>
           </div>
         </div>
       )}

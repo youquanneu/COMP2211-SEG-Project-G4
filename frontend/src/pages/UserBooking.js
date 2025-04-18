@@ -19,7 +19,6 @@ function UserBooking() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // Send log to backend
   const sendLog = async (action, value) => {
     try {
       await axios.post(getAPI_URL('api/logs'), { action, value });
@@ -28,12 +27,10 @@ function UserBooking() {
     }
   };
 
-  // Fetch resources on mount
   useEffect(() => {
     const fetchResources = async () => {
       try {
         const response = await axios.get(getAPI_URL('user/resource/getAllResource'));
-        console.log('API Response:', response.data);
         if (Array.isArray(response.data)) {
           setResources(response.data);
         } else {
@@ -48,7 +45,6 @@ function UserBooking() {
     fetchResources();
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -61,7 +57,6 @@ function UserBooking() {
     };
   }, []);
 
-  // Fetch available time slots
   const handleSearchTimes = async () => {
     await sendLog('search_times', 'Searched times');
     if (!resource || !purpose || !date) {
@@ -70,12 +65,11 @@ function UserBooking() {
     }
     try {
       const formattedDate = date.toISOString().split('T')[0];
-      console.log("Searching for resource : " + resource + " on date: " + formattedDate);
       const response = await axios.post(getAPI_URL('user/reservation/getAvailableTimeSlot'), {
-        resourceDTO: resource, formattedDate
+        resourceDTO: resource,
+        formattedDate
       });
       if (Array.isArray(response.data)) {
-        console.log(response.data);
         setAvailableTimes(response.data);
         setShowDropdown(true);
         setError('');
@@ -90,7 +84,6 @@ function UserBooking() {
   };
 
   const handleSelectTime = (slot) => {
-    console.log("Selected time: ", slot);
     setTime(slot);
     setShowDropdown(false);
     sendLog('select_time', `${slot.startingTime}-${slot.endingTime}`);
@@ -99,25 +92,25 @@ function UserBooking() {
   const handleBook = async () => {
     await sendLog('book', 'Submitted booking');
     if (resource && purpose && date && time) {
-//      const formattedDate = date.toLocaleDateString('en-US', {
-//        month: 'long',
-//        day: 'numeric',
-//        year: 'numeric',
-//      });
       const formattedDate = date.toISOString().split('T')[0];
       const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
 
       const bookingData = {
         userEmail,
-        resourceDTO : resource,
+        resourceDTO: resource,
         purpose,
-        reservationDate : formattedDate,
-        timeSlotDTO : time
+        reservationDate: formattedDate,
+        timeSlotDTO: time
       };
-      console.log(bookingData);
+
       try {
         const response = await axios.post(getAPI_URL('user/reservation/makeReservation'), bookingData);
-        setBookingDetails(response.data);
+        const fullBookingDetails = {
+          ...bookingData,          // Keep what we already know
+          ...response.data         // Override/add anything returned from backend
+        };
+        setBookingDetails(fullBookingDetails);
+        console.log('Full Booking Details:', fullBookingDetails);
         setError('');
       } catch (err) {
         setError('Failed to save booking. Please try again.');
@@ -137,27 +130,26 @@ function UserBooking() {
     <div className="booking-container">
       <h1>Book a Resource</h1>
       {error && <p className="error-message">{error}</p>}
+
       <div className="form-group">
         <label>Resources</label>
         <select
           value={resource ? resource.resourceName : ""}
           onChange={(e) => {
             const selectedResource = resources.find((res) => res.resourceName === e.target.value);
-            setResource(selectedResource || null);  // Store the full resource object
+            setResource(selectedResource || null);
             sendLog('select_resource', selectedResource ? selectedResource.resourceName : 'None');
           }}
         >
           <option value="">Select Resource</option>
-          {resources.map((res) => {
-            const resourceName = res.resourceName || `Resource ID ${res.resourceId}` || 'Unknown Resource';
-            return (
-              <option key={res.resourceId} value={resourceName}>
-                {resourceName}
-              </option>
-            );
-          })}
+          {resources.map((res) => (
+            <option key={res.resourceId} value={res.resourceName}>
+              {res.resourceName || `Resource ID ${res.resourceId}`}
+            </option>
+          ))}
         </select>
       </div>
+
       <div className="form-group">
         <label>Purpose</label>
         <select
@@ -174,6 +166,7 @@ function UserBooking() {
           <option value="Study">Study</option>
         </select>
       </div>
+
       <div className="form-group">
         <label>Date</label>
         <DatePicker
@@ -191,6 +184,7 @@ function UserBooking() {
           className="date-picker"
         />
       </div>
+
       <div className="form-group">
         <label>Time</label>
         <div className="time-input-wrapper" ref={dropdownRef}>
@@ -219,17 +213,19 @@ function UserBooking() {
           )}
         </div>
       </div>
+
       <button onClick={handleBook}>Book</button>
       <button onClick={handleBack} className="back-button">
         Back
       </button>
+
       {bookingDetails && (
         <div className="booking-details">
           <h2>Your Booking</h2>
-          <p>Resource: {bookingDetails.resourceName}</p>
+          <p>Resource: {bookingDetails.resourceDTO?.resourceName}</p>
           <p>Purpose: {bookingDetails.purpose}</p>
-          <p>Date: {bookingDetails.date}</p>
-          <p>Time: {bookingDetails.time}</p>
+          <p>Date: {bookingDetails.reservationDate}</p>
+          <p>Time: {bookingDetails.timeSlotDTO?.startingTime} - {bookingDetails.timeSlotDTO?.endingTime}</p>
         </div>
       )}
     </div>
