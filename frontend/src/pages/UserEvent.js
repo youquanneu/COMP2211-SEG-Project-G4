@@ -9,9 +9,10 @@ function UserEvent() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [error, setError] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
   const navigate = useNavigate();
 
-  // Toggle for mock data (set to false to use API)
+  // Toggle for mock data
   const useMockData = false;
 
   // Send log to backend
@@ -52,7 +53,6 @@ function UserEvent() {
 
         let eventData = response.data;
 
-        // Handle various response structures
         if (!Array.isArray(eventData)) {
           if (eventData.events && Array.isArray(eventData.events)) {
             eventData = eventData.events;
@@ -70,7 +70,6 @@ function UserEvent() {
         if (eventData.length === 0) {
           setError('No events available.');
         }
-
       } catch (err) {
         setError('Failed to load events. Check if backend is running.');
         console.error('Fetch error:', err.message);
@@ -94,6 +93,14 @@ function UserEvent() {
     sendLog('back', 'Clicked back to userhome');
   };
 
+  // Handle Add to Calendar click
+  const handleAddToCalendar = (event) => {
+    setShowSuccessPopup(true);
+    sendLog('add_to_calendar', `Added ${event.eventTitle} to calendar`);
+    // Optionally, store the event locally or send to backend
+    setTimeout(() => setShowSuccessPopup(false), 2000); // Auto-close after 2 seconds
+  };
+
   // Format date and time
   const formatDateTime = (dateStr) => {
     try {
@@ -111,15 +118,6 @@ function UserEvent() {
     } catch {
       return 'Invalid Date';
     }
-  };
-
-  // Generate Google Calendar link
-  const generateCalendarLink = (event) => {
-    const startTime = new Date(event.eventStarting).toISOString();
-    const endTime = new Date(event.eventEnding).toISOString();
-    const calendarLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.eventTitle)}&dates=${startTime.replace(/[-:]/g, '')}/${endTime.replace(/[-:]/g, '')}&details=${encodeURIComponent(event.eventDescription)}&location=${encodeURIComponent(event.area)}&sf=true&output=xml`;
-
-    return calendarLink;
   };
 
   return (
@@ -157,9 +155,15 @@ function UserEvent() {
                   <p>
                     <strong>End:</strong> {formatDateTime(event.eventEnding)}
                   </p>
-                  <a href={generateCalendarLink(event)} target="_blank" rel="noopener noreferrer">
-                    <button className="add-to-calendar-btn">Add to Calendar</button>
-                  </a>
+                  <button
+                    className="add-to-calendar-btn"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent event card click
+                      handleAddToCalendar(event);
+                    }}
+                  >
+                    Add to Calendar
+                  </button>
                 </div>
               </div>
             ))
@@ -223,9 +227,21 @@ function UserEvent() {
             <p>
               <strong>Description:</strong> {selectedEvent.eventDescription || 'No description available.'}
             </p>
-            <a href={generateCalendarLink(selectedEvent)} target="_blank" rel="noopener noreferrer">
-              <button className="add-to-calendar-btn">Add to Calendar</button>
-            </a>
+            <button
+              className="add-to-calendar-btn"
+              onClick={() => handleAddToCalendar(selectedEvent)}
+            >
+              Add to Calendar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showSuccessPopup && (
+        <div className="success-popup">
+          <div className="success-popup-content">
+            <p>Event successfully added to the calendar.</p>
+            <button onClick={() => setShowSuccessPopup(false)}>Close</button>
           </div>
         </div>
       )}

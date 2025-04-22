@@ -26,6 +26,8 @@ function Home() {
     const selectedPage = event.target.value;
     if (selectedPage === 'login') {
       navigate('/login');
+    } else if (selectedPage === 'event') {
+      navigate('/event');
     } else if (selectedPage === 'directory') {
       navigate('/navigation');
     }
