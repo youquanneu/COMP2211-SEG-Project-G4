@@ -110,7 +110,7 @@ function UserEmergency() {
       navigate('/userhome');
     } else {
       console.log('Navigating to /');
-      navigate('/');
+      navigate(-1);
     }
   };
 
