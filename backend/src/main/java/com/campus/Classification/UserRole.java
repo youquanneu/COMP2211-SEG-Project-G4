@@ -1,5 +1,5 @@
 package com.campus.Classification;
 
 public enum UserRole {
-    Student, Lecturer, AdministrativeStaff;
+    Student, Lecturer, AdministrativeStaff, Organization;
 }

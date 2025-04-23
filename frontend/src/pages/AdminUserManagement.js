@@ -40,9 +40,7 @@ function AdminUserManagement() {
         }
       };
   useEffect(() => {
-    if(filter){
     fetchUsers();
-    }
   }, []);
 
   const handleFilterChange = (event) => {

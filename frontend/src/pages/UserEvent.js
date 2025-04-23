@@ -47,7 +47,19 @@ function UserEvent() {
       }
 
       try {
+        setError(''); // Clear any previous errors
         await sendLog('fetch_events', 'Fetching events from API');
+        
+        // First check if events need to be initialized
+        try {
+          console.log('Checking if events need initialization...');
+          const initResponse = await axios.get(getAPI_URL('setup/reinitialize'));
+          console.log('Init response:', initResponse.data);
+        } catch (initErr) {
+          console.log('Event initialization not available or failed:', initErr.message);
+        }
+        
+        // Now fetch events
         const response = await axios.get(getAPI_URL('user/event/getAllEvent'));
         console.log('API Response:', response.data);
 
@@ -61,18 +73,36 @@ function UserEvent() {
           } else if (eventData.result && Array.isArray(eventData.result)) {
             eventData = eventData.result;
           } else {
+            console.error('Unexpected response format:', eventData);
             setError('Invalid event data format. Expected an array.');
             return;
           }
         }
 
-        setEvents(eventData);
-        if (eventData.length === 0) {
-          setError('No events available.');
+        // Check if we have valid event data
+        if (eventData && eventData.length > 0) {
+          setEvents(eventData);
+          console.log('Successfully loaded', eventData.length, 'events');
+        } else {
+          console.warn('No events available in response');
+          setError('No events available. Please try again later.');
         }
       } catch (err) {
-        setError('Failed to load events. Check if backend is running.');
-        console.error('Fetch error:', err.message);
+        console.error('Fetch error details:', err);
+        if (err.response) {
+          // The request was made and the server responded with a status code outside the range of 2xx
+          console.error('Error response:', err.response.data);
+          console.error('Error status:', err.response.status);
+          setError(`Server error: ${err.response.status} - ${err.response.data.message || err.response.data || 'Unknown error'}`);
+        } else if (err.request) {
+          // The request was made but no response was received
+          console.error('No response received');
+          setError('Could not connect to server. Check if backend is running.');
+        } else {
+          // Something happened in setting up the request
+          console.error('Error message:', err.message);
+          setError(`Error: ${err.message}`);
+        }
       }
     };
     fetchEvents();

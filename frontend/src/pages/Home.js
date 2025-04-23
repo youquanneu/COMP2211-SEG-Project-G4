@@ -30,6 +30,10 @@ function Home() {
       navigate('/event');
     } else if (selectedPage === 'directory') {
       navigate('/navigation');
+    }else if (selectedPage === 'event') {
+      navigate('/event');
+    }else if (selectedPage === 'emergency') {
+      navigate('/emergency');
     }
   };
 
@@ -52,7 +56,6 @@ function Home() {
             <option value="event">Events</option>
             <option value="directory">Directory</option>
             <option value="emergency">Emergency</option>
-            <option value="navigation">Campus Navigation</option>
           </select>
         </div>
         <div className="auth-wrapper">
