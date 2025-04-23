@@ -50,16 +50,16 @@ public class ReservationService {
                                             Purpose purpose,
                                             LocalDateTime reservationStarting,
                                             LocalDateTime reservationEnding){
-        try {
+//     try {
             newReservationValidation(resource, reservationStarting, reservationEnding);
             Reservation reservation = new Reservation(user, resource, purpose, reservationStarting, reservationEnding);
             saveReservation(reservation);
             notificationService.reservationNotification(reservation);
 
             return reservation;
-        }catch (Exception e){
-            return null;
-        }
+//        }catch (Exception e){
+//           return null;
+//        }
     }   // Function : Create a new reservation after check the time validation
     void checkEditValidation(User booker, Reservation reservation){
         boolean isAdministrator = booker.getUserRole().equals(UserRole.AdministrativeStaff);
