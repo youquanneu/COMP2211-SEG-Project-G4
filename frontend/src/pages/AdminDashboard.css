@@ -1,7 +1,7 @@
 /* src/pages/AdminDashboard.css */
 .admin-dashboard-container {
   width: 90%;
-  max-width: 600px; /* Slightly wider to accommodate two cards */
+  max-width: 400px; 
   background: var(--background-color);
   padding: 20px;
   border-radius: 10px;

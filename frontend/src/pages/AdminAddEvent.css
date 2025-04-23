@@ -1,7 +1,7 @@
 /* src/pages/AdminAddEvent.css */
 .admin-add-event-container {
     width: 90%;
-    max-width: 600px; /* Match other pages like EquipmentApproval */
+    max-width: 400px; /* Match other pages like EquipmentApproval */
     background: #E6F0FA; /* Light blue background for a distinct look */
     padding: 20px;
     border-radius: 10px;

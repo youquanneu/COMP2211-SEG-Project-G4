@@ -1,8 +1,8 @@
 /* src/pages/EquipmentApproval.css */
 .equipment-approval-container {
   width: 90%;
-  max-width: 600px; /* Increased from 400px to fit table content fully */
-  background: #F5F5F5; /* Light grey background */
+  max-width: 400px;
+  background: #F5F5F5;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px var(--shadow-color);
@@ -12,7 +12,7 @@
 
 .equipment-approval-header {
   display: flex;
-  justify-content: center; /* Center the logo */
+  justify-content: center;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -24,14 +24,14 @@
 
 .equipment-approval-content h1 {
   color: var(--text-color);
-  font-size: calc(var(--font-size-base) * 1.5);
+  font-size: calc(var(--font-size-base) * 1.25);
   margin-bottom: 20px;
 }
 
 .request-table {
   width: 100%;
+  margin: 0 auto 20px auto;
   border-collapse: collapse;
-  margin-bottom: 20px;
 }
 
 .request-table table {
@@ -40,17 +40,44 @@
 
 .request-table th,
 .request-table td {
-  padding: 8px; /* Slightly increased padding for readability */
+  padding: 8px;
   border: 1px solid var(--border-color);
-  font-size: calc(var(--font-size-base) * 0.875); /* Restored original font size */
+  font-size: calc(var(--font-size-base) * 0.875);
   color: var(--text-color);
-  text-align: center; /* Center-align content for better fit */
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .request-table th {
-  background: #D3D3D3; /* Slightly darker grey for table header */
+  background: #D3D3D3;
   color: var(--text-color);
   font-weight: bold;
+}
+
+.request-table th:nth-child(1),
+.request-table td:nth-child(1) { /* User */
+  max-width: 80px;
+}
+
+.request-table th:nth-child(2),
+.request-table td:nth-child(2) { /* Equipment */
+  max-width: 90px;
+}
+
+.request-table th:nth-child(3),
+.request-table td:nth-child(3) { /* Qty */
+  max-width: 40px;
+}
+
+.request-table th:nth-child(4),
+.request-table td:nth-child(4) { /* Date */
+  max-width: 70px;
+}
+
+.request-table th:nth-child(5),
+.request-table td:nth-child(5) { /* Actions */
+  max-width: 100px;
 }
 
 .request-table td {
@@ -58,14 +85,15 @@
 }
 
 .approve-button {
-  padding: 6px 12px; /* Restored original padding */
-  background: linear-gradient(to right, #28A745, #218838); /* Green gradient */
+  width: 80px;
+  padding: 3px; /* Reduced horizontal padding from 6px to 4px */
+  background: linear-gradient(to right, #28A745, #218838);
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: calc(var(--font-size-base) * 0.875); /* Restored original font size */
+  font-size: calc(var(--font-size-base) * 0.65); /* Reduced from 0.75 */
   cursor: pointer;
-  margin-right: 5px; /* Restored original margin */
+  margin-right: 2px; /* Reduced from 3px */
   transition: transform 0.2s ease;
 }
 
@@ -75,12 +103,13 @@
 }
 
 .decline-button {
-  padding: 6px 12px; /* Restored original padding */
-  background: linear-gradient(to right, #DC3545, #C82333); /* Red gradient */
+  width: 80px;
+  padding: 3px; /* Reduced horizontal padding from 6px to 4px */
+  background: linear-gradient(to right, #DC3545, #C82333);
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: calc(var(--font-size-base) * 0.875); /* Restored original font size */
+  font-size: calc(var(--font-size-base) * 0.65); /* Reduced from 0.75 */
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -119,7 +148,7 @@
   }
 
   .equipment-approval-content h1 {
-    font-size: calc(var(--font-size-base) * 1.75);
+    font-size: calc(var(--font-size-base) * 1.5);
   }
 
   .request-table th,
@@ -130,8 +159,8 @@
 
   .approve-button,
   .decline-button {
-    padding: 8px 16px;
-    font-size: calc(var(--font-size-base) * 1);
+    padding: 6px 8px; /* Reduced horizontal padding from 12px to 8px */
+    font-size: calc(var(--font-size-base) * 0.875);
   }
 
   .back-button {
@@ -157,8 +186,8 @@
 
   .approve-button,
   .decline-button {
-    padding: 4px 8px;
-    font-size: calc(var(--font-size-base) * 0.75);
-    margin-right: 3px;
+    padding: 2px 3px; /* Reduced horizontal padding from 4px to 3px */
+    font-size: calc(var(--font-size-base) * 0.6); /* Reduced from 0.65 */
+    margin-right: 0px;
   }
 }
