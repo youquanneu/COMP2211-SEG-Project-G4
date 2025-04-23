@@ -23,6 +23,10 @@ public class TimeSlotService {
     }
     public List<TimeSlot> getAvailableTimeSlots(Resource resource, List<Reservation> reservations) {
         List<TimeSlot> openSlots = openTime(resource);
+        if(reservations == null){
+            return openSlots;
+        }
+        else{
         List<TimeSlot> availableSlots = new ArrayList<>();
         for (TimeSlot slot : openSlots) {
             boolean overlaps = false;
@@ -40,6 +44,7 @@ public class TimeSlotService {
             }
         }
         return availableSlots;
+        }
     }
     private List<TimeSlot> openTime(Resource resource){
         List<TimeSlot> allSlots = getTimeSlot();
