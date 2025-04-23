@@ -18,7 +18,7 @@ public class TimeSlotService {
     public TimeSlot saveTimeSlot(TimeSlot timeSlot){
         return timeSlotRepository.save(timeSlot);
     }
-    private List<TimeSlot> getTimeSlot(){
+    public List<TimeSlot> getTimeSlot(){
         return timeSlotRepository.findAll();
     }
     public List<TimeSlot> getAvailableTimeSlots(Resource resource, List<Reservation> reservations) {

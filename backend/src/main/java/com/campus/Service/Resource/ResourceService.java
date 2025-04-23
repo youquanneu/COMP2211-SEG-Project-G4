@@ -33,14 +33,32 @@ public class ResourceService {
     }
     public List<ResourceDTO> getAllResourceDTO(){
         List<ResourceDTO> resourceDTOS = new ArrayList<>();
-        for (Resource resource : getAllResource()){
+        for (Resource resource : getAllBookableResource()){
             resourceDTOS.add(new ResourceDTO(resource.getResourceId(), resource.getResourceName(), resource.getOpenTime(), resource.getCloseTime()));
         }
         return resourceDTOS;
     }
+    public List<Resource> getAllBookableResource(){
+        List<Resource> allResources = resourceRepository.findAll();
+        List<Resource> bookableResources = new ArrayList<>();
+        
+        for (Resource resource : allResources) {
+            // Skip bathrooms and surau
+            if (resource.getResourceName().contains("Bathroom") ||
+                resource.getResourceName().contains("3R011T") ||
+                resource.getResourceName().contains("3R012T") ||
+                resource.getResourceName().contains("Surau") ||
+                resource.getResourceName().contains("3R035")) {
+                continue;
+            }
+            bookableResources.add(resource);
+        }
+        
+        return bookableResources;
+    }
     public List<Resource> getAllResource(){
         return resourceRepository.findAll();
-    }   // Get all resources
+    }   // Get all resources, including bathrooms and surau
     public List<Resource> filterResource(Integer resourceId, String resourceName,
                                          LocalTime openTime, LocalTime closeTime,
                                          Restriction restriction,ResourceCategory resourceCategory){
