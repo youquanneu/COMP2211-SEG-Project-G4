@@ -15,6 +15,7 @@ function UserBooking() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [bookingDetails, setBookingDetails] = useState(null);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [resources, setResources] = useState([]);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -27,19 +28,43 @@ function UserBooking() {
     }
   };
 
+  // Format date to YYYY-MM-DD in local timezone
+  const formatLocalDate = (date) => {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     const fetchResources = async () => {
       try {
         const response = await axios.get(getAPI_URL('user/resource/getAllResource'));
         if (Array.isArray(response.data)) {
           setResources(response.data);
+          setError(''); // Clear any previous errors
         } else {
-          setError('Invalid resource data format.');
+          setError('Invalid resource data format. Please contact support.');
           console.error('Expected an array, got:', response.data);
         }
       } catch (err) {
-        setError('Failed to load resources. Check if backend is running.');
         console.error('Fetch error:', err.message, err.response?.data);
+        if (err.response) {
+          const { status, data } = err.response;
+          if (status === 404) {
+            setError(data.message || 'No resources available at this time.');
+          } else if (status === 400) {
+            setError(data.message || 'Invalid request. Please try again.');
+          } else if (status === 500) {
+            setError(data.message || 'Server error. Please try again later.');
+          } else {
+            setError(data.message || 'Failed to load resources. Please try again.');
+          }
+        } else {
+          setError('Network error. Please check your connection and try again.');
+        }
+        sendLog('fetch_resources_error', `Status: ${err.response?.status || 'N/A'}, Message: ${err.response?.data?.message || err.message}`);
       }
     };
     fetchResources();
@@ -61,10 +86,11 @@ function UserBooking() {
     await sendLog('search_times', 'Searched times');
     if (!resource || !purpose || !date) {
       setError('Please select Resource, Purpose, and Date first.');
+      setSuccess('');
       return;
     }
     try {
-      const formattedDate = date.toISOString().split('T')[0];
+      const formattedDate = formatLocalDate(date);
       const response = await axios.post(getAPI_URL('user/reservation/getAvailableTimeSlot'), {
         resourceDTO: resource,
         formattedDate
@@ -73,12 +99,14 @@ function UserBooking() {
         setAvailableTimes(response.data);
         setShowDropdown(true);
         setError('');
+        setSuccess('');
       } else {
         setError('Invalid time slot data format.');
         console.error('Expected an array, got:', response.data);
       }
     } catch (err) {
       setError('Failed to load available times. Please try again.');
+      setSuccess('');
       console.error('Fetch error:', err.message, err.response?.data);
     }
   };
@@ -92,7 +120,7 @@ function UserBooking() {
   const handleBook = async () => {
     await sendLog('book', 'Submitted booking');
     if (resource && purpose && date && time) {
-      const formattedDate = date.toISOString().split('T')[0];
+      const formattedDate = formatLocalDate(date);
       const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
 
       const bookingData = {
@@ -106,18 +134,32 @@ function UserBooking() {
       try {
         const response = await axios.post(getAPI_URL('user/reservation/makeReservation'), bookingData);
         const fullBookingDetails = {
-          ...bookingData,          // Keep what we already know
-          ...response.data         // Override/add anything returned from backend
+          ...bookingData,
+          ...response.data
         };
         setBookingDetails(fullBookingDetails);
-        console.log('Full Booking Details:', fullBookingDetails);
+        setSuccess('Reservation successfully booked!');
         setError('');
+        console.log('Full Booking Details:', fullBookingDetails);
       } catch (err) {
-        setError('Failed to save booking. Please try again.');
         console.error('Booking error:', err.message, err.response?.data);
+        setSuccess('');
+        if (err.response) {
+          const { status, data } = err.response;
+          if (status === 409) {
+            setError(data.message || 'This time slot is already reserved. Please choose another time.');
+          } else if (status === 400) {
+            setError(data.message || 'Invalid booking details. Please check your input.');
+          } else {
+            setError(data.message || 'Failed to save booking. Please try again later.');
+          }
+        } else {
+          setError('Network error. Please check your connection and try again.');
+        }
       }
     } else {
       setError('Please select all options before booking.');
+      setSuccess('');
     }
   };
 
@@ -129,6 +171,7 @@ function UserBooking() {
   return (
     <div className="booking-container">
       <h1>Book a Resource</h1>
+      {success && <p className="success-message">{success}</p>}
       {error && <p className="error-message">{error}</p>}
 
       <div className="form-group">
@@ -173,7 +216,7 @@ function UserBooking() {
           selected={date}
           onChange={(selectedDate) => {
             setDate(selectedDate);
-            sendLog('select_date', selectedDate ? selectedDate.toISOString().split('T')[0] : 'None');
+            sendLog('select_date', selectedDate ? formatLocalDate(selectedDate) : 'None');
           }}
           dateFormat="MMMM d, yyyy"
           placeholderText="Select a date"
