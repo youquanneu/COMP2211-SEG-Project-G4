@@ -33,7 +33,7 @@ function UserCalendar() {
         // Fetch events
         const eventsResponse = await axios.get(getAPI_URL('user/event/getAllEvent'));
         const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
-        console.log('Events Response:', eventsResponse.data);
+        // console.log('Events Response:', JSON.stringify(eventsResponse.data, null, 2)); // Commented out for production
         let eventData = eventsResponse.data;
         if (!Array.isArray(eventData)) {
           if (eventData.events && Array.isArray(eventData.events)) {
@@ -48,14 +48,27 @@ function UserCalendar() {
             return;
           }
         }
+        // Filter and normalize valid events
+        eventData = eventData
+          .filter(event => 
+            event.eventId && 
+            event.eventTitle && 
+            event.eventStarting && 
+            event.eventEnding
+          )
+          .map(event => ({
+            ...event,
+            date: new Date(event.eventStarting).toISOString().split('T')[0]
+          }));
         setEvents(eventData);
+        // console.log('Valid events:', eventData); // Commented out for production
 
         // Fetch bookings
-        console.log('Email:', userEmail);
+        // console.log('Email:', userEmail); // Commented out for production
         const bookingsResponse = await axios.post(getAPI_URL('user/reservation/myReservation'), {
           email: userEmail,
         });
-        console.log('Bookings Response:', bookingsResponse.data);
+        // console.log('Bookings Response:', JSON.stringify(bookingsResponse.data, null, 2)); // Commented out for production
         let bookingData = bookingsResponse.data;
         if (!Array.isArray(bookingData)) {
           if (bookingData.bookings && Array.isArray(bookingData.bookings)) {
@@ -70,7 +83,14 @@ function UserCalendar() {
             return;
           }
         }
+        // Filter valid bookings
+        bookingData = bookingData.filter(booking => 
+          booking.reservationId && 
+          booking.reservationStarting && 
+          booking.reservationEnding
+        );
         setBookings(bookingData);
+        // console.log('Valid bookings:', bookingData); // Commented out for production
       } catch (err) {
         setError('Failed to load data. Check if backend is running.');
         console.error('Fetch error:', err.message, err.response?.data);
@@ -83,28 +103,38 @@ function UserCalendar() {
   const selectedDateItems = [
     ...events
       .filter((event) => {
-        const eventDate = new Date(event.date);
-        eventDate.setHours(0, 0, 0, 0); // Normalize event date to midnight
-        const selectedDateNormalized = new Date(date);
-        selectedDateNormalized.setHours(0, 0, 0, 0);
-        return eventDate.getTime() === selectedDateNormalized.getTime();
+        if (!event.eventStarting) return false;
+        const eventDate = new Date(event.eventStarting);
+        const normalizedEventDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+        const selectedDateNormalized = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        // console.log('Event filter:', normalizedEventDate.toISOString().split('T')[0], selectedDateNormalized.toISOString().split('T')[0], 'Title:', event.eventTitle); // Commented out for production
+        return normalizedEventDate.getTime() === selectedDateNormalized.getTime();
       })
-      .map((event) => ({ ...event, type: 'event' })),
+      .map((event) => ({
+        id: event.eventId,
+        date: new Date(event.eventStarting).toISOString().split('T')[0],
+        topic: event.eventTitle || 'Untitled Event',
+        area: event.area || 'N/A',
+        organizers: event.organizer?.map((org) => org.username || org.email || 'Unknown').join(', ') || 'N/A',
+        description: `${new Date(event.eventStarting).toLocaleString()} - ${new Date(event.eventEnding).toLocaleString()}`,
+        type: 'event',
+      })),
     ...bookings
       .filter((booking) => {
+        if (!booking.reservationStarting) return false;
         const bookingDate = new Date(booking.reservationStarting);
-        bookingDate.setHours(0, 0, 0, 0); // Normalize booking date to midnight
-        const selectedDateNormalized = new Date(date);
-        selectedDateNormalized.setHours(0, 0, 0, 0);
-        return bookingDate.getTime() === selectedDateNormalized.getTime();
+        const normalizedBookingDate = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
+        const selectedDateNormalized = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        // Fixed: Use normalizedBookingDate instead of normalizedEventDate
+        return normalizedBookingDate.getTime() === selectedDateNormalized.getTime();
       })
       .map((booking) => ({
         id: booking.reservationId,
         date: new Date(booking.reservationStarting).toISOString().split('T')[0],
         topic: `Booking: ${booking.resourceDTO?.resourceName || 'Unknown'}`,
-        area: booking.purpose || 'No purpose specified', // Ensure purpose is shown, even if empty
+        area: booking.purpose || 'No purpose specified',
         organizers: booking.userDTO?.email || 'User',
-        description: `${new Date(booking.reservationStarting).toLocaleString()} - ${new Date(booking.reservationEnding).toLocaleString()}`, // Formatting the time
+        description: `${new Date(booking.reservationStarting).toLocaleString()} - ${new Date(booking.reservationEnding).toLocaleString()}`,
         type: 'booking',
       })),
   ];
@@ -112,12 +142,26 @@ function UserCalendar() {
   // Mark dates with events or bookings
   const tileContent = ({ date, view }) => {
     if (view === 'month') {
-      const dateStr = date.toISOString().split('T')[0];
-      const hasEvent = events.some((event) => event.date === dateStr);
-      const hasBooking = bookings.some((booking) => {
-        const bookingDate = new Date(booking.reservationStarting).toISOString().split('T')[0];
-        return bookingDate === dateStr;
+      const normalizedTileDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const dateStr = normalizedTileDate.toISOString().split('T')[0];
+      // console.log('Checking tile for date:', dateStr); // Commented out for production
+
+      const hasEvent = events.some((event) => {
+        if (!event.eventStarting) return false;
+        const eventDate = new Date(event.eventStarting);
+        const normalizedEventDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+        // console.log('Event date:', normalizedEventDate.toISOString().split('T')[0], 'Title:', event.eventTitle); // Commented out for production
+        return normalizedEventDate.toISOString().split('T')[0] === dateStr;
       });
+
+      const hasBooking = bookings.some((booking) => {
+        if (!booking.reservationStarting) return false;
+        const bookingDate = new Date(booking.reservationStarting);
+        const normalizedBookingDate = new Date(bookingDate.getFullYear(), bookingDate.getMonth(), bookingDate.getDate());
+        // console.log('Booking date:', normalizedBookingDate.toISOString().split('T')[0], 'Original:', booking.reservationStarting, 'Resource:', booking.resourceDTO?.resourceName); // Commented out for production
+        return normalizedBookingDate.toISOString().split('T')[0] === dateStr;
+      });
+
       return hasEvent || hasBooking ? <span className="event-dot"></span> : null;
     }
     return null;
@@ -136,9 +180,8 @@ function UserCalendar() {
       <div className="calendar-group">
         <Calendar
           onChange={(selectedDate) => {
-            const normalizedDate = new Date(selectedDate);
-            normalizedDate.setHours(0, 0, 0, 0);
-            console.log('Selected Date:', normalizedDate.toISOString().split('T')[0]); // Debug
+            const normalizedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+            // console.log('Selected Date:', normalizedDate.toISOString().split('T')[0]); // Commented out for production
             setDate(normalizedDate);
             sendLog('select_date', normalizedDate.toISOString().split('T')[0]);
           }}

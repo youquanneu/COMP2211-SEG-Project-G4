@@ -12,14 +12,14 @@
 }
 
 .calendar-logo {
-  width: 100px;
+  width: 80px; 
   height: auto;
   margin-bottom: 10px;
 }
 
 .calendar-container h1 {
   color: var(--text-color, #333);
-  font-size: calc(var(--font-size-base, 16px) * 1.375);
+  font-size: calc(var(--font-size-base, 16px) * 1.5); 
   margin-bottom: 20px;
   text-align: center;
 }
@@ -32,7 +32,7 @@
 .custom-calendar {
   width: 100%;
   border: 1px solid var(--border-color, #ddd);
-  background: var(--border-color, #f9f9f9);
+  background: var(--background-color, #f9f9f9); 
   border-radius: 6px;
   padding: 10px;
 }
@@ -74,7 +74,7 @@
 
 .react-calendar__tile {
   background: var(--background-color, #fff);
-  border: none; /* Remove default border */
+  border: none;
   border-radius: 4px;
   padding: 8px;
   font-size: calc(var(--font-size-base, 16px) * 0.875);
@@ -134,13 +134,13 @@
   padding: 15px;
   border: 1px solid var(--border-color, #ddd);
   border-radius: 6px;
-  background: var(--border-color, #f9f9f9);
+  background: var(--background-color, #f9f9f9);
   text-align: left;
 }
 
 .event-details h2 {
   color: var(--text-color, #333);
-  font-size: calc(var(--font-size-base, 16px) * 1.125);
+  font-size: calc(var(--font-size-base, 16px) * 1.25); 
   margin-bottom: 10px;
 }
 
@@ -149,16 +149,15 @@
 }
 
 .event-item p {
-  color: var(--secondary-text-color, #555);
+  color: var(--text-color, #333); 
   font-size: calc(var(--font-size-base, 16px) * 0.875);
   margin: 5px 0;
 }
 
 .back-button {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(to right, var(--button-bg-start, #0077B6), var(--button-bg-end, #005888));
-  color: white;
+  width: 120px; 
+  padding: 8px; 
+  background: linear-gradient(to right, #6c757d, #5a6268);
   border: none;
   border-radius: 6px;
   font-size: calc(var(--font-size-base, 16px) * 0.875);
@@ -167,7 +166,7 @@
   margin: 10px auto;
   display: block;
   text-align: center;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease; 
 }
 
 .back-button:hover {
@@ -176,17 +175,17 @@
 
 @media (min-width: 768px) {
   .calendar-container {
-    max-width: 600px;
-    padding: 25px;
+    max-width: 400px; 
+    padding: 25px; 
   }
 
   .calendar-logo {
-    width: 150px;
+    width: 100px; 
     margin-bottom: 15px;
   }
 
   .calendar-container h1 {
-    font-size: calc(var(--font-size-base, 16px) * 1.625);
+    font-size: calc(var(--font-size-base, 16px) * 1.75); 
   }
 
   .custom-calendar {
@@ -211,7 +210,7 @@
   }
 
   .event-details h2 {
-    font-size: calc(var(--font-size-base, 16px) * 1.25);
+    font-size: calc(var(--font-size-base, 16px) * 1.5); 
   }
 
   .event-item p {
@@ -220,10 +219,23 @@
 
   .back-button {
     font-size: calc(var(--font-size-base, 16px) * 1);
+    width: 140px; 
   }
 }
 
 @media (max-width: 360px) {
+  .calendar-container {
+    padding: 15px; 
+  }
+
+  .calendar-logo {
+    width: 60px;
+  }
+
+  .calendar-container h1 {
+    font-size: calc(var(--font-size-base, 16px) * 1.25); 
+  }
+
   .custom-calendar {
     padding: 8px;
   }
@@ -243,5 +255,18 @@
 
   .react-calendar__month-view__weekdays {
     font-size: calc(var(--font-size-base, 16px) * 0.75);
+  }
+
+  .event-details h2 {
+    font-size: calc(var(--font-size-base, 16px) * 1);
+  }
+
+  .event-item p {
+    font-size: calc(var(--font-size-base, 16px) * 0.75);
+  }
+
+  .back-button {
+    font-size: calc(var(--font-size-base, 16px) * 0.75);
+    width: 120px; 
   }
 }
