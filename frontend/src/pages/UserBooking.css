@@ -1,238 +1,346 @@
 .booking-container {
   width: 90%;
   max-width: 400px;
-  background: var(--background-color);
+  background: #ffffff;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px var(--shadow-color);
-  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
   text-align: center;
+  box-sizing: border-box;
+  position: relative;
+  overflow: visible;
 }
 
 .booking-container h1 {
-  color: var(--text-color);
-  font-size: calc(var(--font-size-base) * 1.5);
+  color: #333333;
+  font-size: 24px;
   margin-bottom: 20px;
 }
 
-.form-group {
+.booking-container .form-group {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
-.form-group label {
-  color: var(--text-color);
-  font-size: calc(var(--font-size-base) * 0.875);
+.booking-container .form-group label {
+  color: #333333;
+  font-size: 14px;
   width: 100px;
   margin-right: 10px;
   text-align: left;
+  flex-shrink: 0;
 }
 
-.form-group select,
-.form-group .date-picker {
+.booking-container .form-group select,
+.booking-container .form-group .date-picker,
+.booking-container .form-group .time-input-wrapper {
   flex: 1;
-  padding: 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: calc(var(--font-size-base) * 0.875);
-  background: var(--background-color);
-  color: var(--text-color);
+  max-width: 240px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 36px;
 }
 
-.form-group select:focus,
-.form-group .date-picker:focus {
+.booking-container .form-group select,
+.booking-container .form-group .date-picker {
+  padding: 8px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #333333;
+}
+
+.booking-container .form-group select:focus,
+.booking-container .form-group .date-picker:focus,
+.booking-container .form-group .time-input:focus {
   outline: none;
-  border-color: var(--button-bg-start);
+  border-color: #007bff;
+  background: #ffffff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
 }
 
-button {
-  width: 120px;
-  padding: 8px;
-  background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: calc(var(--font-size-base) * 0.875);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  margin: 10px auto;
-  display: block;
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-
-.back-button {
-  background: linear-gradient(to right, #6c757d, #5a6268);
-}
-
-.back-button:hover {
-  background: #5a6268;
-}
-
-.booking-details {
-  margin-top: 20px;
-  padding: 15px;
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-}
-
-.booking-details h2 {
-  color: var(--text-color);
-  font-size: calc(var(--font-size-base) * 1.25);
-  margin-bottom: 10px;
-}
-
-.booking-details p {
-  color: var(--text-color);
-  font-size: calc(var(--font-size-base) * 0.875);
-  margin: 5px 0;
-}
-
-.time-input-wrapper {
-  flex: 1;
+.booking-container .form-group .time-input-wrapper {
   position: relative;
+  display: flex;
+  align-items: center;
+  background: transparent; /* Ensure no background */
+  border: none; /* Remove border from wrapper */
+  padding: 0; /* Remove padding from wrapper */
 }
 
-.time-input {
+.booking-container .form-group .time-input {
   width: 100%;
   padding: 8px 30px 8px 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #cccccc;
   border-radius: 6px;
-  font-size: calc(var(--font-size-base) * 0.875);
-  background: var(--background-color);
-  color: var(--text-color);
+  font-size: 14px;
+  background: #ffffff;
+  color: #333333;
   cursor: pointer;
+  box-sizing: border-box;
+  max-width: 240px;
+  min-height: 36px;
 }
 
-.time-input:focus {
-  outline: none;
-  border-color: var(--button-bg-start);
-}
-
-.search-icon {
+.booking-container .form-group .search-icon {
   position: absolute;
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: calc(var(--font-size-base) * 0.875);
-  color: var(--button-bg-start);
+  font-size: 14px;
+  color: #007bff;
   cursor: pointer;
   padding: 4px;
 }
 
-.search-icon:hover {
-  color: var(--button-bg-end);
+.booking-container .form-group .search-icon:hover {
+  color: #0056b3;
 }
 
-.time-dropdown {
+.booking-container .form-group .time-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
+  max-width: 240px;
   max-height: 200px;
   overflow-y: auto;
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border: 1px solid #cccccc;
   border-radius: 6px;
-  box-shadow: 0 2px 4px var(--shadow-color);
-  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 100;
   margin-top: 4px;
   list-style: none;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.time-option {
+.booking-container .form-group .time-option {
   padding: 8px;
-  font-size: calc(var(--font-size-base) * 0.875);
-  color: var(--text-color);
+  font-size: 14px;
+  color: #333333;
   cursor: pointer;
   min-height: 44px;
   display: flex;
   align-items: center;
 }
 
-.time-option:hover {
-  background: var(--hover-bg, #f5f5f5);
+.booking-container .form-group .time-option:hover {
+  background: #f5f5f5;
 }
 
-.error-message {
+.booking-container button {
+  width: 120px;
+  padding: 8px;
+  background: linear-gradient(to right, #007bff, #0056b3);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 10px auto;
+  display: block;
+}
+
+.booking-container button:hover {
+  transform: translateY(-2px);
+}
+
+.booking-container .back-button {
+  background: linear-gradient(to right, #6c757d, #5a6268);
+}
+
+.booking-container .back-button:hover {
+  background: #5a6268;
+}
+
+.booking-container .booking-details {
+  margin-top: 20px;
+  padding: 15px;
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+}
+
+.booking-container .booking-details h2 {
+  color: #333333;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.booking-container .booking-details p {
+  color: #333333;
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.booking-container .error-message {
   color: red;
-  font-size: calc(var(--font-size-base) * 0.875);
+  font-size: 14px;
   margin: 10px 0;
   text-align: center;
 }
 
+.booking-container .success-message {
+  color: green;
+  font-size: 14px;
+  margin: 10px 0;
+  text-align: center;
+}
 
+.booking-container .react-datepicker-wrapper,
+.booking-container .react-datepicker__input-container {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  position: relative;
+  z-index: 50;
+}
+
+.booking-container .react-datepicker__input-container input {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  font-size: 14px;
+  background: transparent;
+  color: #333333;
+}
+
+.booking-container .react-datepicker {
+  z-index: 100;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 240px;
+  font-size: 12px;
+}
+
+.booking-container .react-datepicker__triangle {
+  z-index: 100;
+}
+
+.booking-container .react-datepicker-popper {
+  z-index: 100;
+}
+
+.booking-container .react-datepicker__navigation {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333333;
+  outline: none;
+}
+
+.booking-container .react-datepicker__navigation:hover,
+.booking-container .react-datepicker__navigation:focus {
+  background: #f5f5f5;
+  color: #007bff;
+}
+
+.booking-container .react-datepicker__navigation--previous,
+.booking-container .react-datepicker__navigation--next {
+  top: 10px;
+}
+
+.booking-container .react-datepicker__navigation-icon {
+  width: 12px;
+  height: 12px;
+  fill: #333333;
+}
+
+.booking-container .react-datepicker__navigation-icon:hover,
+.booking-container .react-datepicker__navigation-icon:focus {
+  fill: #007bff;
+}
+
+/* Responsive adjustments */
 @media (min-width: 768px) {
   .booking-container {
     padding: 25px;
   }
 
   .booking-container h1 {
-    font-size: calc(var(--font-size-base) * 1.75);
+    font-size: 28px;
   }
 
-  .form-group label {
-    font-size: calc(var(--font-size-base) * 1);
+  .booking-container .form-group label {
+    font-size: 16px;
     width: 120px;
   }
 
-  .form-group select,
-  .form-group .date-picker,
-  .time-input {
-    font-size: calc(var(--font-size-base) * 1);
+  .booking-container .form-group select,
+  .booking-container .form-group .date-picker,
+  .booking-container .form-group .time-input {
+    font-size: 16px;
   }
 
-  .search-icon {
-    font-size: calc(var(--font-size-base) * 1);
+  .booking-container .form-group .search-icon {
+    font-size: 16px;
   }
 
-  .time-option {
-    font-size: calc(var(--font-size-base) * 1);
+  .booking-container .form-group .time-option {
+    font-size: 16px;
     padding: 10px;
   }
 
-  button {
-    font-size: calc(var(--font-size-base) * 1);
+  .booking-container button {
+    font-size: 16px;
     width: 140px;
   }
 
-  .booking-details h2 {
-    font-size: calc(var(--font-size-base) * 1.5);
+  .booking-container .booking-details h2 {
+    font-size: 24px;
   }
 
-  .booking-details p {
-    font-size: calc(var(--font-size-base) * 1);
+  .booking-container .booking-details p {
+    font-size: 16px;
   }
 
-  .error-message {
-    font-size: calc(var(--font-size-base) * 1);
+  .booking-container .error-message,
+  .booking-container .success-message {
+    font-size: 16px;
   }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 480px) {
   .booking-container {
     padding: 15px;
   }
 
-  .form-group {
+  .booking-container .form-group {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .form-group label {
+  .booking-container .form-group label {
     width: 100%;
     margin-bottom: 5px;
     margin-right: 0;
   }
 
-  .form-group select,
-  .form-group .date-picker,
-  .time-input-wrapper {
-    width: 100%;
+  .booking-container .form-group select,
+  .booking-container .form-group .date-picker,
+  .booking-container .form-group .time-input-wrapper,
+  .booking-container .form-group .time-dropdown,
+  .booking-container .react-datepicker-wrapper,
+  .booking-container .react-datepicker__input-container,
+  .booking-container .react-datepicker {
+    max-width: 100%;
   }
 }
