@@ -1,4 +1,3 @@
-// My campus navigation component 
 import React, { useState, useRef, useEffect } from 'react';
 import { rooms, waypoints, allNodes, isRoom, navigationConfig } from '../data/navigationData';
 import { findPath, getNodeById, getNodePosition, verifyConnections } from '../utils/navigationUtils';
@@ -35,7 +34,6 @@ import InfoIcon from '@mui/icons-material/Info';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import LabelIcon from '@mui/icons-material/Label';
 import LabelOffIcon from '@mui/icons-material/LabelOff';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import './NavigationMap.css'; // Styles for this component
 // Using direct import - no more relative path issues
@@ -397,26 +395,6 @@ const CampusNavigation = () => {
 
   return (
     <Box className="navigation-container">
-      <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 1 }}>
-        <IconButton
-          color="primary"
-          onClick={() => navigate(-1)}
-          size="small"
-          sx={{
-            borderRadius: 1,
-            border: '1px solid rgba(25, 118, 210, 0.5)',
-            p: 0.8,
-            bgcolor: 'rgba(25, 118, 210, 0.08)',
-            '&:hover': {
-              bgcolor: 'rgba(25, 118, 210, 0.15)',
-            }
-          }}
-          aria-label="go to home"
-        >
-          <ArrowBackIcon fontSize="small" />
-        </IconButton>
-      </Box>
-      
       <Typography 
         variant="h5" 
         component="h2" 
@@ -846,6 +824,29 @@ const CampusNavigation = () => {
               </Box>
             </Paper>
           )}
+          
+          {/* Back button centered with text "Back" */}
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+            <Button
+              color="primary"
+              onClick={() => navigate(-1)}
+              size="small"
+              sx={{
+                borderRadius: 1,
+                border: '1px solid rgba(25, 118, 210, 0.5)',
+                p: 0.8,
+                bgcolor: 'rgba(25, 118, 210, 0.08)',
+                '&:hover': {
+                  bgcolor: 'rgba(25, 118, 210, 0.15)',
+                },
+                textTransform: 'none',
+                fontWeight: 500,
+              }}
+              aria-label="go to home"
+            >
+              Back
+            </Button>
+          </Box>
         </>
       )}
     </Box>
