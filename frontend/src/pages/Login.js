@@ -85,7 +85,7 @@ function Login() {
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
-        navigate(userDTO.UserRole === 'AdministrativeStaff' ? '/admindashboard' : '/userhome');
+        navigate(userDTO.userRole === 'AdministrativeStaff' ? '/admindashboard' : '/userhome');
       }, 2000);
     } catch (error) {
       console.log(error);
