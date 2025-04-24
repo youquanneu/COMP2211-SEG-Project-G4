@@ -11,7 +11,6 @@ function Event() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Toggle for mock data
   const useMockData = false;
 
   // Send log to backend
