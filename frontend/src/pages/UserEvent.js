@@ -3,19 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../assets/logo.png';
 import './UserEvent.css';
-import { getAPI_URL } from "../services/api";
+import { getAPI_URL } from '../services/api';
 
 function UserEvent() {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [error, setError] = useState('');
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const navigate = useNavigate();
 
-  // Toggle for mock data
   const useMockData = false;
 
-  // Send log to backend
   const sendLog = async (action, value) => {
     try {
       await axios.post(getAPI_URL('api/logs'), { action, value });
@@ -24,8 +22,22 @@ function UserEvent() {
     }
   };
 
-  // Fetch events on component mount
+  // Clean up malformed events in localStorage
+  const cleanLocalStorage = () => {
+    const storedEvents = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+    const validEvents = storedEvents.filter(event => 
+      event.eventId && 
+      event.date && 
+      event.topic && 
+      event.eventStarting && 
+      event.eventEnding
+    );
+    localStorage.setItem('calendarEvents', JSON.stringify(validEvents));
+    console.log('Cleaned localStorage, retained:', validEvents.length, 'valid events');
+  };
+
   useEffect(() => {
+    cleanLocalStorage(); // Run cleanup on mount
     const fetchEvents = async () => {
       if (useMockData) {
         const mockEvents = [
@@ -47,10 +59,8 @@ function UserEvent() {
       }
 
       try {
-        setError(''); // Clear any previous errors
+        setError('');
         await sendLog('fetch_events', 'Fetching events from API');
-        
-        // First check if events need to be initialized
         try {
           console.log('Checking if events need initialization...');
           const initResponse = await axios.get(getAPI_URL('setup/reinitialize'));
@@ -58,13 +68,10 @@ function UserEvent() {
         } catch (initErr) {
           console.log('Event initialization not available or failed:', initErr.message);
         }
-        
-        // Now fetch events
         const response = await axios.get(getAPI_URL('user/event/getAllEvent'));
         console.log('API Response:', response.data);
 
         let eventData = response.data;
-
         if (!Array.isArray(eventData)) {
           if (eventData.events && Array.isArray(eventData.events)) {
             eventData = eventData.events;
@@ -79,27 +86,31 @@ function UserEvent() {
           }
         }
 
-        // Check if we have valid event data
+        // Filter out invalid events
+        eventData = eventData.filter(event => 
+          event.eventId && 
+          event.eventTitle && 
+          event.eventStarting && 
+          event.eventEnding
+        );
+
         if (eventData && eventData.length > 0) {
           setEvents(eventData);
-          console.log('Successfully loaded', eventData.length, 'events');
+          console.log('Successfully loaded', eventData.length, 'valid events');
         } else {
-          console.warn('No events available in response');
-          setError('No events available. Please try again later.');
+          console.warn('No valid events available in response');
+          setError('No valid events available. Please try again later.');
         }
       } catch (err) {
         console.error('Fetch error details:', err);
         if (err.response) {
-          // The request was made and the server responded with a status code outside the range of 2xx
           console.error('Error response:', err.response.data);
           console.error('Error status:', err.response.status);
           setError(`Server error: ${err.response.status} - ${err.response.data.message || err.response.data || 'Unknown error'}`);
         } else if (err.request) {
-          // The request was made but no response was received
           console.error('No response received');
           setError('Could not connect to server. Check if backend is running.');
         } else {
-          // Something happened in setting up the request
           console.error('Error message:', err.message);
           setError(`Error: ${err.message}`);
         }
@@ -123,15 +134,38 @@ function UserEvent() {
     sendLog('back', 'Clicked back to userhome');
   };
 
-  // Handle Add to Calendar click
   const handleAddToCalendar = (event) => {
+    if (!event.eventId || !event.eventStarting || !event.eventTitle) {
+      console.error('Invalid event data for calendar:', event);
+      return;
+    }
+    const storedEvents = JSON.parse(localStorage.getItem('calendarEvents')) || [];
+    const eventExists = storedEvents.some((e) => e.eventId === event.eventId);
+    if (!eventExists) {
+      const eventDate = new Date(event.eventStarting);
+      const normalizedDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+        .toISOString()
+        .split('T')[0];
+      console.log('Adding event with date:', normalizedDate, 'Original:', event.eventStarting);
+      const eventToSave = {
+        eventId: event.eventId,
+        date: normalizedDate,
+        topic: event.eventTitle || 'Untitled Event',
+        area: event.area || 'N/A',
+        organizers: event.organizer?.map((org) => org.username || org.email || 'Unknown').join(', ') || 'N/A',
+        description: `${new Date(event.eventStarting).toLocaleString()} - ${new Date(event.eventEnding).toLocaleString()}`,
+        eventStarting: event.eventStarting,
+        eventEnding: event.eventEnding,
+        type: 'event',
+      };
+      storedEvents.push(eventToSave);
+      localStorage.setItem('calendarEvents', JSON.stringify(storedEvents));
+    }
     setShowSuccessPopup(true);
     sendLog('add_to_calendar', `Added ${event.eventTitle} to calendar`);
-    // Optionally, store the event locally or send to backend
-    setTimeout(() => setShowSuccessPopup(false), 2000); // Auto-close after 2 seconds
+    setTimeout(() => setShowSuccessPopup(false), 2000);
   };
 
-  // Format date and time
   const formatDateTime = (dateStr) => {
     try {
       const date = new Date(dateStr);
@@ -186,9 +220,9 @@ function UserEvent() {
                     <strong>End:</strong> {formatDateTime(event.eventEnding)}
                   </p>
                   <button
-                    className="add-to-calendar-btn"
+                    className="add-to-calendar-button"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent event card click
+                      e.stopPropagation();
                       handleAddToCalendar(event);
                     }}
                   >
@@ -258,7 +292,7 @@ function UserEvent() {
               <strong>Description:</strong> {selectedEvent.eventDescription || 'No description available.'}
             </p>
             <button
-              className="add-to-calendar-btn"
+              className="add-to-calendar-button"
               onClick={() => handleAddToCalendar(selectedEvent)}
             >
               Add to Calendar

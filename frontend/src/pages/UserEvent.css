@@ -1,18 +1,24 @@
 /* General container for the events page */
 .events-container {
   font-family: Arial, sans-serif;
-  color: #333;
-  padding: 20px;
-  background-color: #f9f9f9;
+  color: var(--text-color, #333); /* Use CSS variable for consistency */
+  width: 90%; /* Match booking-container */
+  max-width: 400px; /* Match booking-container */
+  padding: 20px; /* Match booking-container */
+  background: var(--background-color, #f9f9f9); /* Use variable, keep fallback */
+  border-radius: 10px; /* Match booking-container */
+  box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.1)); /* Match booking-container */
+  margin: 20px auto; /* Match booking-container */
+  text-align: center; /* Match booking-container */
 }
 
+/* Header */
 .events-header {
-  text-align: center;
   margin-bottom: 20px;
 }
 
 .events-logo {
-  width: 100px;
+  width: 80px; /* Slightly smaller to fit narrower container */
   margin-bottom: 10px;
 }
 
@@ -20,110 +26,116 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%; /* Ensure content fits container */
 }
 
+/* Event list as a single column */
 .events-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-direction: column; /* Replace grid with flex for single-column layout */
+  gap: 15px; /* Slightly smaller gap to fit content */
   width: 100%;
 }
 
 .event-card {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: var(--background-color, #fff);
+  border-radius: 6px; /* Match booking-container’s form elements */
+  box-shadow: 0 4px 8px var(--shadow-color, rgba(0, 0, 0, 0.1));
   overflow: hidden;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
-  transition: transform 0.3s ease;
-  padding: 0; /* Ensures no extra padding */
+  height: auto; /* Height adjusts to content */
+  transition: transform 0.2s ease; /* Match booking-container’s button transition */
 }
 
 .event-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-2px); /* Match booking-container’s button hover */
 }
 
 .event-image {
   width: 100%;
-  height: 200px;
+  height: 150px; /* Reduced to fit smaller container */
   object-fit: cover;
 }
 
 .event-details {
-  padding: 15px;
-  flex-grow: 1; /* Allows the content to grow and fill space */
-  box-sizing: border-box; /* Ensures padding doesn't affect width */
-  width: 100%; /* Ensures it fits within the card */
+  padding: 10px; /* Reduced to fit narrower container */
+  flex-grow: 1;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .event-details h3 {
-  margin: 10px 0;
-  font-size: 1.5rem;
+  margin: 8px 0;
+  font-size: calc(var(--font-size-base, 16px) * 1.25); /* Match booking-container’s scaling */
+  color: var(--text-color, #333);
 }
 
 .event-details p {
-  font-size: 1rem;
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
   margin: 5px 0;
+  color: var(--text-color, #333);
 }
 
 .error-message {
   color: red;
-  font-weight: bold;
+  font-size: calc(var(--font-size-base, 16px) * 0.875); /* Match booking-container */
+  margin: 10px 0;
   text-align: center;
 }
 
 .add-to-calendar-button {
-  padding: 10px 20px;
-  background-color: #0077b6;
+  padding: 8px; /* Match booking-container’s button padding */
+  background: linear-gradient(to right, var(--button-bg-start, #0077b6), var(--button-bg-end, #005f8a)); /* Use variables */
   color: white;
-  font-size: 1rem;
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
   border: none;
-  border-radius: 5px;
+  border-radius: 6px; /* Match booking-container */
   cursor: pointer;
-  position: relative; /* Keep button inside the card */
-  bottom: 0;
-  width: 100%; /* Button will span the width of the card */
+  width: 100%;
   text-align: center;
-  white-space: nowrap; /* Ensures the text stays in one line */
-  margin-top: auto; /* Pushes the button to the bottom of the card */
+  margin: 10px 0; /* Adjusted for spacing */
+  transition: transform 0.2s ease; /* Match booking-container */
 }
 
 .add-to-calendar-button:hover {
-  background-color: #005f8a;
+  transform: translateY(-2px); /* Match booking-container */
 }
 
 .add-to-calendar-button:focus {
   outline: none;
+  border: 1px solid var(--button-bg-start, #0077b6); /* Match booking-container’s focus */
 }
 
 /* Back button */
 .back-button {
-  margin-top: 30px;
-  padding: 12px 25px;
-  background-color: #333;
+  padding: 8px; /* Match booking-container’s button */
+  background: linear-gradient(to right, #6c757d, #5a6268); /* Match booking-container’s back-button */
   color: white;
-  font-size: 1rem;
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.2s ease;
+  margin: 20px auto; /* Adjusted for centering */
+  display: block;
+  width: 120px; /* Match booking-container’s button width */
 }
 
 .back-button:hover {
-  background-color: #555;
+  transform: translateY(-2px); /* Match booking-container */
 }
 
+/* Popup */
 .event-popup {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -131,29 +143,29 @@
 }
 
 .popup-content {
-  background-color: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  max-width: 600px;
-  width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: var(--background-color, #fff);
+  padding: 20px; /* Reduced to fit smaller layout */
+  border-radius: 6px;
+  max-width: 90%; /* Match booking-container’s width */
+  width: 360px; /* Slightly smaller than max-width to account for padding */
+  box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.1));
 }
 
 .popup-image {
   width: 100%;
-  height: 200px;
+  height: 150px; /* Reduced to match event-image */
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: transparent;
+  top: 8px;
+  right: 8px;
+  background: transparent;
   border: none;
-  font-size: 2rem;
-  color: #333;
+  font-size: calc(var(--font-size-base, 16px) * 1.25);
+  color: var(--text-color, #333);
   cursor: pointer;
 }
 
@@ -161,23 +173,83 @@
   color: red;
 }
 
-/* Mobile responsive adjustments */
-@media (max-width: 768px) {
-  .events-list {
-    grid-template-columns: 1fr;
-  }
-  
-  .popup-content {
-    padding: 20px;
-  }
-  
-  .back-button {
-    font-size: 0.9rem;
-    padding: 10px 20px;
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .events-container {
+    padding: 25px; /* Match booking-container */
   }
 
-  .add-to-calendar-button {
-    font-size: 0.9rem;
-    padding: 8px 15px;
+  .events-logo {
+    width: 100px; /* Slightly larger for bigger screens */
+  }
+
+  .event-image,
+  .popup-image {
+    height: 180px; /* Slightly larger for bigger screens */
+  }
+
+  .event-details {
+    padding: 15px;
+  }
+
+  .event-details h3 {
+    font-size: calc(var(--font-size-base, 16px) * 1.5);
+  }
+
+  .event-details p,
+  .error-message,
+  .add-to-calendar-button,
+  .back-button {
+    font-size: calc(var(--font-size-base, 16px) * 1);
+  }
+
+  .back-button {
+    width: 140px; 
+  }
+
+  .popup-content {
+    padding: 25px;
+    width: 400px;
+  }
+}
+
+@media (max-width: 360px) {
+  .events-container {
+    padding: 15px; 
+  }
+
+  .events-logo {
+    width: 60px; 
+  }
+
+  .event-image,
+  .popup-image {
+    height: 120px; 
+  }
+
+  .event-details {
+    padding: 8px;
+  }
+
+  .event-details h3 {
+    font-size: calc(var(--font-size-base, 16px) * 1);
+  }
+
+  .event-details p,
+  .error-message,
+  .add-to-calendar-button,
+  .back-button {
+    font-size: calc(var(--font-size-base, 16px) * 0.75);
+  }
+
+  .add-to-calendar-button,
+  .back-button {
+    padding: 6px;
+  }
+
+  .popup-content {
+    padding: 15px;
+    width: 100%;
+    max-width: 300px; 
   }
 }
