@@ -89,6 +89,20 @@ function UserBooking() {
       setSuccess('');
       return;
     }
+
+    // Validate that the selected date is not before today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to midnight for date comparison
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      const errorMessage = 'Reservation time cannot be before current time.';
+      setError(errorMessage);
+      setSuccess('');
+      sendLog('search_times_error', errorMessage);
+      return;
+    }
+
     try {
       const formattedDate = formatLocalDate(date);
       const response = await axios.post(getAPI_URL('user/reservation/getAvailableTimeSlot'), {
@@ -120,6 +134,20 @@ function UserBooking() {
   const handleBook = async () => {
     await sendLog('book', 'Submitted booking');
     if (resource && purpose && date && time) {
+      // Validate that the reservation time is not before current time
+      const now = new Date();
+      const [startHours, startMinutes] = time.startingTime.split(':').map(Number);
+      const reservationDateTime = new Date(date);
+      reservationDateTime.setHours(startHours, startMinutes, 0, 0);
+
+      if (reservationDateTime < now) {
+        const errorMessage = 'Reservation time cannot be before current time';
+        setError(errorMessage);
+        setSuccess('');
+        sendLog('book_error', errorMessage);
+        return;
+      }
+
       const formattedDate = formatLocalDate(date);
       const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
 
