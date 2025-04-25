@@ -269,7 +269,7 @@ function UserEvent() {
               {selectedEvent.venues && selectedEvent.venues.length > 0 ? (
                 <ul>
                   {selectedEvent.venues.map((venue, index) => (
-                    <li key={index}>{venue.venueName || venue.name || 'Unnamed Venue'}</li>
+                    <li key={index}>{venue.resourceName || venue.name || '3R002'}</li>
                   ))}
                 </ul>
               ) : (
