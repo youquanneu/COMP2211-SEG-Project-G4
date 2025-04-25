@@ -23,23 +23,28 @@ public class TimeSlotService {
     }
     public List<TimeSlot> getAvailableTimeSlots(Resource resource, List<Reservation> reservations) {
         List<TimeSlot> openSlots = openTime(resource);
-        List<TimeSlot> availableSlots = new ArrayList<>();
-        for (TimeSlot slot : openSlots) {
-            boolean overlaps = false;
-            for (Reservation reservation : reservations) {
-                LocalTime reservationStarting = reservation.getReservationStarting().toLocalTime();
-                LocalTime reservationEnding = reservation.getReservationEnding().toLocalTime();
-                if (!(slot.getEndingTime().isBefore(reservationStarting.plusSeconds(1))
-                        || slot.getStartingTime().isAfter(reservationEnding.minusSeconds(1)))) {
-                    overlaps = true;
-                    break;
+        if (reservations == null){
+            return openSlots;
+        }
+        else {
+            List<TimeSlot> availableSlots = new ArrayList<>();
+            for (TimeSlot slot : openSlots) {
+                boolean overlaps = false;
+                for (Reservation reservation : reservations) {
+                    LocalTime reservationStarting = reservation.getReservationStarting().toLocalTime();
+                    LocalTime reservationEnding = reservation.getReservationEnding().toLocalTime();
+                    if (!(slot.getEndingTime().isBefore(reservationStarting.plusSeconds(1))
+                            || slot.getStartingTime().isAfter(reservationEnding.minusSeconds(1)))) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+                if (!overlaps) {
+                    availableSlots.add(slot);
                 }
             }
-            if (!overlaps) {
-                availableSlots.add(slot);
-            }
+            return availableSlots;
         }
-        return availableSlots;
     }
     private List<TimeSlot> openTime(Resource resource){
         List<TimeSlot> allSlots = getTimeSlot();

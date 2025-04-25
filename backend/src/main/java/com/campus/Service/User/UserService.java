@@ -61,14 +61,14 @@ public class UserService implements UserDetailsService {
         verifyCurrentPassword(user,password);
         return user;
     }   // Function: Return a user by email and password
-    private User findUserByUsername(String username){
+    public User findUserByUsername(String username){
         Optional<User> user = userRepository.findByUsernameEqualsIgnoreCase(username);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
         return user.get();
     }   // Base Function : Get user by username
-    private User findUserByEmail(String email){
+    public User findUserByEmail(String email){
         Optional<User> user = userRepository.findByEmailEqualsIgnoreCase(email);
         if (user.isEmpty()){
             throw new RuntimeException("User email not found : " + email);
