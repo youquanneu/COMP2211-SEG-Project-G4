@@ -1,3 +1,9 @@
+/* Ensure font-family is applied to all elements within .navigation-container */
+.navigation-container,
+.navigation-container * {
+  font-family: 'Times New Roman', Times, serif !important;
+}
+
 /* Base container */
 .navigation-container {
   width: 90%;
@@ -8,7 +14,6 @@
   box-shadow: 0 4px 12px var(--shadow-color);
   margin: 20px auto;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 @media (min-width: 768px) {
@@ -130,38 +135,66 @@
 
 button, .MuiButton-root {
   width: 120px;
-  padding: 8px;
-  background: linear-gradient(to right, var(--button-bg-start), var(--button-bg-end));
-  color: white;
+  padding: 8px 16px;
+  background: linear-gradient(to right, #1976d2, #1565c0);
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   font-size: calc(var(--font-size-base) * 0.875);
+  font-weight: 500;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  text-transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button:hover, .MuiButton-root:hover {
+  background: linear-gradient(to right, #1e88e5, #1976d2);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.back-button, .MuiButton-outlined, .MuiButton-containedSecondary, .MuiButton-containedInfo {
-  background: linear-gradient(to right, #6c757d, #5a6268);
+button:disabled, .MuiButton-root.Mui-disabled {
+  background: linear-gradient(to right, #b0bec5, #90a4ae);
+  color: #eceff1;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.back-button:hover, .MuiButton-outlined:hover, .MuiButton-containedSecondary:hover, .MuiButton-containedInfo:hover {
-  background: #5a6268;
+button:focus, .MuiButton-root:focus {
+  outline: 2px solid #1e88e5;
+  outline-offset: 2px;
+}
+
+.MuiButton-outlined, .MuiButton-containedSecondary, .MuiButton-containedInfo {
+  background: linear-gradient(to right, #78909c, #607d8b);
+  color: #ffffff;
+}
+
+.MuiButton-outlined:hover, .MuiButton-containedSecondary:hover, .MuiButton-containedInfo:hover {
+  background: linear-gradient(to right, #90a4ae, #78909c);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.MuiButton-outlined.Mui-disabled, .MuiButton-containedSecondary.Mui-disabled, .MuiButton-containedInfo.Mui-disabled {
+  background: linear-gradient(to right, #b0bec5, #90a4ae);
+  color: #eceff1;
 }
 
 @media (min-width: 768px) {
   button, .MuiButton-root {
     width: 140px;
     font-size: calc(var(--font-size-base) * 1);
+    padding: 10px 20px;
   }
 }
 
 @media (max-width: 360px) {
   button, .MuiButton-root {
     width: 100%;
+    padding: 8px 12px;
+    font-size: calc(var(--font-size-base) * 0.75);
   }
 }
 

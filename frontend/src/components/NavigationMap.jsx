@@ -35,15 +35,13 @@ import NavigationIcon from '@mui/icons-material/Navigation';
 import LabelIcon from '@mui/icons-material/Label';
 import LabelOffIcon from '@mui/icons-material/LabelOff';
 import { useNavigate } from 'react-router-dom';
-import './NavigationMap.css'; // Styles for this component
-// Using direct import - no more relative path issues
+import './NavigationMap.css';
 import floorPlanImage from '../assets/floor-plan.png';
 
 const CampusNavigation = () => {
-  // Theme and media query for responsive design
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
   
   const [startRoom, setStartRoom] = useState("");
   const [endRoom, setEndRoom] = useState("");
@@ -58,10 +56,9 @@ const CampusNavigation = () => {
   const [connectionStatus, setConnectionStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Load the floor plan image
   useEffect(() => {
     const img = new Image();
-    img.src = floorPlanImage; // Using imported image
+    img.src = floorPlanImage;
     console.log("Loading image from:", floorPlanImage);
     
     img.onload = () => {
@@ -75,19 +72,16 @@ const CampusNavigation = () => {
     };
   }, []);
 
-  // Animation loop for path markers - makes them move along the path
   useEffect(() => {
     if (path.length <= 1) return;
     
     const animate = () => {
-      setAnimationFrame(prev => (prev + 1) % 60); // 60 frames cycle
+      setAnimationFrame(prev => (prev + 1) % 60);
       animationRef.current = requestAnimationFrame(animate);
     };
     
-    // Start animation
     animationRef.current = requestAnimationFrame(animate);
     
-    // Cleanup - cancel animation when component unmounts
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -96,7 +90,6 @@ const CampusNavigation = () => {
     };
   }, [path]);
 
-  // Draw the rooms and path on canvas
   useEffect(() => {
     if (!canvasRef.current || !imageLoaded || !imgRef.current) return;
 
@@ -104,21 +97,14 @@ const CampusNavigation = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw the floor plan image
     ctx.drawImage(imgRef.current, 0, 0, canvas.width, canvas.height);
 
-    // Draw rooms with highlighting
     rooms.forEach(room => {
-      // Use red highlight for disconnected rooms
       const isDisconnected = connectionStatus?.disconnectedRooms.includes(room.id);
-      // Make boxes fully transparent (alpha = 0) to hide them
       ctx.fillStyle = 'rgba(0, 0, 0, 0)';
       ctx.fillRect(room.x, room.y, room.width, room.height);
       
-      // Draw room labels if enabled in config
       if (showNodeLabels) {
         ctx.font = 'bold 12px Arial';
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -126,36 +112,30 @@ const CampusNavigation = () => {
       }
     });
 
-    // Draw waypoints if enabled
     if (showWaypoints) {
       waypoints.forEach(waypoint => {
         ctx.beginPath();
         
         if (waypoint.type === 'junction') {
-          // Blue circle for junctions
           ctx.fillStyle = 'rgba(0, 0, 255, 0.7)';
           ctx.arc(waypoint.x, waypoint.y, 6, 0, Math.PI * 2);
         } else {
-          // Red circle for corridors
           ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
           ctx.arc(waypoint.x, waypoint.y, 4, 0, Math.PI * 2);
         }
         
         ctx.fill();
         
-        // Draw all waypoint IDs if enabled, not just junctions
         if (showNodeLabels) {
           ctx.font = waypoint.type === 'junction' ? 'bold 10px Arial' : '9px Arial';
           ctx.fillStyle = waypoint.type === 'junction' ? 'rgba(0, 0, 100, 0.8)' : 'rgba(150, 0, 0, 0.7)';
           
-          // Position the label based on node type
           if (waypoint.type === 'junction') {
             ctx.fillText(waypoint.id, waypoint.x - 8, waypoint.y - 8);
           } else {
             ctx.fillText(waypoint.id, waypoint.x + 6, waypoint.y - 2);
           }
         } else if (waypoint.type === 'junction') {
-          // Always show junction IDs as before
           ctx.font = '10px Arial';
           ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
           ctx.fillText(waypoint.id, waypoint.x - 8, waypoint.y - 8);
@@ -163,12 +143,10 @@ const CampusNavigation = () => {
       });
     }
 
-    // Draw path if we have one
     if (path.length > 1) {
       const nodeMap = new Map();
       allNodes.forEach(node => nodeMap.set(node.id, node));
 
-      // Draw the path
       ctx.beginPath();
       ctx.lineWidth = 3;
       ctx.strokeStyle = 'rgba(0, 128, 0, 0.8)';
@@ -189,12 +167,11 @@ const CampusNavigation = () => {
       }
       ctx.stroke();
 
-      // Draw animated arrows along the path 
       const arrowPositions = [];
-      const totalArrows = Math.min(path.length - 1, 5); // Max 5 arrows
+      const totalArrows = Math.min(path.length - 1, 5);
       
       for (let i = 0; i < totalArrows; i++) {
-        const position = (i / totalArrows) + (animationFrame / 240); // Animation speed
+        const position = (i / totalArrows) + (animationFrame / 240);
         const segmentIndex = Math.floor(position * (path.length - 1)) % (path.length - 1);
         const segmentPosition = (position * (path.length - 1)) % 1;
         
@@ -209,48 +186,41 @@ const CampusNavigation = () => {
         const arrowX = pos1.x + segmentPosition * (pos2.x - pos1.x);
         const arrowY = pos1.y + segmentPosition * (pos2.y - pos1.y);
         
-        // Calculate angle for the arrow
         const angle = Math.atan2(pos2.y - pos1.y, pos2.x - pos1.x);
         
         arrowPositions.push({ x: arrowX, y: arrowY, angle });
       }
       
-      // Draw each arrow
       arrowPositions.forEach(({ x, y, angle }) => {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
         
-        // Draw arrow
         ctx.beginPath();
         ctx.fillStyle = 'rgba(0, 128, 0, 0.9)';
-        ctx.moveTo(10, 0);  // Arrow tip
-        ctx.lineTo(-5, 5);  // Bottom corner
-        ctx.lineTo(-2, 0);  // Middle indent
-        ctx.lineTo(-5, -5); // Top corner
+        ctx.moveTo(10, 0);
+        ctx.lineTo(-5, 5);
+        ctx.lineTo(-2, 0);
+        ctx.lineTo(-5, -5);
         ctx.closePath();
         ctx.fill();
         
         ctx.restore();
       });
 
-      // Highlight the start and end rooms
       const startNode = nodeMap.get(path[0]);
       const endNode = nodeMap.get(path[path.length - 1]);
 
       if (startNode && isRoom(startNode)) {
-        // Start room - make transparent to hide
         ctx.fillStyle = 'rgba(0, 0, 0, 0)';
         ctx.fillRect(startNode.x, startNode.y, startNode.width, startNode.height);
       }
 
       if (endNode && isRoom(endNode)) {
-        // End room - make transparent to hide
         ctx.fillStyle = 'rgba(0, 0, 0, 0)';
         ctx.fillRect(endNode.x, endNode.y, endNode.width, endNode.height);
       }
 
-      // Draw path nodes (dots at junction points)
       path.forEach(nodeId => {
         const node = nodeMap.get(nodeId);
         if (!node || isRoom(node)) return;
@@ -259,18 +229,15 @@ const CampusNavigation = () => {
         ctx.beginPath();
         
         if (node.type === 'junction') {
-          // Highlight junction points more prominently
           ctx.fillStyle = 'rgba(0, 128, 0, 0.9)';
           ctx.arc(pos.x, pos.y, 6, 0, Math.PI * 2);
         } else {
-          // Highlight corridor points
           ctx.fillStyle = 'rgba(0, 128, 0, 0.7)';
           ctx.arc(pos.x, pos.y, 4, 0, Math.PI * 2);
         }
         
         ctx.fill();
         
-        // Highlight the node IDs along the path
         if (showNodeLabels) {
           ctx.font = 'bold 11px Arial';
           ctx.fillStyle = 'rgba(0, 100, 0, 0.9)';
@@ -280,16 +247,13 @@ const CampusNavigation = () => {
     }
   }, [path, imageLoaded, animationFrame, showWaypoints, showNodeLabels, connectionStatus]);
 
-  // Toggle node labels
   const toggleNodeLabels = () => {
     setShowNodeLabels(!showNodeLabels);
   };
 
-  // Check connectivity between all rooms
   const checkConnectivity = () => {
     setLoading(true);
     
-    // Using setTimeout to let UI update first
     setTimeout(() => {
       const { connectedRooms, disconnectedRooms } = verifyConnections();
       
@@ -303,7 +267,6 @@ const CampusNavigation = () => {
     }, 10);
   };
 
-  // Calculate path between rooms
   const calculatePath = () => {
     if (!startRoom || !endRoom) {
       return;
@@ -311,7 +274,6 @@ const CampusNavigation = () => {
     
     setLoading(true);
     
-    // Using setTimeout so we don't block
     setTimeout(() => {
       const foundPath = findPath(startRoom, endRoom);
       setPath(foundPath);
@@ -319,7 +281,6 @@ const CampusNavigation = () => {
     }, 10);
   };
 
-  // Reset the path
   const resetPath = () => {
     setStartRoom("");
     setEndRoom("");
@@ -327,13 +288,11 @@ const CampusNavigation = () => {
     setConnectionStatus(null);
   };
 
-  // Get only room IDs for dropdown menus
   const roomOptions = rooms.map(room => ({
     id: room.id,
     name: room.name
   }));
 
-  // Generate navigation instructions
   const generateInstructions = () => {
     if (!path || path.length < 2) return [];
     
@@ -514,7 +473,7 @@ const CampusNavigation = () => {
               display: 'flex', 
               flexWrap: 'wrap',
               justifyContent: 'center',
-              gap: 1,
+              gap: 1.5,
               width: '100%',
             }}>
               <Button
@@ -524,18 +483,6 @@ const CampusNavigation = () => {
                 onClick={calculatePath}
                 startIcon={<RouteIcon />}
                 size="small"
-                sx={{ 
-                  px: 1.5,
-                  py: 0.7,
-                  borderRadius: 1.5,
-                  fontWeight: 500,
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  textTransform: 'none',
-                  minWidth: 0,
-                  '&:hover': {
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.15)'
-                  }
-                }}
               >
                 {isMobile ? "Find" : "Find Directions"}
               </Button>
@@ -543,16 +490,9 @@ const CampusNavigation = () => {
               <Button
                 variant="outlined"
                 onClick={resetPath}
-                size="small"
                 startIcon={<RestartAltIcon />}
                 disabled={!startRoom && !endRoom}
-                sx={{ 
-                  borderRadius: 1.5,
-                  textTransform: 'none',
-                  px: 1.5,
-                  py: 0.7,
-                  minWidth: 0
-                }}
+                size="small"
               >
                 Reset
               </Button>
@@ -564,13 +504,6 @@ const CampusNavigation = () => {
                   onClick={() => setShowWaypoints(!showWaypoints)}
                   startIcon={showWaypoints ? <VisibilityOffIcon /> : <VisibilityIcon />}
                   size="small"
-                  sx={{ 
-                    borderRadius: 1.5,
-                    textTransform: 'none',
-                    px: 1.5,
-                    py: 0.7,
-                    minWidth: 0
-                  }}
                 >
                   {isMobile ? "" : "Waypoints"}
                 </Button>
@@ -583,13 +516,6 @@ const CampusNavigation = () => {
                   onClick={toggleNodeLabels}
                   startIcon={showNodeLabels ? <LabelOffIcon /> : <LabelIcon />}
                   size="small"
-                  sx={{ 
-                    borderRadius: 1.5,
-                    textTransform: 'none',
-                    px: 1.5,
-                    py: 0.7,
-                    minWidth: 0
-                  }}
                 >
                   {isMobile ? "" : "Labels"}
                 </Button>
@@ -602,13 +528,6 @@ const CampusNavigation = () => {
                   onClick={checkConnectivity}
                   startIcon={<CheckCircleOutlineIcon />}
                   size="small"
-                  sx={{ 
-                    borderRadius: 1.5,
-                    textTransform: 'none',
-                    px: 1.5,
-                    py: 0.7,
-                    minWidth: 0
-                  }}
                 >
                   {isMobile ? "" : "Verify"}
                 </Button>
@@ -678,7 +597,6 @@ const CampusNavigation = () => {
             </Alert>
           )}
            
-          {/* Map container with canvas - tried to make this responsive but it gets weird */}
           <Box 
             sx={{ 
               position: 'relative',
@@ -702,7 +620,6 @@ const CampusNavigation = () => {
             />
           </Box>
            
-          {/* Path details and directions */}
           {path.length > 0 && (
             <Paper 
               sx={{ 
@@ -784,21 +701,20 @@ const CampusNavigation = () => {
                 }}
               >
                 {instructions.map((instruction, index) => {
-                  // Style based on instruction type - had to handle each case
                   let color = 'inherit';
                   let fontWeight = 400;
                   let icon = null;
                   
                   if (instruction.type === 'start') {
-                    color = '#4caf50'; // Green for start
+                    color = '#4caf50';
                     fontWeight = 600;
                     icon = <MyLocationIcon fontSize="small" sx={{ mr: 1, color: '#4caf50' }} />;
                   } else if (instruction.type === 'destination') {
-                    color = '#f44336'; // Red for destination
+                    color = '#f44336';
                     fontWeight = 600;
                     icon = <LocationOnIcon fontSize="small" sx={{ mr: 1, color: '#f44336' }} />;
                   } else if (instruction.type === 'junction') {
-                    color = '#ff9800'; // Orange for turns
+                    color = '#ff9800';
                     fontWeight = 600;
                     icon = <NavigationIcon fontSize="small" sx={{ mr: 1, color: '#ff9800' }} />;
                   }
@@ -825,19 +741,18 @@ const CampusNavigation = () => {
             </Paper>
           )}
           
-          {/* Back button centered with text "Back" */}
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
             <Button
-              color="primary"
+              color="secondary"
               onClick={() => navigate(-1)}
               size="small"
               sx={{
+                background: 'linear-gradient(to right, #78909c, #607d8b)',
+                color: '#ffffff',
                 borderRadius: 1,
-                border: '1px solid rgba(25, 118, 210, 0.5)',
                 p: 0.8,
-                bgcolor: 'rgba(25, 118, 210, 0.08)',
                 '&:hover': {
-                  bgcolor: 'rgba(25, 118, 210, 0.15)',
+                  background: 'linear-gradient(to right, #90a4ae, #78909c)',
                 },
                 textTransform: 'none',
                 fontWeight: 500,
