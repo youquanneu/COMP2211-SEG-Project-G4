@@ -13,13 +13,13 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 25px;
-  flex-wrap: nowrap; /* Prevent wrapping */
+  flex-wrap: nowrap; 
 }
 
 .home-logo {
-  width: 50px; /* Reduced from 60px */
+  width: 50px; 
   height: auto;
-  margin-right: 10px; /* Reduced from 15px */
+  margin-right: 10px; 
   flex-shrink: 0;
 }
 
@@ -31,13 +31,13 @@
 
 .nav-dropdown {
   padding: 6px;
-  font-size: calc(var(--font-size-base, 16px) * 0.875); /* 14px */
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
   border: 1px solid var(--border-color, #ddd);
   border-radius: 6px;
   background: var(--background-color, #fff);
   color: var(--text-color, #333);
-  max-width: 100px; /* Reduced from 130px */
-  width: 100%; /* Fill wrapper */
+  max-width: 100px; 
+  width: 100%; 
   flex-shrink: 1;
   min-width: 0;
 }
@@ -50,20 +50,22 @@
 .auth-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px; /* Reduced from 10px */
+  gap: 8px; 
   flex-shrink: 1;
 }
 
-.sign-in-button {
+.auth-wrapper .sign-in-button {
   color: var(--button-bg-start, #0077B6);
-  font-size: calc(var(--font-size-base, 16px) * 0.875);
+  font-size: calc(var(--font-size-base, 16px) * 1); 
   font-weight: bold;
-  background: none;
-  border: none;
+  background: transparent ;
+  border: none ; 
+  outline: none ;
+  box-shadow: none ; 
   padding: 0;
   cursor: pointer;
   text-decoration: none;
-  max-width: 60px; /* Cap width */
+  max-width: 70px; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -73,10 +75,28 @@
 .sign-in-button:hover {
   text-decoration: underline;
   color: var(--button-bg-end, #005888);
+  background: transparent ; 
+  border: none ;
+  outline: none ;
+  box-shadow: none ; 
+}
+
+.sign-in-button:focus {
+  outline: none ; 
+  border: none; 
+  box-shadow: none ; 
+  background: transparent ; 
+}
+
+.sign-in-button:active {
+  outline: none ; 
+  border: none ; 
+  box-shadow: none ; 
+  background: transparent ; 
 }
 
 .settings-icon {
-  font-size: calc(var(--font-size-base, 16px) * 2); /* 32px vs 40px */
+  font-size: calc(var(--font-size-base, 16px) * 2); 
   color: var(--button-bg-start, #0077B6);
   cursor: pointer;
   flex-shrink: 0;
@@ -155,11 +175,15 @@
     max-width: 160px;
   }
   .sign-in-button {
-    font-size: calc(var(--font-size-base, 16px) * 1);
-    max-width: 80px;
+    font-size: calc(var(--font-size-base, 16px) * 1.125); 
+    max-width: 90px; 
+    background: transparent;
+    border: none ; 
+    outline: none ; 
+    box-shadow: none ;
   }
   .settings-icon {
-    font-size: calc(var(--font-size-base, 16px) * 2.25); /* 36px */
+    font-size: calc(var(--font-size-base, 16px) * 2.25); 
   }
   .home-content h1 {
     font-size: calc(var(--font-size-base, 16px) * 1.625);
@@ -174,12 +198,12 @@
 
 @media (max-width: 360px) {
   .home-header {
-    flex-direction: row; /* Keep row layout */
+    flex-direction: row; 
     align-items: center;
     gap: 8px;
   }
   .home-logo {
-    width: 40px; /* Further reduced */
+    width: 40px;
     margin-right: 8px;
   }
   .nav-dropdown {
@@ -190,11 +214,15 @@
     gap: 6px;
   }
   .sign-in-button {
-    font-size: calc(var(--font-size-base, 16px) * 0.75); /* 12px */
-    max-width: 50px;
+    font-size: calc(var(--font-size-base, 16px) * 0.875); 
+    max-width: 60px; 
+    background: transparent; 
+    border: none ;
+    outline: none ;
+    box-shadow: none ;
   }
   .settings-icon {
-    font-size: calc(var(--font-size-base, 16px) * 1.75); /* 28px */
+    font-size: calc(var(--font-size-base, 16px) * 1.75); 
   }
   .home-photo {
     max-width: 100%;
