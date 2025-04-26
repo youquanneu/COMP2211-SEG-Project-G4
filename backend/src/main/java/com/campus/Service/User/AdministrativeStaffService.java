@@ -2,12 +2,10 @@ package com.campus.Service.User;
 
 import com.campus.Classification.Restriction;
 import com.campus.Classification.Status;
+import com.campus.DataTransferObject.Resource.DashboardDTO;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
-import com.campus.Entity.Resource.Equipment;
-import com.campus.Entity.Resource.IndoorVenue;
-import com.campus.Entity.Resource.OutdoorVenue;
-import com.campus.Entity.Resource.Resource;
+import com.campus.Entity.Resource.*;
 import com.campus.Entity.User.AdministrativeStaff;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
@@ -212,12 +210,9 @@ public class AdministrativeStaffService{
         return reservationRepository.filterReservation(reservationId,booker,resource,reservationAfter,reservationBefore,status);
     }
 
-
     @Autowired
     private EventRepository eventRepository;
-
     public Event createNewEvent(Event event){
         return eventRepository.save(event);
     }
-
 }

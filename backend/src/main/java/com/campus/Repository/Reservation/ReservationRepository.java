@@ -39,6 +39,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
             @Param("resource")              Resource resource,
             @Param("reservationStarting")   LocalDateTime reservationStarting,
             @Param("reservationEnding")     LocalDateTime reservationEnding);
+
     @Query("select reservation from Reservation reservation " +
             "where  (:reservationId         is null or reservation.reservationId        = :reservationId) " +
             "and    (:booker                is null or reservation.booker               = :booker)" +
@@ -54,6 +55,7 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
             @Param("reservationAfter")  LocalDateTime reservationAfter,
             @Param("reservationBefore") LocalDateTime reservationBefore,
             @Param("status") Status status);
+
     @Query("select reservation from Reservation reservation " +
             "where    (reservation.resource             = :resource)  " +
             "and    ((reservation.reservationStarting  >= :dateStart)" +
@@ -64,4 +66,11 @@ public interface ReservationRepository extends JpaRepository<Reservation,Integer
             @Param("resource")          Resource resource,
             @Param("dateStart")  LocalDateTime dateStart,
             @Param("dateEnd")  LocalDateTime dateEnd);
+
+    @Query("select reservation from Reservation reservation " +
+            "where  (   reservation.reservationStarting <= :currentTime " +
+            "       and reservation.reservationEnding   >= :currentTime)" +
+            "and    reservation.status = 0" // Only approved reservations
+    )
+    List<Reservation> filterOngoingReservations(@Param("currentTime")  LocalDateTime currentTime);
 }

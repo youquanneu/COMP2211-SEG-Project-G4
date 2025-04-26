@@ -2,12 +2,11 @@ package com.campus.Controller.User;
 
 import com.campus.Classification.UserRole;
 import com.campus.DataTransferObject.Reservation.ReservationDTO;
-import com.campus.DataTransferObject.Resource.EquipmentDTO;
-import com.campus.DataTransferObject.Resource.ResourceDTO;
-import com.campus.DataTransferObject.Resource.RestrictionControlRequest;
-import com.campus.DataTransferObject.Resource.VenueDTO;
+import com.campus.DataTransferObject.Resource.*;
 import com.campus.DataTransferObject.User.RegisterRequest;
 import com.campus.DataTransferObject.User.UserDTO;
+import com.campus.Entity.Reservation.Reservation;
+import com.campus.Entity.Resource.*;
 import com.campus.Entity.User.Lecturer;
 import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -80,11 +80,12 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-    @PostMapping("")
-    public ResponseEntity<?> booking() {
-        logger.info("processing : " );
+    @GetMapping("/dashboard/getStatus")
+    public ResponseEntity<?> getReservationStatus() {
+        logger.info("Processing getReservationStatus " );
         try {
-            return ResponseEntity.ok("");
+            DashboardDTO dashboardDTO = getDashboardData();
+            return ResponseEntity.ok(dashboardDTO);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -179,5 +180,34 @@ public class AdminController {
             logger.info("Get exception : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
+    }
+    private DashboardDTO getDashboardData(){
+        List<Reservation> ongoingReservation = reservationService.getOngoingReservation();
+        List<Reservation> venueReservation = new ArrayList<>();
+        List<Reservation> equipmentReservation = new ArrayList<>();
+        for (Reservation reservation : ongoingReservation){
+            if (reservation.getResource() instanceof Venue){
+                venueReservation.add(reservation);
+            }
+            else if (reservation.getResource() instanceof Equipment){
+                equipmentReservation.add(reservation);
+            }
+        }
+        List<Resource> bookableResource = venueService.getBookableResource();
+        List<Venue> bookableVenue = new ArrayList<>();
+        List<Equipment> bookableEquipment = new ArrayList<>();
+        for (Resource resource : bookableResource){
+            if (resource instanceof Venue){
+                bookableVenue.add((Venue) resource);
+            }
+            else if (resource instanceof Equipment){
+                bookableEquipment.add((Equipment) resource);
+            }
+        }
+        return new DashboardDTO(
+                venueReservation.size(),
+                bookableVenue.size(),
+                equipmentReservation.size(),
+                bookableEquipment.size());
     }
 }

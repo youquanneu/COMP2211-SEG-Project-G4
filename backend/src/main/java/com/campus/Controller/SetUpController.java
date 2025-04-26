@@ -43,13 +43,12 @@ public class SetUpController  implements CommandLineRunner {
         logger.info("Application start here");
         try {
             System.out.println(userService.getUserById(1));
+
         }catch (Exception e) {
-            initializeUser();
-            initializeResource();
-            initializeReservation();
-            initializeTimeSlot();
-            initializeEmergencyCase();
-            testNewEvent();
+//            initializeUser();
+//            initializeResource();
+//            initializeReservation();
+//            initializeTimeSlot();
         }
         System.out.println("——————————————————————————————————————————————————————————");
         logger.info("Initial Set Up complete");

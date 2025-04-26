@@ -45,6 +45,9 @@ public class ReservationService {
     public List<Reservation> getMyReservationList(User user){
         return reservationRepository.findReservationByBooker(user);
     }
+    public List<Reservation> getOngoingReservation(){
+        return reservationRepository.filterOngoingReservations(LocalDateTime.now());
+    }
     public Reservation createNewReservation(User user,
                                             Resource resource,
                                             Purpose purpose,
