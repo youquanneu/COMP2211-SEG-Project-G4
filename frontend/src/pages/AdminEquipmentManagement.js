@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import { getEquipment, updateEquipmentAvailability } from '../api'; // Import the new functions
+import { getEquipments, changeResourceRestriction } from '../services/api';
 import './AdminEquipmentManagement.css';
 
 function AdminEquipmentManagement() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [equipment, setEquipment] = useState([]);
+  const [equipments, setEquipments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -15,9 +15,9 @@ function AdminEquipmentManagement() {
     const fetchEquipment = async () => {
       setLoading(true);
       try {
-        const response = await getEquipment();
+        const response = await getEquipments();
         if (response.success) {
-          setEquipment(response.data);
+          setEquipments(response.data);
         } else {
           setError('Failed to fetch equipment.');
         }
@@ -31,23 +31,22 @@ function AdminEquipmentManagement() {
     fetchEquipment();
   }, []);
 
-  const handleToggleAvailability = async (id) => {
-    const item = equipment.find((e) => e.id === id);
-    const updatedAvailability = !item.available;
-
+  const handleRestrictionChange = async (equipment, newRestriction) => {
     try {
-      const response = await updateEquipmentAvailability(id, updatedAvailability);
+      const response = await changeResourceRestriction(equipment, newRestriction);
       if (response.success) {
-        setEquipment((prevEquipment) =>
-          prevEquipment.map((item) =>
-            item.id === id ? { ...item, available: updatedAvailability } : item
-          )
-        );
+        setEquipments((prevEquipments) =>
+                prevEquipments.map((e) =>
+                  e.resourceId === equipment.resourceId
+                    ? { ...e, restriction: newRestriction }
+                    : e
+                )
+              );
       } else {
-        setError('Failed to update equipment availability.');
+        setError('Failed to update venue availability.');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'An error occurred while updating equipment availability.');
+      setError(err.response?.data?.error || 'An error occurred while updating venue availability.');
     }
   };
 
@@ -73,21 +72,21 @@ function AdminEquipmentManagement() {
         <div className="equipment-list">
           {loading ? (
             <p>Loading equipment...</p>
-          ) : equipment.length > 0 ? (
-            equipment.map((item) => (
-              <div key={item.id} className="equipment-item">
-                <span className="equipment-name">{item.name}</span>
-                <label className="availability-toggle">
-                  <input
-                    type="checkbox"
-                    checked={item.available}
-                    onChange={() => handleToggleAvailability(item.id)}
-                  />
-                  <span className="toggle-label">
-                    {item.available ? 'Available' : 'Unavailable'}
-                  </span>
-                </label>
-              </div>
+          ) : equipments.length > 0 ? (
+            equipments.map((equipment) => (
+              <div key={equipment.resourceId} className="equipment-item">
+                <span className="equipment-name">{equipment.resourceName}</span>
+                 <div className="availability-toggle">
+                  <select
+                    value={equipment.restriction}
+                    onChange={(e) => handleRestrictionChange(equipment, e.target.value)} >
+                        <option value="NonRestriction">NonRestriction</option>
+                        <option value="ApprovalRequired">ApprovalRequired</option>
+                        <option value="Restricted">Restricted</option>
+                        <option value="NonBookable">NonBookable</option>
+                      </select>
+                    </div>
+                </div>
             ))
           ) : (
             <p>No equipment found.</p>

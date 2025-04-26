@@ -149,3 +149,47 @@ export const registerUser = async (userData) => {
     throw error;
   }
 };
+
+export const getVenues = async () => {
+    try{
+        const response = await axios.get(getAPI_URL('admin/venueManagement/getVenues'));
+        return {
+        success : true,
+        data : response.data
+        };
+    }
+    catch (error) {
+        console.error('Error:', error);
+        throw error;
+      }
+};
+
+export const getEquipments = async () => {
+    try{
+        const response = await axios.get(getAPI_URL('admin/equipmentManagement/getEquipments'));
+        return {
+        success : true,
+        data : response.data
+        };
+    }
+    catch (error) {
+        console.error('Error:', error);
+        throw error;
+      }
+};
+export const changeResourceRestriction = async (resourceDTO, restriction) =>{
+    try {
+        const response = await axios.post(getAPI_URL('admin/resourceManagement/restrictionControl'),
+        {
+        resourceDTO,
+        restriction
+        }
+       );
+        return { success: true, data: response.data };
+      } catch (error) {
+        console.error('Error :', error);
+        throw error;
+      }
+}
+
+

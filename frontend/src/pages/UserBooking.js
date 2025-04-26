@@ -40,7 +40,7 @@ function UserBooking() {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const response = await axios.get(getAPI_URL('user/resource/getAllResource'));
+        const response = await axios.get(getAPI_URL('user/resource/getBookableResource'));
         if (Array.isArray(response.data)) {
           setResources(response.data);
           setError(''); // Clear any previous errors
