@@ -119,7 +119,11 @@ function UserBooking() {
         console.error('Expected an array, got:', response.data);
       }
     } catch (err) {
-      setError('Failed to load available times. Please try again.');
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Failed to load available times. Please try again.');
+      }
       setSuccess('');
       console.error('Fetch error:', err.message, err.response?.data);
     }
@@ -151,6 +155,9 @@ function UserBooking() {
       const formattedDate = formatLocalDate(date);
       const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
 
+      // Log the booking data for debugging
+      console.log('Booking with purpose:', purpose);
+
       const bookingData = {
         userEmail,
         resourceDTO: resource,
@@ -161,6 +168,10 @@ function UserBooking() {
 
       try {
         const response = await axios.post(getAPI_URL('user/reservation/makeReservation'), bookingData);
+        
+        // Log the response for debugging
+        console.log('Booking response:', response.data);
+        
         const fullBookingDetails = {
           ...bookingData,
           ...response.data
@@ -172,18 +183,26 @@ function UserBooking() {
       } catch (err) {
         console.error('Booking error:', err.message, err.response?.data);
         setSuccess('');
-        if (err.response) {
-          const { status, data } = err.response;
-          if (status === 409) {
-            setError(data.message || 'This time slot is already reserved. Please choose another time.');
-          } else if (status === 400) {
-            setError(data.message || 'Invalid booking details. Please check your input.');
+        
+        // Extract the error message directly from the response
+        if (err.response && err.response.data) {
+          if (typeof err.response.data === 'string') {
+            // Handle plain text error responses
+            setError(err.response.data);
+          } else if (err.response.data.message) {
+            // Handle error objects with message property
+            setError(err.response.data.message);
+          } else if (err.response.data.error) {
+            // Some APIs return errors in an error field
+            setError(err.response.data.error);
           } else {
-            setError(data.message || 'Failed to save booking. Please try again later.');
+            setError('Failed to save booking. Please try again later.');
           }
         } else {
           setError('Network error. Please check your connection and try again.');
         }
+        
+        sendLog('book_error', `${err.response?.data?.message || err.message}`);
       }
     } else {
       setError('Please select all options before booking.');

@@ -68,7 +68,7 @@ function UserCalendar() {
         const bookingsResponse = await axios.post(getAPI_URL('user/reservation/myReservation'), {
           email: userEmail,
         });
-        // console.log('Bookings Response:', JSON.stringify(bookingsResponse.data, null, 2)); // Commented out for production
+        console.log('Bookings Response:', JSON.stringify(bookingsResponse.data, null, 2));
         let bookingData = bookingsResponse.data;
         if (!Array.isArray(bookingData)) {
           if (bookingData.bookings && Array.isArray(bookingData.bookings)) {
@@ -89,8 +89,14 @@ function UserCalendar() {
           booking.reservationStarting && 
           booking.reservationEnding
         );
+        
+        // Log individual bookings to debug purpose field
+        bookingData.forEach((booking, index) => {
+          console.log(`Booking ${index}:`, booking);
+          console.log(`Purpose for booking ${index}:`, booking.purpose);
+        });
+        
         setBookings(bookingData);
-        // console.log('Valid bookings:', bookingData); // Commented out for production
       } catch (err) {
         setError('Failed to load data. Check if backend is running.');
         console.error('Fetch error:', err.message, err.response?.data);
@@ -128,15 +134,21 @@ function UserCalendar() {
         // Fixed: Use normalizedBookingDate instead of normalizedEventDate
         return normalizedBookingDate.getTime() === selectedDateNormalized.getTime();
       })
-      .map((booking) => ({
-        id: booking.reservationId,
-        date: new Date(booking.reservationStarting).toISOString().split('T')[0],
-        topic: `Booking: ${booking.resourceDTO?.resourceName || 'Unknown'}`,
-        area: booking.purpose || 'No purpose specified',
-        organizers: booking.userDTO?.email || 'User',
-        description: `${new Date(booking.reservationStarting).toLocaleString()} - ${new Date(booking.reservationEnding).toLocaleString()}`,
-        type: 'booking',
-      })),
+      .map((booking) => {
+        console.log('Mapping booking with ID:', booking.reservationId);
+        console.log('Purpose value:', booking.purpose);
+        
+        return {
+          id: booking.reservationId,
+          date: new Date(booking.reservationStarting).toISOString().split('T')[0],
+          topic: `Booking: ${booking.resourceDTO?.resourceName || 'Unknown'}`,
+          // Format the purpose from the purpose enum
+          purpose: booking.purpose || 'No purpose specified',
+          organizers: booking.userDTO?.email || 'User',
+          description: `${new Date(booking.reservationStarting).toLocaleString()} - ${new Date(booking.reservationEnding).toLocaleString()}`,
+          type: 'booking',
+        };
+      }),
   ];
 
   // Mark dates with events or bookings
@@ -208,14 +220,21 @@ function UserCalendar() {
               <p>
                 <strong>{item.type === 'booking' ? 'Booking' : 'Event'}:</strong> {item.topic}
               </p>
-              <p>
-                <strong>Purpose/Area:</strong> {item.area}
-              </p>
+              {item.type === 'booking' && (
+                <p>
+                  <strong>Purpose:</strong> {item.purpose}
+                </p>
+              )}
+              {item.type === 'event' && (
+                <p>
+                  <strong>Area/Purpose:</strong> {item.area}
+                </p>
+              )}
               <p>
                 <strong>User/Organizers:</strong> {item.organizers}
               </p>
               <p>
-                <strong>Time/Description:</strong> {item.description}
+                <strong>Time:</strong> {item.description}
               </p>
             </div>
           ))}

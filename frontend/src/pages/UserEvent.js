@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../assets/logo.png';
+import basketballEventImg from '../assets/Basketball event.png';
+import engineeringEventImg from '../assets/Engineering event.png';
+import aiEventImg from '../assets/AI event.png';
+import sustainabilityEventImg from '../assets/Sustainability Event.png';
 import './UserEvent.css';
 import { getAPI_URL } from '../services/api';
 
@@ -20,6 +24,23 @@ function UserEvent() {
     } catch (err) {
       console.error('Log error:', err.message);
     }
+  };
+
+  // Get appropriate image based on event title
+  const getEventImage = (event) => {
+    const title = event.eventTitle ? event.eventTitle.toLowerCase() : '';
+    
+    if (title.includes('basketball') || title.includes('tournament')) {
+      return basketballEventImg;
+    } else if (title.includes('faculty') || title.includes('faculty meeting')) {
+      return engineeringEventImg;
+    } else if (title.includes('artificial intelligence') || title.includes('Current')) {
+      return aiEventImg;
+    } else if (title.includes('sustainable') || title.includes('Sustainable')) {
+      return sustainabilityEventImg;
+    }
+    
+    return logo; // Default fallback
   };
 
   // Clean up malformed events in localStorage
@@ -201,7 +222,7 @@ function UserEvent() {
                 onClick={() => handleEventClick(event)}
               >
                 <img
-                  src={event.imageUrl || logo}
+                  src={event.imageUrl || getEventImage(event)}
                   alt={event.eventTitle || 'Event'}
                   className="event-image"
                   onError={(e) => {
@@ -247,7 +268,7 @@ function UserEvent() {
               ×
             </button>
             <img
-              src={selectedEvent.imageUrl || logo}
+              src={selectedEvent.imageUrl || getEventImage(selectedEvent)}
               alt={selectedEvent.eventTitle || 'Event'}
               className="popup-image"
               onError={(e) => {
