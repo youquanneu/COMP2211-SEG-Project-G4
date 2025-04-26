@@ -1,65 +1,49 @@
 // src/pages/EquipmentApproval.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import './EquipmentApproval.css';
+import axios from 'axios';
+import { getAPI_URL } from "../services/api";
 
 function EquipmentApproval() {
   const navigate = useNavigate();
-  
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      userName: 'John Doe',
-      equipmentName: 'Projector',
-      quantity: 1,
-      bookingDate: '2025-04-20',
-      status: 'Pending',
-    },
-    {
-      id: 2,
-      userName: 'Jane Smith',
-      equipmentName: 'Laptop',
-      quantity: 2,
-      bookingDate: '2025-04-22',
-      status: 'Pending',
-    },
-    {
-      id: 3,
-      userName: 'Alice Brown',
-      equipmentName: 'Microphone',
-      quantity: 3,
-      bookingDate: '2025-04-25',
-      status: 'Pending',
-    },
-    {
-      id: 4,
-      userName: 'Bob Wilson',
-      equipmentName: 'Camera',
-      quantity: 1,
-      bookingDate: '2025-04-18',
-      status: 'Pending',
-    },
-  ]);
+  const getPendingList = async () => {
+    try {
+        const response = await axios.get(getAPI_URL('admin/reservationManagement/getPendingReservation'));
+        setRequests(response.data)
+        console.log(response.data)
+    } catch (error) {
+      console.error('Error fetching :', error);
+      alert (error.message);
+    }
+  };
+  useEffect(() => {
+      getPendingList();
+    }, []);
+  const [requests, setRequests] = useState([]);
 
-  const pendingRequests = requests.filter((request) => request.status === 'Pending');
-
-  const handleApprove = (id) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request.id === id ? { ...request, status: 'Approved' } : request
-      )
-    );
-    alert('Request approved!');
+  const handleApprove = async (request) => {
+  try {
+    const response = await axios.post(getAPI_URL('admin/reservationManagement/approveReservation'),request);
+    console.log(response)
+    getPendingList()
+  }catch (error) {
+         console.error('Error during approve :', error);
+         alert (error.message);
+       }
   };
 
-  const handleDecline = (id) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request.id === id ? { ...request, status: 'Declined' } : request
-      )
-    );
-    alert('Request declined!');
+  const handleDecline = async (request) => {
+    try {
+      const response = await axios.post(getAPI_URL('admin/reservationManagement/rejectReservation'),request);
+      console.log(response)
+      getPendingList()
+      }
+      catch (error) {
+             console.error('Error during approve :', error);
+             alert(error.message);
+           }
   };
 
   const handleBack = () => {
@@ -73,35 +57,37 @@ function EquipmentApproval() {
       </header>
       <main className="equipment-approval-content">
         <h1>Approval of Equipment</h1>
-        {pendingRequests.length > 0 ? (
+        {requests.length > 0 ? (
           <div className="request-table">
             <table>
               <thead>
                 <tr>
                   <th>User</th>
-                  <th>Equipment</th>
-                  <th>Qty</th>
-                  <th>Date</th>
+                  <th>Resource</th>
+                  <th>Purpose</th>
+                  <th>Period</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {pendingRequests.map((request) => (
-                  <tr key={request.id}>
-                    <td>{request.userName}</td>
-                    <td>{request.equipmentName}</td>
-                    <td>{request.quantity}</td>
-                    <td>{request.bookingDate}</td>
+                {requests.map((request) => (
+                  <tr key={request.reservationId}>
+                    <td>{request.userDTO.username}</td>
+                    <td>{request.resourceDTO.resourceName}</td>
+                    <td>{request.purpose}</td>
+                    <td>
+                    {request.reservationStarting} to {request.reservationEnding}
+                    </td>
                     <td>
                       <button
                         className="approve-button"
-                        onClick={() => handleApprove(request.id)}
+                        onClick={() => handleApprove(request)}
                       >
                         Approve
                       </button>
                       <button
                         className="decline-button"
-                        onClick={() => handleDecline(request.id)}
+                        onClick={() => handleDecline(request)}
                       >
                         Decline
                       </button>
@@ -112,7 +98,7 @@ function EquipmentApproval() {
             </table>
           </div>
         ) : (
-          <p>No pending equipment requests.</p>
+          <p>No pending reservation requests.</p>
         )}
         <button className="back-button" onClick={handleBack}>
           Back
