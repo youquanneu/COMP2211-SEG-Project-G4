@@ -195,10 +195,16 @@ public class AdministrativeStaffService{
         return reservationRepository.findReservationByStatus(Status.Pending);
     }
     public Reservation approveReservation(Reservation reservation){
+        if (reservation.getStatus()!=Status.Pending){
+            throw new RuntimeException("Reservation is not under pending approved");
+        }
         reservation.changeReservationStatus(Status.Approved);
         return reservationRepository.save(reservation);
     }
     public Reservation rejectReservation(Reservation reservation){
+        if (reservation.getStatus()!=Status.Pending){
+            throw new RuntimeException("Reservation is not under pending approved");
+        }
         reservation.changeReservationStatus(Status.Rejected);
         return reservationRepository.save(reservation);
     }
