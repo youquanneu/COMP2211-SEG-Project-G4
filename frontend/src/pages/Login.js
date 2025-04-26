@@ -63,12 +63,13 @@ function Login() {
 
       localStorage.setItem('token', token);
       console.log("set token: " + token);
-      localStorage.setItem('userRole', userDTO.UserRole);
-      console.log("set userRole: " + userDTO.UserRole);
+      localStorage.setItem('userRole', userDTO.userRole);
+      console.log("set userRole: " + userDTO.userRole);
       localStorage.setItem('userEmail', email);
       console.log("set userEmail: " + email);
 
       setUserEmail(email);
+      setOtp(response.data.otp || null);
       setOtp(response.data.otp || null);
       setIsForgotFlow(false);
 
@@ -85,7 +86,7 @@ function Login() {
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
-        navigate(userDTO.userRole === 'AdministrativeStaff' ? '/admindashboard' : '/userhome');
+        navigate(userDTO.userRole === 'AdministrativeStaff' ? '/adminDashboard' : '/userHome');
       }, 2000);
     } catch (error) {
       console.log(error);
@@ -103,9 +104,10 @@ function Login() {
         return;
       }
 
-      const response = await axios.post(`${API_URL}/auth/forgot-password`, { email });
+      const response = await axios.post(getAPI_URL("user/requestOtp"), { email });
       setUserEmail(email);
-      setOtp(response.data.otp || null);
+      console.log(response.data)
+      setOtp(response.data || null);
       setIsForgotFlow(true);
       setCurrentForm('otp');
     } catch (error) {
@@ -123,9 +125,10 @@ function Login() {
         return;
       }
 
-      const response = await axios.post(`${API_URL}/auth/verify-otp`, {
+      const response = await axios.post(getAPI_URL("user/matchOtp"), {
         email: userEmail,
-        otp: enteredOTP,
+        otpPrefix: otp,
+        enteredOTP,
       });
 
       setOtp(null);
@@ -135,7 +138,7 @@ function Login() {
       } else {
         const { token, user } = response.data;
         localStorage.setItem('token', token);
-        localStorage.setItem('userRole', user.role);
+        localStorage.setItem('userRole', user.userRole);
 
         const root = document.documentElement;
         localStorage.setItem('darkTheme', 'false');
@@ -150,11 +153,11 @@ function Login() {
         setShowSuccess(true);
         setTimeout(() => {
           setShowSuccess(false);
-          navigate(user.role === 'admin' ? '/admindashboard' : '/userhome');
+          navigate(user.userRole === 'AdministrativeStaff' ? '/adminDashboard' : '/userHome');
         }, 2000);
       }
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'Invalid OTP. Please try again.');
+      setErrorMessage(error.response?.data || 'Invalid OTP. Please try again.');
       setShowError(true);
     }
   };
@@ -168,16 +171,16 @@ function Login() {
         return;
       }
 
-      await axios.post(`${API_URL}/auth/change-password`, {
-        email: userEmail,
-        resetToken,
-        newPassword,
-      });
-
+      const response = await axios.post(getAPI_URL("user/resetPassword"), {
+              email: userEmail,
+              newPassword,
+              confirmPassword,
+            });
+      console.log(response.data)
       setResetToken('');
       setShowSuccess(true);
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'Failed to update password. Please try again.');
+      setErrorMessage(error.response?.data || 'Failed to update password. Please try again.');
       setShowError(true);
     }
   };

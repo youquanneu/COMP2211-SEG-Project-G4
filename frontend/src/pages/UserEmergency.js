@@ -53,14 +53,14 @@ function UserEmergency() {
         }
 
         // Check for missing id/venueId
-        venueData.forEach((venue, index) => {
-          if (!venue.id && !venue.venueId) {
-            console.warn(`Venue at index ${index} missing id/venueId:`, venue);
-          }
-          if (!venue.name && !venue.venueName) {
-            console.warn(`Venue at index ${index} missing name/venueName:`, venue);
-          }
-        });
+//        venueData.forEach((venue, index) => {
+//          if (!venue.id && !venue.venueId) {
+//            console.warn(`Venue at index ${index} missing id/venueId:`, venue);
+//          }
+//          if (!venue.name && !venue.venueName) {
+//            console.warn(`Venue at index ${index} missing name/venueName:`, venue);
+//          }
+//        });
 
         setVenues(venueData);
         if (venueData.length > 0) {

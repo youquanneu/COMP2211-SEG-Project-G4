@@ -31,8 +31,9 @@ function UserCalendar() {
     const fetchData = async () => {
       try {
         // Fetch events
-        const eventsResponse = await axios.get(getAPI_URL('user/event/getAllEvent'));
         const userEmail = localStorage.getItem('userEmail') || 'Anonymous';
+        const eventsResponse = await axios.post(getAPI_URL('user/event/getMyEvent'),{email: userEmail,});
+        console.log(eventsResponse.data)
         // console.log('Events Response:', JSON.stringify(eventsResponse.data, null, 2)); // Commented out for production
         let eventData = eventsResponse.data;
         if (!Array.isArray(eventData)) {
