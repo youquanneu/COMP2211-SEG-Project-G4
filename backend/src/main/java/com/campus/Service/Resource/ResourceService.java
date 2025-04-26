@@ -31,16 +31,12 @@ public class ResourceService {
         }
         return resource.get();
     }
-    public List<ResourceDTO> getAllResourceDTO(){
-        List<ResourceDTO> resourceDTOS = new ArrayList<>();
-        for (Resource resource : getAllResource()){
-            resourceDTOS.add(new ResourceDTO(resource.getResourceId(), resource.getResourceName(), resource.getOpenTime(), resource.getCloseTime()));
-        }
-        return resourceDTOS;
-    }
     public List<Resource> getAllResource(){
         return resourceRepository.findAll();
     }   // Get all resources
+    public List<Resource> getBookableResource(){
+        return resourceRepository.findBookableResource();
+    }
     public List<Resource> filterResource(Integer resourceId, String resourceName,
                                          LocalTime openTime, LocalTime closeTime,
                                          Restriction restriction,ResourceCategory resourceCategory){

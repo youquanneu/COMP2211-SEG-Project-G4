@@ -20,6 +20,9 @@ public interface ResourceRepository extends JpaRepository<Resource,Integer> {
     List<Resource> findByResourceNameContainingIgnoreCase(String resourceName);
     List<Resource> findByOpenTimeBeforeAndCloseTimeAfter(LocalTime openTime, LocalTime closeTime);
     @Query("select resource from Resource resource " +
+            "where resource.restriction in (0, 1)")
+    List<Resource> findBookableResource();
+    @Query("select resource from Resource resource " +
             "where  (:resourceId        is null or resource.resourceId  = :resourceId)  " +
             "and    (:resourceName      is null or upper(resource.resourceName) like concat('%',upper(:resourceName),'%'))" +
             "and    (:openTime          is null or resource.openTime    < :openTime)    " +

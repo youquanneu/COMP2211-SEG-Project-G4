@@ -1,13 +1,19 @@
 package com.campus.DataTransferObject.Resource;
 
+import com.campus.Classification.Restriction;
+
 import java.time.LocalTime;
 
 public class IndoorVenueDTO extends VenueDTO{
     public IndoorVenueDTO(){}
-    public IndoorVenueDTO(Integer resourceId, String resourceName,
-                          LocalTime openTime, LocalTime closeTime,
-                          String building, String roomNumber){
-        super(resourceId,resourceName,openTime,closeTime);
+    public IndoorVenueDTO(Integer resourceId,
+                          String resourceName,
+                          LocalTime openTime,
+                          LocalTime closeTime,
+                          Restriction restriction,
+                          String building,
+                          String roomNumber){
+        super(resourceId,resourceName,openTime,closeTime,restriction);
         setBuilding(building);
         setRoomNumber(roomNumber);
     }

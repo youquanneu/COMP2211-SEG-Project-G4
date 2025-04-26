@@ -1,5 +1,6 @@
 package com.campus.DataTransferObject.Resource;
 
+import com.campus.Classification.Restriction;
 import com.campus.Entity.Resource.Resource;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,19 +10,24 @@ import java.util.List;
 
 public class ResourceDTO {
     public ResourceDTO(){}
-    public ResourceDTO(Integer resourceId, String resourceName,
-                       LocalTime openTime, LocalTime closeTime){
+    public ResourceDTO(Integer resourceId,
+                       String resourceName,
+                       LocalTime openTime,
+                       LocalTime closeTime,
+                       Restriction restriction){
         setResourceId(resourceId);
         setResourceName(resourceName);
         setOpenTime(openTime);
         setCloseTime(closeTime);
+        setRestriction(restriction);
     }
     public static ResourceDTO mapper(Resource resource){
         return new ResourceDTO(
                 resource.getResourceId(),
                 resource.getResourceName(),
                 resource.getOpenTime(),
-                resource.getCloseTime());
+                resource.getCloseTime(),
+                resource.getRestriction());
     }
     public static List<ResourceDTO> listMapper(List<Resource>resources){
         List<ResourceDTO> resourceDTOS = new ArrayList<>();
@@ -38,6 +44,8 @@ public class ResourceDTO {
     private LocalTime openTime;
     @JsonProperty
     private LocalTime closeTime;
+    @JsonProperty("restriction")
+    private Restriction restriction;
     public Integer getResourceId() {
         return resourceId;
     }
@@ -50,6 +58,9 @@ public class ResourceDTO {
     public LocalTime getCloseTime() {
         return closeTime;
     }
+    public Restriction getRestriction() {
+        return restriction;
+    }
     private void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
     }
@@ -61,5 +72,8 @@ public class ResourceDTO {
     }
     private void setCloseTime(LocalTime closeTime) {
         this.closeTime = closeTime;
+    }
+    private void setRestriction(Restriction restriction) {
+        this.restriction = restriction;
     }
 }

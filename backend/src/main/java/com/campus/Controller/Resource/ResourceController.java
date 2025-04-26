@@ -16,11 +16,11 @@ public class ResourceController {
     private static final Logger logger = Logger.getLogger(ResourceController.class.getName());
     @Autowired
     private ResourceService resourceService;
-    @GetMapping("/getAllResource")
+    @GetMapping("/getBookableResource")
     public ResponseEntity<?> getAllResource() {
         logger.info("Processing getAllResource ");
         try {
-            List<ResourceDTO> resourceDTOS = resourceService.getAllResourceDTO();
+            List<ResourceDTO> resourceDTOS = ResourceDTO.listMapper(resourceService.getBookableResource());
             logger.info("Get resources" + resourceDTOS);
             return ResponseEntity.ok(resourceDTOS);
         }catch (Exception e){

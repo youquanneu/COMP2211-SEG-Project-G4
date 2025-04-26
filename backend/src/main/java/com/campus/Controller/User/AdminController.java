@@ -2,12 +2,18 @@ package com.campus.Controller.User;
 
 import com.campus.Classification.UserRole;
 import com.campus.DataTransferObject.Reservation.ReservationDTO;
+import com.campus.DataTransferObject.Resource.EquipmentDTO;
+import com.campus.DataTransferObject.Resource.ResourceDTO;
+import com.campus.DataTransferObject.Resource.RestrictionControlRequest;
+import com.campus.DataTransferObject.Resource.VenueDTO;
 import com.campus.DataTransferObject.User.RegisterRequest;
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.User.Lecturer;
 import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Service.Reservation.ReservationService;
+import com.campus.Service.Resource.EquipmentService;
+import com.campus.Service.Resource.VenueService;
 import com.campus.Service.User.AdministrativeStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +31,10 @@ public class AdminController {
     private AdministrativeStaffService administrativeStaffService;
     @Autowired
     private ReservationService reservationService;
+    @Autowired
+    private VenueService venueService;
+    @Autowired
+    private EquipmentService equipmentService;
     @PostMapping("/register")
     public User registerUser(@RequestBody User user) {
         return administrativeStaffService.registerNewUser(user);
@@ -129,5 +139,45 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-
+    @GetMapping("/venueManagement/getVenues")
+    public ResponseEntity<?> getVenues() {
+        logger.info("Processing getVenues ");
+        try {
+            List<VenueDTO> venueDTOS = VenueDTO.venueListMapper(venueService.getAllVenue());
+            logger.info("Get venues ");
+            return ResponseEntity.ok(venueDTOS);
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+    @GetMapping("/equipmentManagement/getEquipments")
+    public ResponseEntity<?> getEquipments() {
+        logger.info("Processing getVenues ");
+        try {
+            List<EquipmentDTO> equipmentDTOS = EquipmentDTO.equipmentListMapper(equipmentService.getAllEquipment());
+            logger.info("Get equipments ");
+            return ResponseEntity.ok(equipmentDTOS);
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+    @PostMapping("/resourceManagement/restrictionControl")
+    public ResponseEntity<?> equipmentRestrictionControl(@RequestBody RestrictionControlRequest restrictionControlRequest) {
+        logger.info("Processing equipmentReservationControl");
+        try {
+            ResourceDTO resourceDTO = ResourceDTO.mapper(
+                    administrativeStaffService.changeRestriction(
+                            venueService.getResourceByID(restrictionControlRequest.getResourceDTO().getResourceId()),
+                            restrictionControlRequest.getRestriction()
+                    )
+            );
+            logger.info("Change restriction successfully : " + resourceDTO);
+            return ResponseEntity.ok(resourceDTO);
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
 }
