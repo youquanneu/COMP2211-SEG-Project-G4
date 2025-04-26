@@ -1,5 +1,5 @@
 package com.campus.Classification;
 
 public enum Restriction {
-    NonRestriction, ApprovalRequired, Restricted;
+    NonRestriction, ApprovalRequired, Restricted, NonBookable;
 }

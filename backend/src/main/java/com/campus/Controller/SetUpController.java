@@ -146,13 +146,17 @@ public class SetUpController  implements CommandLineRunner {
         List<Resource> resourceList = new ArrayList<>();
         
         // Add equipment resources (keeping the original equipment for demo purposes)
-        Resource equipment1 = new Equipment("Equipment1", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.NonRestriction,"SerialNumber1");
-        Resource equipment2 = new Equipment("Equipment2", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.NonRestriction,"SerialNumber2");
+        Resource equipment1 = new Equipment("Equipment1", LocalTime.of(7,0),LocalTime.of(22,0), Restriction.NonRestriction,"SerialNumber1");
+        Resource equipment2 = new Equipment("Equipment2", LocalTime.of(7,0),LocalTime.of(22,0), Restriction.NonRestriction,"SerialNumber2");
         Resource equipment3 = new Equipment("Portable Projector", null,null, Restriction.NonRestriction,"SerialNumber3");
         resourceList.add(equipment1);
         resourceList.add(equipment2);
         resourceList.add(equipment3);
-        
+
+        // Add an outdoor venue
+        Resource outdoorVenue1 = new OutdoorVenue("Basketball Court", LocalTime.of(6,0),LocalTime.of(22,0), Restriction.NonRestriction, "Beside field");
+        resourceList.add(outdoorVenue1);
+
         // Add actual rooms from navigationData.js
         // Lecture Rooms
         resourceList.add(new IndoorVenue("3R002 - Lecture Room", LocalTime.of(8,0),LocalTime.of(22,0), Restriction.ApprovalRequired, "Building 3", "3R002"));
@@ -173,9 +177,9 @@ public class SetUpController  implements CommandLineRunner {
         resourceList.add(new IndoorVenue("3R031 - Lecture Room", LocalTime.of(8,0),LocalTime.of(22,0), Restriction.ApprovalRequired, "Building 3", "3R031"));
         
         // Labs
-        resourceList.add(new IndoorVenue("3R010 - Mechanical Workshop", LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R010"));
-        resourceList.add(new IndoorVenue("3R012 - Green Engineering Lab", LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R012"));
-        resourceList.add(new IndoorVenue("3R013 - Materials and Structure Lab", LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R013"));
+        resourceList.add(new IndoorVenue("3R010 - Mechanical Workshop",             LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R010"));
+        resourceList.add(new IndoorVenue("3R012 - Green Engineering Lab",           LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R012"));
+        resourceList.add(new IndoorVenue("3R013 - Materials and Structure Lab",     LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R013"));
         resourceList.add(new IndoorVenue("3R014 - Aerospace Lab", LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R014"));
         resourceList.add(new IndoorVenue("3R016 - Thermodynamics & Fluid Mechanics Lab", LocalTime.of(9,0),LocalTime.of(18,0), Restriction.ApprovalRequired, "Building 3", "3R016"));
         resourceList.add(new IndoorVenue("3R023 - Computer Science Lab 1", LocalTime.of(9,0),LocalTime.of(20,0), Restriction.ApprovalRequired, "Building 3", "3R023"));
@@ -193,13 +197,10 @@ public class SetUpController  implements CommandLineRunner {
         resourceList.add(new IndoorVenue("3R035 - Female Surau", LocalTime.of(6,0),LocalTime.of(22,0), Restriction.NonRestriction, "Building 3", "3R035"));
         
         // Bathrooms
-        resourceList.add(new IndoorVenue("3R011T - Women's Bathroom", LocalTime.of(0,0),LocalTime.of(23,59), Restriction.NonRestriction, "Building 3", "3R011T"));
-        resourceList.add(new IndoorVenue("3R012T - Men's Bathroom", LocalTime.of(0,0),LocalTime.of(23,59), Restriction.NonRestriction, "Building 3", "3R012T"));
+        resourceList.add(new IndoorVenue("3R011T - Women's Bathroom", LocalTime.of(0,0),LocalTime.of(23,59), Restriction.NonBookable, "Building 3", "3R011T"));
+        resourceList.add(new IndoorVenue("3R012T - Men's Bathroom", LocalTime.of(0,0),LocalTime.of(23,59), Restriction.NonBookable, "Building 3", "3R012T"));
         
-        // Add an outdoor venue
-        Resource outdoorVenue1 = new OutdoorVenue("Basketball Court", LocalTime.of(6,0),LocalTime.of(22,0), Restriction.NonRestriction, "Beside field");
-        resourceList.add(outdoorVenue1);
-        
+
         return resourceList;
     }
     public void testNewReservation(){
