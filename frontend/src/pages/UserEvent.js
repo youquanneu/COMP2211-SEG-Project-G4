@@ -11,7 +11,7 @@ function UserEvent() {
   const [error, setError] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const navigate = useNavigate();
-
+  const userEmail = localStorage.getItem('userEmail');
   const useMockData = false;
 
   const sendLog = async (action, value) => {
@@ -134,36 +134,49 @@ function UserEvent() {
     sendLog('back', 'Clicked back to userhome');
   };
 
-  const handleAddToCalendar = (event) => {
+  const handleAddToCalendar = async (event) => {
     if (!event.eventId || !event.eventStarting || !event.eventTitle) {
       console.error('Invalid event data for calendar:', event);
       return;
     }
     const storedEvents = JSON.parse(localStorage.getItem('calendarEvents')) || [];
     const eventExists = storedEvents.some((e) => e.eventId === event.eventId);
-    if (!eventExists) {
-      const eventDate = new Date(event.eventStarting);
-      const normalizedDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
-        .toISOString()
-        .split('T')[0];
-      console.log('Adding event with date:', normalizedDate, 'Original:', event.eventStarting);
-      const eventToSave = {
-        eventId: event.eventId,
-        date: normalizedDate,
-        topic: event.eventTitle || 'Untitled Event',
-        area: event.area || 'N/A',
-        organizers: event.organizer?.map((org) => org.username || org.email || 'Unknown').join(', ') || 'N/A',
-        description: `${new Date(event.eventStarting).toLocaleString()} - ${new Date(event.eventEnding).toLocaleString()}`,
-        eventStarting: event.eventStarting,
-        eventEnding: event.eventEnding,
-        type: 'event',
-      };
-      storedEvents.push(eventToSave);
-      localStorage.setItem('calendarEvents', JSON.stringify(storedEvents));
+    console.log(event)
+    console.log(userEmail)
+    try{
+        const response = await axios.post(getAPI_URL('user/event/registerForEvent'),{email:userEmail, eventDTO: event})
+        console.log(response.data)
+        setShowSuccessPopup(true);
+        sendLog('add_to_calendar', `Added ${event.eventTitle} to calendar`);
+        setTimeout(() => setShowSuccessPopup(false), 2000);
+    }catch (err){
+        console.error(err);
+        const errorMessage = err.response?.data || 'Failed to register for event';
+        // Alert generated
+        alert(`Error: ${errorMessage}`);
+        // Here need to popup error message
     }
-    setShowSuccessPopup(true);
-    sendLog('add_to_calendar', `Added ${event.eventTitle} to calendar`);
-    setTimeout(() => setShowSuccessPopup(false), 2000);
+//    if (!eventExists) {
+//      const eventDate = new Date(event.eventStarting);
+//      const normalizedDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+//        .toISOString()
+//        .split('T')[0];
+//
+//      console.log('Adding event with date:', normalizedDate, 'Original:', event.eventStarting);
+//      const eventToSave = {
+//        eventId: event.eventId,
+//        date: normalizedDate,
+//        topic: event.eventTitle || 'Untitled Event',
+//        area: event.area || 'N/A',
+//        organizers: event.organizer?.map((org) => org.username || org.email || 'Unknown').join(', ') || 'N/A',
+//        description: `${new Date(event.eventStarting).toLocaleString()} - ${new Date(event.eventEnding).toLocaleString()}`,
+//        eventStarting: event.eventStarting,
+//        eventEnding: event.eventEnding,
+//        type: 'event',
+//      };
+//      storedEvents.push(eventToSave);
+//      localStorage.setItem('calendarEvents', JSON.stringify(storedEvents));
+//    }
   };
 
   const formatDateTime = (dateStr) => {
