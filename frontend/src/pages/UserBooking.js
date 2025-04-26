@@ -170,6 +170,7 @@ function UserBooking() {
         setError('');
         console.log('Full Booking Details:', fullBookingDetails);
       } catch (err) {
+      console.log(err)
         console.error('Booking error:', err.message, err.response?.data);
         setSuccess('');
         if (err.response) {
@@ -179,7 +180,7 @@ function UserBooking() {
           } else if (status === 400) {
             setError(data.message || 'Invalid booking details. Please check your input.');
           } else {
-            setError(data.message || 'Failed to save booking. Please try again later.');
+            setError(data || 'Failed to save booking. Please try again later.');
           }
         } else {
           setError('Network error. Please check your connection and try again.');
