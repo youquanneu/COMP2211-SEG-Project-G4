@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,17 +36,34 @@ public class EventService {
         return eventRepository.findAll();
     }
     @Transactional
-    public void registerForEvent(Event event, User user){
+    public List<Event> getMyParticipateEvent(User user){
+        return eventRepository.findEventsByParticipantContaining(user);
+    }
+    @Transactional
+    public List<Event> getMyOrganizeEvent(User user){
+        return eventRepository.findEventsByOrganizerContaining(user);
+    }
+    @Transactional
+    public List<Event> getMyRelateEvent(User user){
+        return eventRepository.findEventsByParticipantContainingOrOrganizerContaining(user,user);
+    }
+    @Transactional
+    public Event registerForEvent(Event event, User user){
         if (LocalDateTime.now().isAfter(event.getEventEnding())) {
             throw new RuntimeException("Event has been closed");
         }
-        else {
-            event.addParticipant(user);
-            notificationService.generateEventNotification(event,user);
-            System.out.println("Register successfully");
+        List<Integer> participantId = new ArrayList<>();
+        for (User participant : event.getParticipant()){
+            participantId.add(participant.getUserId());
         }
+        if (participantId.contains(user.getUserId())) {
+            throw new RuntimeException("User already registered for this event");
+        }
+        event.addParticipant(user);
+        notificationService.generateEventNotification(event,user);
+        return eventRepository.save(event);
     }
-    public void rescheduleEvent(){
+    public void rescheduleEvent(Event event, LocalDateTime eventStartingTime, LocalDateTime eventEndingTime){
 
     }
     public Event cancelledEvent(Event event){

@@ -13,6 +13,7 @@ import com.campus.Entity.User.Lecturer;
 import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Service.Event.EmergencyCaseService;
+import com.campus.Service.Event.EventService;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Reservation.TimeSlotService;
 import com.campus.Service.Resource.ResourceService;
@@ -33,17 +34,23 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/setup")
 public class SetUpController  implements CommandLineRunner {
+    @Autowired
+    private EventService eventService;
     private static final Logger logger = Logger.getLogger(SetUpController.class.getName());
     @Override
     public void run(String... args) throws Exception {
         System.out.println("——————————————————————————————————————————————————————————");
         logger.info("Application start here");
-//        initializeUser();
-//        initializeResource();
-//        initializeReservation();
-//        initializeTimeSlot();
-//        initializeEmergencyCase();
-//        testNewEvent();
+        try {
+            System.out.println(userService.getUserById(1));
+        }catch (Exception e) {
+            initializeUser();
+            initializeResource();
+            initializeReservation();
+            initializeTimeSlot();
+            initializeEmergencyCase();
+            testNewEvent();
+        }
         System.out.println("——————————————————————————————————————————————————————————");
         logger.info("Initial Set Up complete");
     }
