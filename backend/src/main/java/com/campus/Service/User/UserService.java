@@ -84,11 +84,11 @@ public class UserService implements UserDetailsService {
         verifyCurrentPassword(user,currentPassword);
         changeToNewPassword(user,newPassword,confirmationPassword);
     }   // Function: Change password for user
-    public void changeToNewPassword(User user, String newPassword, String confirmationPassword) {
+    public User changeToNewPassword(User user, String newPassword, String confirmationPassword) {
         verifyNewPassword(user, newPassword, confirmationPassword);
         String encoderNewPassword = passwordEncoder.encode(newPassword);
         user.changePassword(encoderNewPassword);
-        userRepository.save(user);  // Save password changed of user into database after validation
+        return userRepository.save(user);  // Save password changed of user into database after validation
     }   // Change password after new verification
     private void verifyNewPassword(User user, String newPassword, String confirmationPassword){
         if (passwordEncoder.matches(newPassword, user.getPassword())) {

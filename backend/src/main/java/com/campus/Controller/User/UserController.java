@@ -3,6 +3,7 @@ package com.campus.Controller.User;
 import com.campus.DataTransferObject.Mail.EmailDTO;
 import com.campus.DataTransferObject.Mail.OneTimePasswordDTO;
 import com.campus.DataTransferObject.User.LoginRequest;
+import com.campus.DataTransferObject.User.ResetPasswordRequest;
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Service.Mail.EmailSenderService;
 import com.campus.Service.Mail.OneTimePasswordService;
@@ -39,7 +40,7 @@ public class UserController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
-    @PostMapping("/getOtp")
+    @PostMapping("/requestOtp")
     public ResponseEntity<?> requestOTP(@RequestBody EmailDTO emailDTO){
         logger.info("Sending OTP to : " + emailDTO);
         try {
@@ -60,7 +61,22 @@ public class UserController{
                     oneTimePasswordDTO.getEmail(),
                     oneTimePasswordDTO.getOtpPrefix(),
                     oneTimePasswordDTO.getEnteredOTP()));
-            logger.info("Log in successful for : " + userDTO.getUsername());
+            logger.info("Match successful for : " + userDTO.getUsername());
+            return ResponseEntity.ok(userDTO);
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest){
+        logger.info("Reset password for : " + resetPasswordRequest.getEmail());
+        try {
+            UserDTO userDTO = UserDTO.mapper(userService.changeToNewPassword(
+                    userService.getUserByEmail(resetPasswordRequest.getEmail()),
+                    resetPasswordRequest.getNewPassword(),
+                    resetPasswordRequest.getConfirmPassword()));
+            logger.info("Password reset successful for : " + userDTO.getUsername());
             return ResponseEntity.ok(userDTO);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());

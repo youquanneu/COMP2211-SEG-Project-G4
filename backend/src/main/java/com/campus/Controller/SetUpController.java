@@ -38,12 +38,12 @@ public class SetUpController  implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("——————————————————————————————————————————————————————————");
         logger.info("Application start here");
-        initializeUser();
-        initializeResource();
-        initializeReservation();
-        initializeTimeSlot();
-        initializeEmergencyCase();
-        testNewEvent();
+//        initializeUser();
+//        initializeResource();
+//        initializeReservation();
+//        initializeTimeSlot();
+//        initializeEmergencyCase();
+//        testNewEvent();
         System.out.println("——————————————————————————————————————————————————————————");
         logger.info("Initial Set Up complete");
     }
@@ -75,7 +75,6 @@ public class SetUpController  implements CommandLineRunner {
 
         return userList;
     }
-
     private void initializeResource(){
         for (Resource resource : buildInitializeResourceList()){
             administrativeStaffService.addNewResource(resource);
