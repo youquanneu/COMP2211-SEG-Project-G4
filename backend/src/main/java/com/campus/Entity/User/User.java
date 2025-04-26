@@ -76,10 +76,14 @@ public class User {
     public String toString(){
         return String.format(
                 """
-                        Username   : %s
-                        Email      : %s
-                        Role       : %s
-                        UserId     : %s
+                        Username   :
+                        %s
+                        Email      :
+                        %s
+                        Role       :
+                        %s
+                        UserId     :
+                        %s
                         """,
                 getUsername(),
                 getEmail(),

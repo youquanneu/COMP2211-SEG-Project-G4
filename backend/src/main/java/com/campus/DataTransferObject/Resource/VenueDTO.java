@@ -31,4 +31,25 @@ public class VenueDTO extends ResourceDTO{
         }
         return venueDTOS;
     }
+    @Override
+    public String toString() {
+        return String.format(
+                """
+                        ResourceId   :
+                        %d
+                        ResourceName :
+                        %s
+                        OpenTime     :
+                        %s
+                        CloseTime    :
+                        %s
+                        Restriction  :
+                        %s
+                        """,
+                getResourceId(),
+                getResourceName(),
+                getOpenTime(),
+                getCloseTime(),
+                getRestriction());
+    }
 }

@@ -2,7 +2,11 @@ package com.campus.Service.User;
 
 import com.campus.Classification.Restriction;
 import com.campus.Classification.Status;
+import com.campus.DataTransferObject.Event.EventDTO;
+import com.campus.DataTransferObject.Event.NewEventRequest;
 import com.campus.DataTransferObject.Resource.DashboardDTO;
+import com.campus.DataTransferObject.Resource.VenueDTO;
+import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.*;
@@ -23,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

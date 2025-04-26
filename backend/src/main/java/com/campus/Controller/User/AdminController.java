@@ -1,10 +1,13 @@
 package com.campus.Controller.User;
 
 import com.campus.Classification.UserRole;
+import com.campus.DataTransferObject.Event.EventDTO;
+import com.campus.DataTransferObject.Event.NewEventRequest;
 import com.campus.DataTransferObject.Reservation.ReservationDTO;
 import com.campus.DataTransferObject.Resource.*;
 import com.campus.DataTransferObject.User.RegisterRequest;
 import com.campus.DataTransferObject.User.UserDTO;
+import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
 import com.campus.Entity.Resource.*;
 import com.campus.Entity.User.Lecturer;
@@ -14,6 +17,7 @@ import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Resource.EquipmentService;
 import com.campus.Service.Resource.VenueService;
 import com.campus.Service.User.AdministrativeStaffService;
+import com.campus.Service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +33,8 @@ public class AdminController {
     private static final Logger logger = Logger.getLogger(AdminController.class.getName());
     @Autowired
     private AdministrativeStaffService administrativeStaffService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private ReservationService reservationService;
     @Autowired
@@ -51,6 +57,18 @@ public class AdminController {
             }
             administrativeStaffService.registerNewUser(newUser);
             return ResponseEntity.ok(UserDTO.mapper(newUser));
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+    @GetMapping("/userManagement/getAllUser")
+    public ResponseEntity<?> getAllUser(){
+        logger.info("Processing getAllUser" );
+        try {
+            List<UserDTO> userDTOS = UserDTO.listMapper(administrativeStaffService.getAllUsers());
+            logger.info("Get User : " + userDTOS );
+            return ResponseEntity.ok(userDTOS);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -90,6 +108,35 @@ public class AdminController {
             logger.info("Get exception : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+    private DashboardDTO getDashboardData(){
+        List<Reservation> ongoingReservation = reservationService.getOngoingReservation();
+        List<Reservation> venueReservation = new ArrayList<>();
+        List<Reservation> equipmentReservation = new ArrayList<>();
+        for (Reservation reservation : ongoingReservation){
+            if (reservation.getResource() instanceof Venue){
+                venueReservation.add(reservation);
+            }
+            else if (reservation.getResource() instanceof Equipment){
+                equipmentReservation.add(reservation);
+            }
+        }
+        List<Resource> bookableResource = venueService.getBookableResource();
+        List<Venue> bookableVenue = new ArrayList<>();
+        List<Equipment> bookableEquipment = new ArrayList<>();
+        for (Resource resource : bookableResource){
+            if (resource instanceof Venue){
+                bookableVenue.add((Venue) resource);
+            }
+            else if (resource instanceof Equipment){
+                bookableEquipment.add((Equipment) resource);
+            }
+        }
+        return new DashboardDTO(
+                venueReservation.size(),
+                bookableVenue.size(),
+                equipmentReservation.size(),
+                bookableEquipment.size());
     }
     @GetMapping("/reservationManagement/getPendingReservation")
     public ResponseEntity<?> getPendingReservation() {
@@ -181,33 +228,34 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-    private DashboardDTO getDashboardData(){
-        List<Reservation> ongoingReservation = reservationService.getOngoingReservation();
-        List<Reservation> venueReservation = new ArrayList<>();
-        List<Reservation> equipmentReservation = new ArrayList<>();
-        for (Reservation reservation : ongoingReservation){
-            if (reservation.getResource() instanceof Venue){
-                venueReservation.add(reservation);
+
+    @PostMapping("/event/newEvent")
+    public ResponseEntity<?> createNewEvent(@RequestBody NewEventRequest newEventRequest) {
+        logger.info("Processing equipmentReservationControl");
+        try {
+            List<User> organizers = new ArrayList<>();
+            for (UserDTO userDTO : newEventRequest.getOrganizer()){
+                organizers.add(userService.getUserById(userDTO.getUserId()));
             }
-            else if (reservation.getResource() instanceof Equipment){
-                equipmentReservation.add(reservation);
+            List<Venue> venues = new ArrayList<>();
+            for (VenueDTO venueDTO : newEventRequest.getVenue()){
+                venues.add((Venue) venueService.getResourceByID(venueDTO.getResourceId()));
             }
+            EventDTO eventDTO = EventDTO.mapper(
+                    administrativeStaffService.createNewEvent(
+                            new Event(
+                                    newEventRequest.getTitle(),
+                                    newEventRequest.getArea(),
+                                    newEventRequest.getStartingTime(),
+                                    newEventRequest.getEndingTime(),
+                                    newEventRequest.getDescription(),
+                                    venues,
+                                    organizers)));
+            logger.info("Event added successfully ");
+            return ResponseEntity.ok(eventDTO);
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-        List<Resource> bookableResource = venueService.getBookableResource();
-        List<Venue> bookableVenue = new ArrayList<>();
-        List<Equipment> bookableEquipment = new ArrayList<>();
-        for (Resource resource : bookableResource){
-            if (resource instanceof Venue){
-                bookableVenue.add((Venue) resource);
-            }
-            else if (resource instanceof Equipment){
-                bookableEquipment.add((Equipment) resource);
-            }
-        }
-        return new DashboardDTO(
-                venueReservation.size(),
-                bookableVenue.size(),
-                equipmentReservation.size(),
-                bookableEquipment.size());
     }
 }

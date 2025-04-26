@@ -23,7 +23,7 @@ public class VenueController {
         logger.info("Processing getAllVenue ");
         try {
             List<VenueDTO> venueDTOS = VenueDTO.venueListMapper(venueService.getAllVenue());
-            logger.info("Get venues" + venueDTOS);
+            logger.info("Get venues");
             return ResponseEntity.ok(venueDTOS);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());
