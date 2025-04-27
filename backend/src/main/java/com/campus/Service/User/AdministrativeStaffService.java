@@ -2,12 +2,14 @@ package com.campus.Service.User;
 
 import com.campus.Classification.Restriction;
 import com.campus.Classification.Status;
+import com.campus.DataTransferObject.Event.EventDTO;
+import com.campus.DataTransferObject.Event.NewEventRequest;
+import com.campus.DataTransferObject.Resource.DashboardDTO;
+import com.campus.DataTransferObject.Resource.VenueDTO;
+import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.Event.Event;
 import com.campus.Entity.Reservation.Reservation;
-import com.campus.Entity.Resource.Equipment;
-import com.campus.Entity.Resource.IndoorVenue;
-import com.campus.Entity.Resource.OutdoorVenue;
-import com.campus.Entity.Resource.Resource;
+import com.campus.Entity.Resource.*;
 import com.campus.Entity.User.AdministrativeStaff;
 import com.campus.Entity.User.User;
 import com.campus.Classification.UserRole;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -195,10 +198,16 @@ public class AdministrativeStaffService{
         return reservationRepository.findReservationByStatus(Status.Pending);
     }
     public Reservation approveReservation(Reservation reservation){
+        if (reservation.getStatus()!=Status.Pending){
+            throw new RuntimeException("Reservation is not under pending approved");
+        }
         reservation.changeReservationStatus(Status.Approved);
         return reservationRepository.save(reservation);
     }
     public Reservation rejectReservation(Reservation reservation){
+        if (reservation.getStatus()!=Status.Pending){
+            throw new RuntimeException("Reservation is not under pending approved");
+        }
         reservation.changeReservationStatus(Status.Rejected);
         return reservationRepository.save(reservation);
     }
@@ -206,12 +215,9 @@ public class AdministrativeStaffService{
         return reservationRepository.filterReservation(reservationId,booker,resource,reservationAfter,reservationBefore,status);
     }
 
-
     @Autowired
     private EventRepository eventRepository;
-
     public Event createNewEvent(Event event){
         return eventRepository.save(event);
     }
-
 }

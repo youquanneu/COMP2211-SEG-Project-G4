@@ -42,15 +42,15 @@ public class EmailSenderService {
     public void reportNewEmergency(EmergencyCase emergencyCase){
         List<AdministrativeStaff> admins = administrativeStaffService.getAllAdmin();
         for (User user : admins){
-            sendEmail(user.getEmail(), "Emergency Case Reported",
-                    emergencyCase.getDescription() + " happened at " + emergencyCase.getLocation());
+            sendEmail(user.getEmail(), "Emergency Case Reported", emergencyCase.getNotification());
         }
     }
-    public void alertEmergency(EmergencyCase emergencyCase){
+    public EmergencyCase alertEmergency(EmergencyCase emergencyCase){
         List<User> users = administrativeStaffService.getAllUsers();
         for (User user : users){
-            sendEmail(user.getEmail(), "Emergency Case To Be Mention",emergencyCase.toString());
+            sendEmail(user.getEmail(), "Emergency Case To Be Mention",emergencyCase.notificationToUser());
         }
+        return emergencyCase;
     }
     private void sendEmail(String email, String subject, String emailContent){
         SimpleMailMessage message = new SimpleMailMessage();

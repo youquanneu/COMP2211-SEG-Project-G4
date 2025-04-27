@@ -1,6 +1,7 @@
 package com.campus.Service.Resource;
 
 import com.campus.Classification.Restriction;
+import com.campus.Entity.Resource.Resource;
 import com.campus.Entity.Resource.Venue;
 import com.campus.Repository.Resource.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VenueService extends ResourceService{
@@ -21,4 +23,7 @@ public class VenueService extends ResourceService{
                                    Restriction restriction){
         return venueRepository.findVenueByFilter(resourceId,resourceName,openTime,closeTime,restriction);
     }
+    public List<Venue> getVenueByNameSearching(String search){
+        return venueRepository.findByResourceNameContainingIgnoreCase(search);
+    }   // Find resource by searching input
 }

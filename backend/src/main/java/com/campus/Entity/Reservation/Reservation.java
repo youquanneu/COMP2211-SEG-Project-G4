@@ -34,7 +34,6 @@ public class Reservation {
     @NotNull
     @ManyToOne
     private Resource resource;
-//    @NotNull
     private Purpose purpose;
     @NotNull
     private LocalDateTime reservationStarting;

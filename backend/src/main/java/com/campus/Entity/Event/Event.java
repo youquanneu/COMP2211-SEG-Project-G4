@@ -110,4 +110,19 @@ public class Event {
             throw new RuntimeException("Time shouldn't be null or end before start");
         }
     }
+    public String toString(){
+        return String.format(
+                """
+                        Event Id        : %s
+                        Event Title     : %s
+                        Organizer       :
+                        %s
+                        Participant     :
+                        %s
+                        """,
+                getEventId(),
+                getEventTitle(),
+                getOrganizer(),
+                getParticipant());
+    }
 }

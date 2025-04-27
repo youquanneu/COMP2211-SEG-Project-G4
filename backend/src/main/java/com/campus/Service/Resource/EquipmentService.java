@@ -24,6 +24,9 @@ public class EquipmentService extends ResourceService{
         }
         return equipment.get();
     }
+    public List<Equipment> getAllEquipment(){
+        return equipmentRepository.findAll();
+    }
     public List<Equipment> filterEquipment(Integer resourceId, String resourceName,
                                            LocalTime openTime, LocalTime closeTime,
                                            Restriction restriction, String serialNumber){

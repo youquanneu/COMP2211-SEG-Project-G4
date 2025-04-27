@@ -16,17 +16,6 @@ public class LogsController {
     @PostMapping("/logs")
     public ResponseEntity<?> logs(@RequestBody LogAction logAction) {
         logger.info("Logs : " + logAction);
-//        try {
-//            UserDTO userDTO = UserDTO.mapper(
-//                    userService.login(
-//                            loginRequest.getEmail(),
-//                            loginRequest.getPassword()));
-//            logger.info("Get userDTO" + userDTO.getUsername());
-//            return ResponseEntity.ok(userDTO);
-//        }catch (Exception e){
-//            logger.info("Get exception : " + e.getMessage());
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-//        }
         return ResponseEntity.ok("Received");
     }
 }

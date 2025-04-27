@@ -12,8 +12,9 @@ import java.util.List;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event,Integer> {
-    List<Event> findEventsByOrganizerContains(User organizer);
+    List<Event> findEventsByOrganizerContaining(User organizer);
     List<Event> findEventsByParticipantContaining(User participant);
+    List<Event> findEventsByParticipantContainingOrOrganizerContaining(User participant,User organizer);
     @Query("select event from Event event "+
             "where  (:eventId           is null or event.eventId            = :eventId)  "+
             "and    (:eventTitle        is null or upper(event.eventTitle) like concat('%',upper(:eventTitle),'%'))"+

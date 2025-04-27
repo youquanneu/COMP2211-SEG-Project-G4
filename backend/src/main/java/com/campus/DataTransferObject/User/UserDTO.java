@@ -61,4 +61,22 @@ public class UserDTO {
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+    @Override
+    public String toString() {
+        return String.format(
+                """
+                        UserId      :
+                        %d
+                        Username    :
+                        %s
+                        Email       :
+                        %s
+                        UserRole    :
+                        %s
+                        """,
+                getUserId(),
+                getUsername(),
+                getEmail(),
+                getUserRole());
+    }
 }
