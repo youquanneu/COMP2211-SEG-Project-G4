@@ -31,6 +31,13 @@ public class ResourceService {
         }
         return resource.get();
     }
+    public Resource getResourceBySimilarName(String resourceName){
+        Optional<Resource> resource = resourceRepository.findByResourceNameContainsIgnoreCase(resourceName);
+        if (resource.isEmpty()){
+            throw new RuntimeException("Resource not found");
+        }
+        return resource.get();
+    }
     public List<Resource> getAllResource(){
         return resourceRepository.findAll();
     }   // Get all resources

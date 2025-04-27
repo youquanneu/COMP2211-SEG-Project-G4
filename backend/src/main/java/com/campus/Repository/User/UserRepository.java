@@ -14,8 +14,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> {
     List<User> findUserByUserRole(UserRole userRole);
+    List<User> searchByUsernameContainingIgnoreCase(String username);
     Optional<User> findByEmailEqualsIgnoreCase(String email);
     Optional<User> findByUsernameEqualsIgnoreCase(String username);
+    Optional<User> findByUsernameContainingIgnoreCase(String username);
     Optional<User> findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(String username, String email);
     @Query("select user from User user "+
             "where  (:userId    is null or user.userId          = :userId)  "+

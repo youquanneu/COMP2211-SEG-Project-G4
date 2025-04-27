@@ -13,7 +13,6 @@ import com.campus.Entity.User.Lecturer;
 import com.campus.Entity.User.Student;
 import com.campus.Entity.User.User;
 import com.campus.Service.Event.EmergencyCaseService;
-import com.campus.Service.Event.EventService;
 import com.campus.Service.Reservation.ReservationService;
 import com.campus.Service.Reservation.TimeSlotService;
 import com.campus.Service.Resource.ResourceService;
@@ -34,26 +33,27 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/setup")
 public class SetUpController  implements CommandLineRunner {
-    @Autowired
-    private EventService eventService;
     private static final Logger logger = Logger.getLogger(SetUpController.class.getName());
     @Override
     public void run(String... args) throws Exception {
         System.out.println("——————————————————————————————————————————————————————————");
         logger.info("Application start here");
         try {
-            System.out.println(userService.getUserById(1));
-
-        }catch (Exception e) {
-//            initializeUser();
-//            initializeResource();
-//            initializeReservation();
-//            initializeTimeSlot();
+            userService.getUserById(1);
+        }
+        catch (Exception e) {
+            initializeUser();
+            initializeResource();
+            initializeReservation();
+            initializeTimeSlot();
+            initializeEvent();
+            initializeEmergencyCase();
         }
         System.out.println("——————————————————————————————————————————————————————————");
         logger.info("Initial Set Up complete");
     }
 
+    // Set initial user in database
     private void initializeUser(){
         for (User user : buildInitializeUserList()){
             administrativeStaffService.registerNewUser(user);
@@ -81,6 +81,7 @@ public class SetUpController  implements CommandLineRunner {
 
         return userList;
     }
+    // Set initial resource in database
     private void initializeResource(){
         for (Resource resource : buildInitializeResourceList()){
             administrativeStaffService.addNewResource(resource);
@@ -139,86 +140,147 @@ public class SetUpController  implements CommandLineRunner {
         resourceList.add(new IndoorVenue("3R012T - Men's Bathroom",  null,null, Restriction.NonBookable, building, "3R012T"));
 
         // Equipment
-        resourceList.add(new Equipment("Foosball Table",campusOpen,campusClose, Restriction.NonRestriction,null));
-        resourceList.add(new Equipment("Table Tennis",  campusOpen,campusClose, Restriction.NonRestriction,null));
+        resourceList.add(new Equipment("Foosball Table",campusOpen,campusClose, Restriction.NonRestriction,"FT0001"));
+        resourceList.add(new Equipment("Table Tennis Table",  campusOpen,campusClose, Restriction.NonRestriction,"TTT0001"));
         resourceList.add(new Equipment("Portable Projector", null,null, Restriction.NonRestriction,"PP1009433"));
 
-        //
-        resourceList.add(new OutdoorVenue("Car Park",null,null,Restriction.NonBookable,null));
+        // Outdoor
+        resourceList.add( new OutdoorVenue("Basketball Court", LocalTime.of(6,0),LocalTime.of(22,0), Restriction.NonRestriction, "Beside field"));
+        resourceList.add( new OutdoorVenue("Car Park",null,null,Restriction.NonBookable,null));
         return resourceList;
     }
+    // Set initial reservation in database
     private void initializeReservation(){
         for (Reservation reservation : buildInitializeReservationList()){
             reservationService.saveReservation(reservation);
         }
     }
     private List<Reservation> buildInitializeReservationList(){
-        List<Reservation> reservations =new ArrayList<>();
-        reservations.add( reservationService.createNewReservation(
-                userService.getUserById(1),
-                resourceService.getResourceByID(1),
-                Purpose.Study,
-                LocalDateTime.now().plusDays(1).withHour(8),
-                LocalDateTime.now().plusDays(1).withHour(10))
-        );
-        reservations.add( reservationService.createNewReservation(
-                userService.getUserById(2),
-                resourceService.getResourceByID(2),
-                Purpose.Meeting,
-                LocalDateTime.now().plusDays(1).withHour(12),
-                LocalDateTime.now().plusDays(1).withHour(13))
-        );
-        reservations.add( reservationService.createNewReservation(
-                userService.getUserById(3),
-                resourceService.getResourceByID(3),
-                Purpose.Presentation,
-                LocalDateTime.now().plusDays(1).withHour(10),
-                LocalDateTime.now().plusDays(1).withHour(11))
-        );
-        reservations.add( reservationService.createNewReservation(
-                userService.getUserById(4),
-                resourceService.getResourceByID(4),
-                Purpose.Workshop,
-                LocalDateTime.now().plusDays(1).withHour(10),
-                LocalDateTime.now().plusDays(1).withHour(11))
-        );
-        reservations.add( reservationService.createNewReservation(
-                userService.getUserById(1),
-                resourceService.getResourceByID(5),
-                Purpose.Meeting,
-                LocalDateTime.now().plusDays(1).withHour(10),
-                LocalDateTime.now().plusDays(1).withHour(11))
-        );
-        return reservations;
+        List<Reservation> reservationList =new ArrayList<>();
+        try {
+            reservationList.add( reservationService.createNewReservation(
+                    userService.findUserBySimilarUsername("Abdullah"),
+                    resourceService.getResourceBySimilarName("Portable Projector"),
+                    Purpose.Meeting,
+                    LocalDateTime.now().plusDays(1).withHour(8),
+                    LocalDateTime.now().plusDays(1).withHour(10))
+            );
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        try {
+            reservationList.add( reservationService.createNewReservation(
+                    userService.findUserBySimilarUsername("Rajesh"),
+                    resourceService.getResourceBySimilarName("Portable Projector"),
+                    Purpose.Presentation,
+                    LocalDateTime.now().plusDays(1).withHour(14),
+                    LocalDateTime.now().plusDays(1).withHour(16))
+            );
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        try {
+            reservationList.add(reservationService.createNewReservation(
+                    userService.findUserBySimilarUsername("Abdullah"),
+                    resourceService.getResourceBySimilarName("Green Engineering Lab"),
+                    Purpose.Workshop,
+                    LocalDateTime.now().plusDays(3).withHour(9),
+                    LocalDateTime.now().plusDays(3).withHour(13))
+            );
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        try {
+            reservationList.add(reservationService.createNewReservation(
+                    userService.findUserBySimilarUsername("Rajesh"),
+                    resourceService.getResourceBySimilarName("3R002"),
+                    Purpose.Lecture,
+                    LocalDateTime.now().plusDays(2).withHour(10),
+                    LocalDateTime.now().plusDays(2).withHour(11))
+            );
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        try {
+            reservationList.add(reservationService.createNewReservation(
+                    userService.findUserBySimilarUsername("Gui Rou"),
+                    resourceService.getResourceBySimilarName("3R003"),
+                    Purpose.Study,
+                    LocalDateTime.now().plusDays(4).withHour(15),
+                    LocalDateTime.now().plusDays(4).withHour(16))
+            );
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        return reservationList;
     }
-    public void testNewEvent(){
-        for (Event event: testEventList()){
+    // Set initial event in database
+    private void initializeEvent(){
+        for (Event event : buildInitializeEventList()){
             administrativeStaffService.createNewEvent(event);
         }
     }
-    private List<Event> testEventList(){
+    private List<Event> buildInitializeEventList(){
         List<Event> eventList = new ArrayList<>();
-        List<User> lecturerList = administrativeStaffService.getUserByUserRole(UserRole.Lecturer);
-        List<User> studentList = administrativeStaffService.getUserByUserRole(UserRole.Student);
-        List<Venue> labList = venueService.filterVenue(null,"lab",null,null,null);
-        List<Venue> basketballCourt = venueService.filterVenue(null,"basketball",null,null,null);
-        Event event1 = new Event("Lab Open Event",
-                "Open for visiting",
-                LocalDateTime.now().plusHours(5),
-                LocalDateTime.now().plusHours(15),
-                "The event is open for anybody to visit the labs",
-                labList,lecturerList);
-
-        Event event2 = new Event("Basket ball event",
-                "Event",
-                LocalDateTime.now().plusDays(1),
-                LocalDateTime.now().plusDays(3),
-                "The event is open for anybody to play ball",
-                basketballCourt,studentList);
-        eventList.add(event1);
-        eventList.add(event2);
+        try {
+            eventList.add(administrativeStaffService.createNewEvent(
+                    new Event(
+                            "Sustainable Engineering Workshop",
+                            "Workshop",
+                            LocalDateTime.now().plusWeeks(2).withHour(10),
+                            LocalDateTime.now().plusWeeks(2).withHour(17),
+                            "A hands-on workshop exploring sustainable engineering practices and green technologies.",
+                            venueService.getVenueByNameSearching("Green Engineering Lab"),
+                            userService.getUserByUsernameSearching("Zila")
+                    )));
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        try {
+            eventList.add(administrativeStaffService.createNewEvent(
+                    new Event(
+                            "Artificial Intelligence: Current Trends",
+                            "Presentation",
+                            LocalDateTime.now().plusWeeks(1).withHour(14),
+                            LocalDateTime.now().plusWeeks(1).withHour(16),
+                            "A guest lecture on the latest developments in artificial intelligence and machine learning.",
+                            venueService.getVenueByNameSearching("Computer Science Lab 1"),
+                            userService.getUserByUsernameSearching("Computer Science Student Club")
+                    )));
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        try {
+            eventList.add(administrativeStaffService.createNewEvent(
+                    new Event(
+                            "Engineering Faculty Meeting",
+                            "Meeting",
+                            LocalDateTime.now().plusDays(5).withHour(14),
+                            LocalDateTime.now().plusDays(5).withHour(16),
+                            "Quarterly department meeting to discuss curriculum updates and research priorities.",
+                            venueService.getVenueByNameSearching("Engineering Foundation Lab"),
+                            userService.getUserByUsernameSearching("Rajesh")
+                    )));
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
+        try {
+            eventList.add(administrativeStaffService.createNewEvent(
+                    new Event(
+                            "Faculty vs. Students Basketball Tournament",
+                            "Sports",
+                            LocalDateTime.now().plusDays(10).withHour(10),
+                            LocalDateTime.now().plusDays(15).withHour(18),
+                            "Annual basketball tournament between faculty members and students. All are welcome to participate or spectate.",
+                            venueService.getVenueByNameSearching("Basketball Court"),
+                            userService.getUserByUsernameSearching("Najib")
+                    )));
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+        }
         return eventList;
     }
+    // Set initial time slot in database
     private void initializeTimeSlot(){
         for (TimeSlot timeSlot : buildInitializeTimeSlotList()){
             timeSlotService.saveTimeSlot(timeSlot);
@@ -226,7 +288,7 @@ public class SetUpController  implements CommandLineRunner {
     }
     private List<TimeSlot> buildInitializeTimeSlotList(){
         List<TimeSlot> timeSlots = new ArrayList<>();
-        for (int hour = 7; hour < 22; hour++) {
+        for (int hour = 0; hour < 24; hour++) {
             LocalTime start = LocalTime.of(hour, 0);
             LocalTime end = LocalTime.of((hour + 1) % 24, 0);
             TimeSlot timeSlot = new TimeSlot(start, end);
@@ -234,6 +296,7 @@ public class SetUpController  implements CommandLineRunner {
         }
         return timeSlots;
     }
+    // Set initial emergency case in database
     private void initializeEmergencyCase(){
         for (EmergencyCase emergencyCase : buildInitializeEmergencyCaseList()){
             emergencyCaseService.reportNewCase(emergencyCase);
@@ -241,10 +304,12 @@ public class SetUpController  implements CommandLineRunner {
     }
     private List<EmergencyCase> buildInitializeEmergencyCaseList(){
         List<EmergencyCase> emergencyCaseList = new ArrayList<>();
-        Venue venue1 = (Venue) venueService.getResourceByID(20);
-        Venue venue2 = (Venue) venueService.getResourceByID(5);
+        Venue venue1 = (Venue) venueService.getResourceBySimilarName("3R012 - Green Engineering Lab");
+        Venue venue2 = (Venue) venueService.getResourceBySimilarName("3R023 - Computer Science Lab 1");
+        Venue venue3 = (Venue) venueService.getResourceBySimilarName("3R026 - Lecture Hall");
         emergencyCaseList.add(new EmergencyCase(venue1,"Fire alarm triggered","Smoke detected in lab area","aha1a22@gmail.com"));
-        emergencyCaseList.add(new EmergencyCase(venue2,"Health emergency","Health emergency case","Rajesh@soton.ac.uk"));
+        emergencyCaseList.add(new EmergencyCase(venue2,"Health emergency","Student feeling unwell during lab session","Rajesh@soton.ac.uk"));
+        emergencyCaseList.add(new EmergencyCase(venue3,"Building Issue","Ceiling Fall Down","visitor@gmail.com"));
         return emergencyCaseList;
     }
     @Autowired

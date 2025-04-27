@@ -10,9 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmergencyCaseRepository extends JpaRepository<EmergencyCase,Integer> {
+    Optional<EmergencyCase> findFirstByOrderByEmergencyCaseIdDesc();
     @Query("select emergencyCase from EmergencyCase emergencyCase "+
             "where  (:emergencyCaseId   is null or emergencyCase.emergencyCaseId    = :emergencyCaseId)  "+
             "and    (:location          is null or emergencyCase.location           = :location)  "+

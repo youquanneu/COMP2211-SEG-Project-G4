@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -68,6 +69,13 @@ public class UserService implements UserDetailsService {
         }
         return user.get();
     }   // Base Function : Get user by username
+    public User findUserBySimilarUsername(String username){
+        Optional<User> user = userRepository.findByUsernameContainingIgnoreCase(username);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException(username);
+        }
+        return user.get();
+    }   // Base Function : Get user by similar username
     public User findUserByEmail(String email){
         Optional<User> user = userRepository.findByEmailEqualsIgnoreCase(email);
         if (user.isEmpty()){
@@ -75,6 +83,9 @@ public class UserService implements UserDetailsService {
         }
         return user.get();
     }   // Base Function : Get user by email
+    public List<User> getUserByUsernameSearching(String username){
+        return userRepository.searchByUsernameContainingIgnoreCase(username);
+    }
     private void verifyCurrentPassword(User user, String password){
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Password Incorrect");

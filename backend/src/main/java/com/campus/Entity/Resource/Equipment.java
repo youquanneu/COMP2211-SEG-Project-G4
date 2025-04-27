@@ -17,7 +17,6 @@ public class Equipment extends Resource{
         super(resourceName, openTime, closeTime, restriction, ResourceCategory.Equipment);
         setSerialNumber(serialNumber);
     }
-    @Column(unique = true)
     private String serialNumber;
     public void changeSerialNumber(String serialNumber){
         setSerialNumber(serialNumber);

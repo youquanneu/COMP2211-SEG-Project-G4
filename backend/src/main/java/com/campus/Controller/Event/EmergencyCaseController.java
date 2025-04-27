@@ -40,13 +40,27 @@ public class EmergencyCaseController {
         try {
             EmergencyCase emergencyCase = new EmergencyCase(
                     (Venue) venueService.getResourceByID(emergencyCaseDTO.getLocation().getResourceId()),
-                    null, emergencyCaseDTO.getDescription(), emergencyCaseDTO.getReporterEmail());
+                    emergencyCaseDTO.getEmergencyCase(),
+                    emergencyCaseDTO.getDescription(),
+                    emergencyCaseDTO.getReporterEmail());
             emergencyCaseService.reportNewCase(emergencyCase);
             logger.info("Report emergency" + emergencyCaseDTO);
             return ResponseEntity.ok(emergencyCaseDTO);
         }catch (Exception e){
             logger.info("Get exception : " + e.getMessage());
             return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(e.getMessage());
+        }
+    }
+    @GetMapping("/emergency/panicButton")
+    public ResponseEntity<?> panicButton(){
+        logger.info("Processing panicButton");
+        try {
+            EmergencyCaseDTO emergencyCaseDTO = EmergencyCaseDTO.mapper(emergencyCaseService.informLatestEmergencyCase());
+            logger.info("Case informed");
+            return ResponseEntity.ok(emergencyCaseDTO);
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(e.getMessage());
         }
     }
 }

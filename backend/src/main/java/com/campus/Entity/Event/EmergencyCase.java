@@ -73,4 +73,34 @@ public class EmergencyCase {
     private void setStatus(Status status) {
         this.status = status;
     }
+    private String reporterEmail(){
+        if (getReporterEmail() != null){
+            return getReporterEmail();
+        }else {
+            return "Anonymous user";
+        }
+    }
+    public String getNotification(){
+        return String.format(
+                """
+                        %s reported at %s
+                        by %s
+                        %s
+                        """,
+                getEmergencyCase(),
+                getLocation().getResourceName(),
+                reporterEmail(),
+                getDescription());
+    }
+    public String notificationToUser(){
+        return String.format(
+                """
+                        %s reported at %s
+                        More Information:
+                        %s
+                        """,
+                getEmergencyCase(),
+                getLocation().getResourceName(),
+                getDescription());
+    }
 }

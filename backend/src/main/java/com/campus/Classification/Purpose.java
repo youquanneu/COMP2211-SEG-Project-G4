@@ -1,5 +1,5 @@
 package com.campus.Classification;
 
 public enum Purpose {
-    Meeting, Presentation, Workshop, Study;
+    Meeting, Presentation, Workshop, Study, Lecture;
 }

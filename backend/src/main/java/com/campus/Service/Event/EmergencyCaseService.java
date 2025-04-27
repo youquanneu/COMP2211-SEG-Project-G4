@@ -1,13 +1,11 @@
 package com.campus.Service.Event;
 
-import com.campus.DataTransferObject.Event.EmergencyCaseDTO;
 import com.campus.Entity.Event.EmergencyCase;
 import com.campus.Repository.Event.EmergencyCaseRepository;
 import com.campus.Service.Mail.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,5 +32,12 @@ public class EmergencyCaseService {
     public EmergencyCase informEmergencyCase(EmergencyCase emergencyCase){
         emailSenderService.alertEmergency(emergencyCase);
         return emergencyCase;
+    }
+    public EmergencyCase informLatestEmergencyCase(){
+        Optional<EmergencyCase> emergencyCase = emergencyCaseRepository.findFirstByOrderByEmergencyCaseIdDesc();
+        if (emergencyCase.isEmpty()){
+            throw new RuntimeException("Not Emergency Case");
+        }
+        return emailSenderService.alertEmergency(emergencyCase.get());
     }
 }
