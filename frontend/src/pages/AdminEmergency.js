@@ -16,12 +16,16 @@ function AdminEmergency() {
   const [emergencies, setEmergencies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [panicSuccess, setPanicSuccess] = useState(false);
+  const [isPanicProcessing, setIsPanicProcessing] = useState(false);
+
 
   const today = new Date().toISOString().split('T')[0];
 
   useEffect(() => {
     const fetchEmergencies = async () => {
       setLoading(true);
+      console.log('loading:', loading);
       try {
         const response = await getEmergencies();
         if (response.success) {
@@ -33,6 +37,7 @@ function AdminEmergency() {
         setError(err.response?.data?.error || 'An error occurred while fetching emergencies.');
       } finally {
         setLoading(false);
+        console.log('loading after finally:', loading);
       }
     };
 
@@ -87,26 +92,39 @@ function AdminEmergency() {
     localStorage.setItem('previousPage', '/admindashboard');
     navigate('/admindashboard', { state: { from: '/admindashboard' } });
   };
-
   const handlePanicClick = async () => {
+
+
+
     setPanicClickCount((prevCount) => {
       const newCount = prevCount + 1;
+      console.log("Button Click : " + newCount)
       if (newCount === 3) {
+        // Disable the button while waiting for the response
+        setIsPanicProcessing(true);
         sendPanicAlert()
           .then((response) => {
             if (response.success) {
+              console.log('Panic alert successfully sent:', response.data);
+              setPanicSuccess(true);
               setShowPanicPopup(true);
               setTimeout(() => {
                 setShowPanicPopup(false);
+                setPanicSuccess(false);
               }, 2000);
             } else {
               setError('Failed to send panic alert.');
+              setPanicSuccess(false);
             }
           })
           .catch((err) => {
             setError(err.response?.data?.error || 'An error occurred while sending the panic alert.');
+            setPanicSuccess(false);
+          })
+          .finally(() => {
+            // Re-enable the button after the API call finishes (success or failure)
+            setIsPanicProcessing(false);
           });
-
         return 0;
       }
       return newCount;
@@ -119,12 +137,15 @@ function AdminEmergency() {
         <img src={logo} alt="Logo" className="admin-emergency-logo" />
       </header>
       <main className="admin-emergency-content">
-        <div className="panic-button" onClick={handlePanicClick}>
+        <div
+          className={`panic-button ${isPanicProcessing ? 'disabled' : ''}`}
+          onClick={isPanicProcessing ? null : handlePanicClick} // Avoid triggering while processing
+        >
           <FaExclamation className="panic-icon" />
         </div>
         {showPanicPopup && (
-          <div className="panic-popup">
-            <p>Emergency sent to all.</p>
+          <div className={`panic-popup ${panicSuccess ? 'success' : 'failure'}`}>
+            <p>{panicSuccess ? 'Emergency sent to all.' : 'Failed to send emergency.'}</p>
           </div>
         )}
         <h1>Emergency Report</h1>

@@ -86,12 +86,16 @@ export const getEmergencies = async () => {
 };
 // Send panic alert
 export const sendPanicAlert = async () => {
-  try {
-    return { success: true };
+  try{
+    const response = await axios.get(getAPI_URL('emergency/panicButton'));
+     return {
+          success: true,
+          data: response.data,
+        };
   } catch (error) {
-    console.error('Error sending panic alert:', error);
-    throw error;
-  }
+      console.error('Error informing emergency case:', error);
+      throw error;
+    }
 };
 
 // Fetch students
@@ -99,7 +103,6 @@ export const getStudents = async () => {
   try {
     const response = await axios.get(getAPI_URL('admin/userManagement/getStudent'));
     const students = response.data
-    console.log(students)
     const formattedStudents = students.map((student) => ({
           userId: student.userId || 'Unknown', // Handle potential missing data
           username: student.username || 'Unknown',
@@ -121,7 +124,6 @@ export const getLecturers = async () => {
   try {
       const response = await axios.get(getAPI_URL('admin/userManagement/getLecturer'));
       const lecturers = response.data
-      console.log(lecturers)
       const formattedLecturers = lecturers.map((lecturer) => ({
             userId: lecturer.userId || 'Unknown',
             username: lecturer.username || 'Unknown',

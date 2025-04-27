@@ -11,6 +11,7 @@ function UserEmergency() {
   const [venues, setVenues] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState('');
+  const [emergencyCase, setEmergencyCase] = useState('');
 
   // Send log to backend
   const sendLog = async (action, value) => {
@@ -76,20 +77,21 @@ function UserEmergency() {
   }, []);
 
   const handleSubmit = async () => {
-    if (!location || !description) {
-      setError('Please select a venue and enter a description.');
+    if (!location || !emergencyCase) {
+      setError('Please select a venue and enter an emergency case.');
       await sendLog('submit_emergency_error', 'Missing venue or description');
       return;
     }
 
     try {
-      const reportData = { location, description };
+      const reportData = { location, emergencyCase, description };
       console.log(reportData)
       await axios.post(getAPI_URL('emergency/reportEmergency'), reportData);
       await sendLog('submit_emergency', `Location: ${location}, Description: ${description}`);
       setShowPopup(true);
       setError('');
       setLocation(venues.length > 0 ? (venues[0].name || venues[0].venueName || '') : '');
+      setEmergencyCase('');
       setDescription('');
       setTimeout(() => {
         setShowPopup(false);
@@ -145,6 +147,15 @@ function UserEmergency() {
               </option>
             )}
           </select>
+        </div>
+        <div className="form-group">
+           <label>Emergency Case:</label>
+           <textarea
+           value={emergencyCase}
+           onChange={(e) => setEmergencyCase(e.target.value)}
+           placeholder=""
+           rows="2"
+          />
         </div>
         <div className="form-group">
           <label>Description:</label>
