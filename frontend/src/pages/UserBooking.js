@@ -255,6 +255,7 @@ function UserBooking() {
           <option value="Presentation">Presentation</option>
           <option value="Workshop">Workshop</option>
           <option value="Study">Study</option>
+          <option value="Lecture">Lecture</option>
         </select>
       </div>
 
