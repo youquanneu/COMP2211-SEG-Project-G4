@@ -127,8 +127,8 @@ public class ReservationService {
         List<Reservation> conflictReservation = reservationRepository.filterConflictReservation
                 (
                         resource,
-                        reservationStarting,
-                        reservationEnding
+                        reservationStarting.plusSeconds(1),
+                        reservationEnding.minusSeconds(1)
                 );
         if (!conflictReservation.isEmpty()){
             throw new RuntimeException("Reservation with time conflict found");
