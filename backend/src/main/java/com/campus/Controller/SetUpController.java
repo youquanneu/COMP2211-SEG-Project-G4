@@ -140,8 +140,8 @@ public class SetUpController  implements CommandLineRunner {
         resourceList.add(new IndoorVenue("3R012T - Men's Bathroom",  null,null, Restriction.NonBookable, building, "3R012T"));
 
         // Equipment
-        resourceList.add(new Equipment("Foosball Table",campusOpen,campusClose, Restriction.NonRestriction,"FT0001"));
-        resourceList.add(new Equipment("Table Tennis Table",  campusOpen,campusClose, Restriction.NonRestriction,"TTT0001"));
+        resourceList.add(new Equipment("3D Printer",null,null, Restriction.NonRestriction,"FT0001"));
+        resourceList.add(new Equipment("Flight Simulator",  null,null, Restriction.NonRestriction,"TTT0001"));
         resourceList.add(new Equipment("Portable Projector", null,null, Restriction.NonRestriction,"PP1009433"));
 
         // Outdoor
