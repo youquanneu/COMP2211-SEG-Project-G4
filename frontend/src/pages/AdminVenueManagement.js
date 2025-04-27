@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import { getVenues, updateVenueAvailability } from '../api'; // Import the new functions
 import './AdminVenueManagement.css';
+import { getVenues, changeResourceRestriction } from '../services/api';
 
 function AdminVenueManagement() {
   const navigate = useNavigate();
@@ -15,12 +15,8 @@ function AdminVenueManagement() {
     const fetchVenues = async () => {
       setLoading(true);
       try {
-        const response = await getVenues();
-        if (response.success) {
-          setVenues(response.data);
-        } else {
-          setError('Failed to fetch venues.');
-        }
+      const response = await getVenues();
+            setVenues(response.data);
       } catch (err) {
         setError(err.response?.data?.error || 'An error occurred while fetching venues.');
       } finally {
@@ -31,18 +27,17 @@ function AdminVenueManagement() {
     fetchVenues();
   }, []);
 
-  const handleToggleAvailability = async (id) => {
-    const venue = venues.find((v) => v.id === id);
-    const updatedAvailability = !venue.available;
-
+  const handleRestrictionChange = async (venue, newRestriction) => {
     try {
-      const response = await updateVenueAvailability(id, updatedAvailability);
+      const response = await changeResourceRestriction(venue, newRestriction);
       if (response.success) {
         setVenues((prevVenues) =>
-          prevVenues.map((venue) =>
-            venue.id === id ? { ...venue, available: updatedAvailability } : venue
-          )
-        );
+                prevVenues.map((v) =>
+                  v.resourceId === venue.resourceId
+                    ? { ...v, restriction: newRestriction }
+                    : v
+                )
+              );
       } else {
         setError('Failed to update venue availability.');
       }
@@ -75,18 +70,18 @@ function AdminVenueManagement() {
             <p>Loading venues...</p>
           ) : venues.length > 0 ? (
             venues.map((venue) => (
-              <div key={venue.id} className="venue-item">
-                <span className="venue-name">{venue.name}</span>
-                <label className="availability-toggle">
-                  <input
-                    type="checkbox"
-                    checked={venue.available}
-                    onChange={() => handleToggleAvailability(venue.id)}
-                  />
-                  <span className="toggle-label">
-                    {venue.available ? 'Available' : 'Unavailable'}
-                  </span>
-                </label>
+              <div key={venue.resourceId} className="venue-item">
+                <span className="venue-name">{venue.resourceName}</span>
+                <div className="availability-toggle">
+                 <select
+                    value={venue.restriction}
+                    onChange={(e) => handleRestrictionChange(venue, e.target.value)} >
+                        <option value="NonRestriction">NonRestriction</option>
+                        <option value="ApprovalRequired">ApprovalRequired</option>
+                        <option value="Restricted">Restricted</option>
+                        <option value="NonBookable">NonBookable</option>
+                    </select>
+                  </div>
               </div>
             ))
           ) : (

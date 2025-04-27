@@ -1,5 +1,6 @@
 package com.campus.DataTransferObject.Reservation;
 
+import com.campus.Classification.Purpose;
 import com.campus.DataTransferObject.Resource.ResourceDTO;
 import com.campus.DataTransferObject.User.UserDTO;
 import com.campus.Entity.Reservation.Reservation;
@@ -15,12 +16,14 @@ public class ReservationDTO {
                           UserDTO userDTO,
                           ResourceDTO resourceDTO,
                           LocalDateTime reservationStarting,
-                          LocalDateTime reservationEnding){
+                          LocalDateTime reservationEnding,
+                          Purpose purpose){
         setReservationId(reservationId);
         setUserDTO(userDTO);
         setResourceDTO(resourceDTO);
         setReservationStarting(reservationStarting);
         setReservationEnding(reservationEnding);
+        setPurpose(purpose);
     }
     public static ReservationDTO mapper(Reservation reservation){
         return new ReservationDTO(
@@ -28,7 +31,8 @@ public class ReservationDTO {
                 UserDTO.mapper(reservation.getBooker()),
                 ResourceDTO.mapper(reservation.getResource()),
                 reservation.getReservationStarting(),
-                reservation.getReservationEnding()
+                reservation.getReservationEnding(),
+                reservation.getPurpose()
                 );
     }
     public static List<ReservationDTO> listMapper(List<Reservation> reservations){
@@ -48,6 +52,9 @@ public class ReservationDTO {
     private LocalDateTime reservationStarting;
     @JsonProperty
     private LocalDateTime reservationEnding;
+    @JsonProperty
+    private Purpose purpose;
+    
     public Integer getReservationId() {
         return reservationId;
     }
@@ -62,6 +69,9 @@ public class ReservationDTO {
     }
     public LocalDateTime getReservationEnding() {
         return reservationEnding;
+    }
+    public Purpose getPurpose() {
+        return purpose;
     }
     private void setReservationId(Integer reservationId) {
         this.reservationId = reservationId;
@@ -78,5 +88,7 @@ public class ReservationDTO {
     private void setReservationEnding(LocalDateTime reservationEnding) {
         this.reservationEnding = reservationEnding;
     }
-
+    private void setPurpose(Purpose purpose) {
+        this.purpose = purpose;
+    }
 }

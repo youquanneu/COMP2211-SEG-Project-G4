@@ -98,19 +98,19 @@ public class ReservationService {
     }   // Check if the reservation is valid and doesn't conflict with other existing reservations
     private void checkTimeValidity(LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         if (reservationStarting == null || reservationEnding == null){
-            throw new RuntimeException("Time of reservation cannot be null");
+            throw new RuntimeException("Error: Time of reservation cannot be null");
         }   // Prevent null time in reservation
         if (reservationStarting.isBefore(LocalDateTime.now()) || reservationEnding.isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Reservation time cannot before current time");
+            throw new RuntimeException("Error: Reservation time cannot before current time");
         }   // Prevent time set before current time
         if (reservationStarting.isAfter(reservationEnding)){
-            throw new RuntimeException("Starting time cannot be after ending time");
+            throw new RuntimeException("Error: Starting time cannot be after ending time");
         }   // Prevent starting time set after ending time
     }   //  Check if time input is valid
     private void checkTimeAvailability(Resource resource, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
         if (resource.getOpenTime()!=null) {
             if (!reservationStarting.toLocalDate().equals(reservationEnding.toLocalDate())){
-                throw new RuntimeException("Periodic open resources cannot booked overnight");
+                throw new RuntimeException("Error: Periodic open resources cannot booked overnight");
             }   // Check if the reservation spans across different days
             else {
                 LocalTime startingTime = reservationStarting.toLocalTime();
@@ -120,7 +120,7 @@ public class ReservationService {
                 boolean invalidStartingTime = startingTime.isBefore(openTime) || startingTime.isAfter(closeTime);  // Check if starting time is outside opening hours
                 boolean invalidEndingTime = endingTime.isBefore(openTime) || endingTime.isAfter(closeTime);    // Check if ending time is outside opening hours
                 if (invalidStartingTime || invalidEndingTime) {
-                    throw new RuntimeException("Resource not available during the requested period");
+                    throw new RuntimeException("Error: Resource not available during the requested period");
                 }
             }
         }
@@ -133,7 +133,7 @@ public class ReservationService {
                         reservationEnding
                 );
         if (!conflictReservation.isEmpty()){
-            throw new RuntimeException("Reservation with time conflict found");
+            throw new RuntimeException("Error: Reservation with time conflict found");
         }
     }   // Check if new reservation conflict with existing reservation
     private void checkRescheduleReservationConflict(Reservation reservation, LocalDateTime reservationStarting, LocalDateTime reservationEnding){
@@ -145,7 +145,7 @@ public class ReservationService {
                         reservationEnding
                 );
         if (!conflictReservation.isEmpty()){
-            throw new RuntimeException("Reservation with time conflict found");
+            throw new RuntimeException("Error: Reservation with time conflict found");
         }
     }   // Check if reservation after change conflict with other reservation
     public List<TimeSlot> availableTime(Resource resource, LocalDate localDate){

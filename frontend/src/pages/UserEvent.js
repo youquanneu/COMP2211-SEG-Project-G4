@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import logo from '../assets/logo.png';
+import basketballEventImg from '../assets/Basketball event.png';
+import engineeringEventImg from '../assets/Engineering event.png';
+import aiEventImg from '../assets/AI event.png';
+import sustainabilityEventImg from '../assets/Sustainability Event.png';
 import './UserEvent.css';
 import { getAPI_URL } from '../services/api';
 
@@ -11,7 +15,7 @@ function UserEvent() {
   const [error, setError] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const navigate = useNavigate();
-
+  const userEmail = localStorage.getItem('userEmail');
   const useMockData = false;
 
   const sendLog = async (action, value) => {
@@ -20,6 +24,23 @@ function UserEvent() {
     } catch (err) {
       console.error('Log error:', err.message);
     }
+  };
+
+  // Get appropriate image based on event title
+  const getEventImage = (event) => {
+    const title = event.eventTitle ? event.eventTitle.toLowerCase() : '';
+    
+    if (title.includes('basketball') || title.includes('tournament')) {
+      return basketballEventImg;
+    } else if (title.includes('faculty') || title.includes('faculty meeting')) {
+      return engineeringEventImg;
+    } else if (title.includes('artificial intelligence') || title.includes('Current')) {
+      return aiEventImg;
+    } else if (title.includes('sustainable') || title.includes('Sustainable')) {
+      return sustainabilityEventImg;
+    }
+    
+    return logo; // Default fallback
   };
 
   // Clean up malformed events in localStorage
@@ -134,36 +155,49 @@ function UserEvent() {
     sendLog('back', 'Clicked back to userhome');
   };
 
-  const handleAddToCalendar = (event) => {
+  const handleAddToCalendar = async (event) => {
     if (!event.eventId || !event.eventStarting || !event.eventTitle) {
       console.error('Invalid event data for calendar:', event);
       return;
     }
     const storedEvents = JSON.parse(localStorage.getItem('calendarEvents')) || [];
     const eventExists = storedEvents.some((e) => e.eventId === event.eventId);
-    if (!eventExists) {
-      const eventDate = new Date(event.eventStarting);
-      const normalizedDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
-        .toISOString()
-        .split('T')[0];
-      console.log('Adding event with date:', normalizedDate, 'Original:', event.eventStarting);
-      const eventToSave = {
-        eventId: event.eventId,
-        date: normalizedDate,
-        topic: event.eventTitle || 'Untitled Event',
-        area: event.area || 'N/A',
-        organizers: event.organizer?.map((org) => org.username || org.email || 'Unknown').join(', ') || 'N/A',
-        description: `${new Date(event.eventStarting).toLocaleString()} - ${new Date(event.eventEnding).toLocaleString()}`,
-        eventStarting: event.eventStarting,
-        eventEnding: event.eventEnding,
-        type: 'event',
-      };
-      storedEvents.push(eventToSave);
-      localStorage.setItem('calendarEvents', JSON.stringify(storedEvents));
+    console.log(event)
+    console.log(userEmail)
+    try{
+        const response = await axios.post(getAPI_URL('user/event/registerForEvent'),{email:userEmail, eventDTO: event})
+        console.log(response.data)
+        setShowSuccessPopup(true);
+        sendLog('add_to_calendar', `Added ${event.eventTitle} to calendar`);
+        setTimeout(() => setShowSuccessPopup(false), 2000);
+    }catch (err){
+        console.error(err);
+        const errorMessage = err.response?.data || 'Failed to register for event';
+        // Alert generated
+        alert(`Error: ${errorMessage}`);
+        // Here need to popup error message
     }
-    setShowSuccessPopup(true);
-    sendLog('add_to_calendar', `Added ${event.eventTitle} to calendar`);
-    setTimeout(() => setShowSuccessPopup(false), 2000);
+//    if (!eventExists) {
+//      const eventDate = new Date(event.eventStarting);
+//      const normalizedDate = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate())
+//        .toISOString()
+//        .split('T')[0];
+//
+//      console.log('Adding event with date:', normalizedDate, 'Original:', event.eventStarting);
+//      const eventToSave = {
+//        eventId: event.eventId,
+//        date: normalizedDate,
+//        topic: event.eventTitle || 'Untitled Event',
+//        area: event.area || 'N/A',
+//        organizers: event.organizer?.map((org) => org.username || org.email || 'Unknown').join(', ') || 'N/A',
+//        description: `${new Date(event.eventStarting).toLocaleString()} - ${new Date(event.eventEnding).toLocaleString()}`,
+//        eventStarting: event.eventStarting,
+//        eventEnding: event.eventEnding,
+//        type: 'event',
+//      };
+//      storedEvents.push(eventToSave);
+//      localStorage.setItem('calendarEvents', JSON.stringify(storedEvents));
+//    }
   };
 
   const formatDateTime = (dateStr) => {
@@ -201,7 +235,7 @@ function UserEvent() {
                 onClick={() => handleEventClick(event)}
               >
                 <img
-                  src={event.imageUrl || logo}
+                  src={event.imageUrl || getEventImage(event)}
                   alt={event.eventTitle || 'Event'}
                   className="event-image"
                   onError={(e) => {
@@ -247,7 +281,7 @@ function UserEvent() {
               ×
             </button>
             <img
-              src={selectedEvent.imageUrl || logo}
+              src={selectedEvent.imageUrl || getEventImage(selectedEvent)}
               alt={selectedEvent.eventTitle || 'Event'}
               className="popup-image"
               onError={(e) => {

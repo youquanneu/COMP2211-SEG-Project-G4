@@ -1,16 +1,33 @@
 // src/pages/AdminDashboard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaBuilding, FaCogs, FaUser, FaCog } from 'react-icons/fa';
 import logo from '../assets/logo.png';
 import './AdminDashboard.css';
+import axios from 'axios';
+import { getAPI_URL } from "../services/api";
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const venueStats = { booked: 6, total: 30 };
-  const equipmentStats = { booked: 8, total: 50 };
+  const [venueStats, setVenueStats] = useState({ booked: 0, total: 0 });
+  const [equipmentStats, setEquipmentStats] = useState({ booked: 0, total: 0 });
+
+  useEffect(() => {
+      const fetchStats = async () => {
+        try {
+          const response = await axios.get(getAPI_URL('admin/dashboard/getStatus'));
+          const data = response.data;
+          setVenueStats({ booked: data.bookedVenue , total: data.availableVenue });
+          setEquipmentStats({ booked: data.bookedEquipment, total: data.availableEquipment });
+        } catch (error) {
+          console.error("Error fetching dashboard stats:", error);
+        }
+      };
+
+      fetchStats();
+    }, []);
 
   const handleNavigation = (event) => {
     const selectedPage = event.target.value;
