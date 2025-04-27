@@ -27,6 +27,7 @@ function EquipmentApproval() {
   try {
     const response = await axios.post(getAPI_URL('admin/reservationManagement/approveReservation'),request);
     console.log(response)
+    getPendingList()
   }catch (error) {
          console.error('Error during approve :', error);
          alert (error.message);
@@ -37,6 +38,7 @@ function EquipmentApproval() {
     try {
       const response = await axios.post(getAPI_URL('admin/reservationManagement/rejectReservation'),request);
       console.log(response)
+      getPendingList()
       }
       catch (error) {
              console.error('Error during approve :', error);
