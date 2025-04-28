@@ -1,14 +1,36 @@
 // src/pages/UserProfile.js
-import React from 'react';
+import React,{ useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaCog, FaBell } from 'react-icons/fa';
 import logo from '../assets/logo.png';
 import profilePic from '../assets/profile-pic-placeholder.png'; // Add a placeholder profile picture
 import './UserProfile.css';
+import { getAPI_URL } from "../services/api";
+import axios from 'axios';
 
 function UserProfile() {
   const navigate = useNavigate();
+  const [userData, setUserData] = useState(null)
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+
+  useEffect(() => {
+      const fetchUserProfile = async () => {
+        try {
+          const userEmail = localStorage.getItem('userEmail');
+          const response = await axios.post(getAPI_URL('user/userProfile'), { email: userEmail });
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+          setError('Failed to load user profile.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchUserProfile();
+    }, []);
 
   const handleNavigation = (event) => {
     const selectedPage = event.target.value;
@@ -42,7 +64,7 @@ function UserProfile() {
 
   const handleBack = () => {
     const userRole = localStorage.getItem('userRole') || 'user';
-    navigate(userRole === 'admin' ? '/adminhome' : '/userhome');
+    navigate(userRole === 'AdministrativeStaff' ? '/adminhome' : '/userhome');
   };
 
   return (
@@ -82,13 +104,13 @@ function UserProfile() {
         <div className="profile-header-section">
           <img src={profilePic} alt="Profile" className="profile-picture" />
           <div className="profile-info">
-            <h2>John Doe</h2>
+            {userData && <h2>{userData.username}</h2>}
           </div>
         </div>
         {/* User Details */}
         <div className="profile-details">
-          <p><strong>Email:</strong> john.doe@example.com</p>
-          <p><strong>Role:</strong> Student</p>
+          {userData && <p><strong>Email:</strong> {userData.email}</p>}
+          {userData && <p><strong>Role:</strong> {userData.userRole}</p>}
         </div>
         <button className="back-button" onClick={handleBack}>
           Back
