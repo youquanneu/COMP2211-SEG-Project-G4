@@ -64,7 +64,7 @@ function UserProfile() {
 
   const handleBack = () => {
     const userRole = localStorage.getItem('userRole') || 'user';
-    navigate(userRole === 'AdministrativeStaff' ? '/adminhome' : '/userhome');
+    navigate(userRole === 'AdministrativeStaff' ? '/admindashboard' : '/userhome');
   };
 
   return (

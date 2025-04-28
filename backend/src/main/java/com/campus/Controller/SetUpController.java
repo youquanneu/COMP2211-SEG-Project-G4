@@ -69,12 +69,12 @@ public class SetUpController  implements CommandLineRunner {
         userList.add(new Student("ShiQi Chen", "csq1e23@soton.ac.uk", "passwordStd4"));
 
         // Lecturers with realistic names and simple passwords
-        userList.add(new Lecturer("Dr. Rajesh", "blockCode.rajesh.yadav@southampton.ac.uk", "passwordLec1"));
-        userList.add(new Lecturer("Dr. Najib", "blockCode.m.n.zamri@soton.ac.uk", "passwordLec2"));
-        userList.add(new Lecturer("Dr. Zila", "blockCode.r.ramli@soton.ac.uk", "passwordLec3"));
+        userList.add(new Lecturer("Dr. Rajesh", "ry@soton.ac.uk", "passwordLec1"));
+        userList.add(new Lecturer("Dr. Najib", "m.n.zamri@soton.ac.uk", "passwordLec2"));
+        userList.add(new Lecturer("Dr. Zila", "r.ramli@soton.ac.uk", "passwordLec3"));
 
         // Others king of user with realistic names and simple passwords
-        userList.add(new User("Computer Science Student Club","blockCode.cssc@soton.ac.uk","passwordCSSC",UserRole.Organization));
+        userList.add(new User("Computer Science Student Club","cssc@soton.ac.uk","passwordCSSC",UserRole.Organization));
 
         // Administrative staff
         userList.add(new AdministrativeStaff("You Quan", "yqn1e23@soton.ac.uk", "Password"));
@@ -145,8 +145,8 @@ public class SetUpController  implements CommandLineRunner {
         resourceList.add(new Equipment("Portable Projector", null,null, Restriction.NonRestriction,"PP1009433"));
 
         // Outdoor
-        resourceList.add( new OutdoorVenue("Basketball Court", LocalTime.of(6,0),LocalTime.of(22,0), Restriction.NonRestriction, "Beside field"));
-        resourceList.add( new OutdoorVenue("Car Park",null,null,Restriction.NonBookable,null));
+        // resourceList.add( new OutdoorVenue("Basketball Court", LocalTime.of(6,0),LocalTime.of(22,0), Restriction.NonRestriction, "Beside field"));
+        // resourceList.add( new OutdoorVenue("Car Park",null,null,Restriction.NonBookable,null));
         return resourceList;
     }
     // Set initial reservation in database
