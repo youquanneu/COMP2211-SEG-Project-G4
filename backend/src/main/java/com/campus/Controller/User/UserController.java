@@ -5,6 +5,7 @@ import com.campus.DataTransferObject.Mail.OneTimePasswordDTO;
 import com.campus.DataTransferObject.User.LoginRequest;
 import com.campus.DataTransferObject.User.ResetPasswordRequest;
 import com.campus.DataTransferObject.User.UserDTO;
+import com.campus.DataTransferObject.User.UserEmailDTO;
 import com.campus.Service.Mail.EmailSenderService;
 import com.campus.Service.Mail.OneTimePasswordService;
 import com.campus.Service.User.UserService;
@@ -33,6 +34,18 @@ public class UserController{
                     userService.login(
                     loginRequest.getEmail(),
                     loginRequest.getPassword()));
+            logger.info("Get userDTO" + userDTO.getUsername());
+            return ResponseEntity.ok(userDTO);
+        }catch (Exception e){
+            logger.info("Get exception : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+    @PostMapping("/userProfile")
+    public ResponseEntity<?> getUserProfile(@RequestBody UserEmailDTO userEmailDTO) {
+        logger.info("Processing getUserProfile ");
+        try {
+            UserDTO userDTO = UserDTO.mapper(userService.getUserByEmail(userEmailDTO.getEmail()));
             logger.info("Get userDTO" + userDTO.getUsername());
             return ResponseEntity.ok(userDTO);
         }catch (Exception e){
